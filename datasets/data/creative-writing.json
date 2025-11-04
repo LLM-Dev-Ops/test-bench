@@ -1,0 +1,60 @@
+{
+  "name": "creative-writing",
+  "description": "Creative generation tasks",
+  "version": "1.0.0",
+  "defaults": {
+    "temperature": 0.9,
+    "max_tokens": 600
+  },
+  "test_cases": [
+    {
+      "id": "story-opening",
+      "category": "creative-writing",
+      "prompt": "Write an engaging opening paragraph for a science fiction story about {{topic}}.",
+      "variables": {
+        "topic": "time travel"
+      }
+    },
+    {
+      "id": "haiku-nature",
+      "category": "creative-writing",
+      "prompt": "Write a haiku about {{subject}}. Follow the traditional 5-7-5 syllable pattern.",
+      "variables": {
+        "subject": "autumn leaves"
+      },
+      "references": [
+        "5 syllables",
+        "7 syllables"
+      ]
+    },
+    {
+      "id": "product-description",
+      "category": "creative-writing",
+      "prompt": "Write a creative product description for a {{product}} that emphasizes its unique features.",
+      "variables": {
+        "product": "smart coffee mug"
+      }
+    },
+    {
+      "id": "dialogue-scene",
+      "category": "creative-writing",
+      "prompt": "Write a short dialogue between two characters meeting at a coffee shop. One character has exciting news to share."
+    },
+    {
+      "id": "metaphor-explanation",
+      "category": "creative-writing",
+      "prompt": "Explain the concept of '{{concept}}' using a creative metaphor or analogy.",
+      "variables": {
+        "concept": "cloud computing"
+      }
+    },
+    {
+      "id": "limerick",
+      "category": "creative-writing",
+      "prompt": "Write a limerick about {{subject}}.",
+      "variables": {
+        "subject": "programming bugs"
+      }
+    }
+  ]
+}

@@ -1,0 +1,98 @@
+{
+  "name": "llm-test-bench",
+  "version": "0.1.0",
+  "description": "A production-grade CLI framework for systematic testing, validation, and benchmarking of Large Language Model (LLM) applications",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "bin": {
+    "ltb": "./dist/cli.js"
+  },
+  "type": "module",
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
+  },
+  "scripts": {
+    "dev": "tsup --watch",
+    "build": "tsup",
+    "build:clean": "rm -rf dist && npm run build",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint src --ext .ts --max-warnings=0",
+    "lint:fix": "eslint src --ext .ts --fix",
+    "format": "prettier --write \"src/**/*.ts\" \"tests/**/*.ts\" \"*.{json,md}\"",
+    "format:check": "prettier --check \"src/**/*.ts\" \"tests/**/*.ts\" \"*.{json,md}\"",
+    "test": "vitest run",
+    "test:watch": "vitest watch",
+    "test:ui": "vitest --ui",
+    "test:coverage": "vitest run --coverage",
+    "test:coverage:check": "vitest run --coverage && node scripts/check-coverage.js",
+    "test:integration": "vitest run --config vitest.integration.config.ts",
+    "ci": "npm run lint && npm run typecheck && npm run test:coverage && npm run build",
+    "prepublishOnly": "npm run ci",
+    "prepare": "husky install || true",
+    "clean": "rm -rf dist coverage test-results .tsbuildinfo node_modules/.cache"
+  },
+  "keywords": [
+    "llm",
+    "testing",
+    "benchmark",
+    "validation",
+    "openai",
+    "anthropic",
+    "claude",
+    "gpt",
+    "cli",
+    "typescript"
+  ],
+  "author": "Your Name",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourusername/llm-test-bench.git"
+  },
+  "bugs": {
+    "url": "https://github.com/yourusername/llm-test-bench/issues"
+  },
+  "homepage": "https://github.com/yourusername/llm-test-bench#readme",
+  "dependencies": {
+    "yargs": "^17.7.2",
+    "zod": "^3.22.4",
+    "yaml": "^2.3.4",
+    "chalk": "^5.3.0",
+    "openai": "^4.20.1",
+    "ajv": "^8.12.0",
+    "p-limit": "^5.0.0",
+    "glob": "^10.3.10"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.5",
+    "@types/yargs": "^17.0.32",
+    "@typescript-eslint/eslint-plugin": "^6.15.0",
+    "@typescript-eslint/parser": "^6.15.0",
+    "@vitest/coverage-v8": "^1.0.4",
+    "@vitest/ui": "^1.0.4",
+    "eslint": "^8.56.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-import": "^2.29.1",
+    "husky": "^8.0.3",
+    "lint-staged": "^15.2.0",
+    "prettier": "^3.1.1",
+    "tsup": "^8.0.1",
+    "typescript": "^5.3.3",
+    "vitest": "^1.0.4"
+  },
+  "lint-staged": {
+    "*.ts": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "*.{json,md,yml,yaml}": [
+      "prettier --write"
+    ]
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ]
+}

@@ -1,0 +1,58 @@
+[package]
+name = "llm-test-bench"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+license.workspace = true
+repository.workspace = true
+homepage.workspace = true
+rust-version.workspace = true
+description = "A production-grade CLI for testing and benchmarking LLM applications"
+
+[[bin]]
+name = "llm-test-bench"
+path = "src/main.rs"
+
+[dependencies]
+# Workspace crates
+llm-test-bench-core = { path = "../core" }
+llm-test-bench-datasets = { path = "../datasets" }
+
+# CLI framework
+clap = { workspace = true }
+clap_complete = { workspace = true }
+
+# Interactive prompts
+inquire = { workspace = true }
+
+# Configuration
+serde = { workspace = true }
+serde_json = { workspace = true }
+toml = { workspace = true }
+
+# Error handling
+anyhow = { workspace = true }
+thiserror = { workspace = true }
+
+# Utilities
+dirs = { workspace = true }
+
+# Async runtime
+tokio = { workspace = true }
+
+# Logging
+tracing = { workspace = true }
+tracing-subscriber = { workspace = true }
+
+# Terminal UI
+indicatif = { workspace = true }
+colored = { workspace = true }
+
+# Streaming
+futures = { workspace = true }
+futures-util = { workspace = true }
+
+[dev-dependencies]
+assert_cmd = { workspace = true }
+predicates = { workspace = true }
+tempfile = "3.8"

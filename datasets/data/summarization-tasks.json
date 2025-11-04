@@ -1,0 +1,44 @@
+{
+  "name": "summarization-tasks",
+  "description": "Text summarization tasks",
+  "version": "1.0.0",
+  "defaults": {
+    "temperature": 0.5,
+    "max_tokens": 200
+  },
+  "test_cases": [
+    {
+      "id": "summarize-article-short",
+      "category": "summarization",
+      "prompt": "Summarize the following text in one sentence:\n\n\"The Amazon rainforest, also known as Amazonia, is a moist broadleaf tropical rainforest in the Amazon biome that covers most of the Amazon basin of South America. This basin encompasses 7,000,000 km2, of which 5,500,000 km2 are covered by the rainforest. The majority of the forest is contained within Brazil, with 60% of the rainforest, followed by Peru with 13%, Colombia with 10%, and minor amounts in other countries.\"\n\nSummary:",
+      "references": [
+        "Amazon",
+        "South America",
+        "Brazil"
+      ]
+    },
+    {
+      "id": "summarize-bullet-points",
+      "category": "summarization",
+      "prompt": "Convert the following paragraph into 3 bullet points:\n\n\"Rust is a multi-paradigm programming language focused on performance and safety. It prevents segmentation faults and guarantees thread safety. Rust achieves memory safety without garbage collection, and reference counting is optional.\"",
+      "references": [
+        "performance",
+        "safety",
+        "no garbage collection"
+      ]
+    },
+    {
+      "id": "extract-key-points",
+      "category": "summarization",
+      "prompt": "List the {{n}} most important points from this text:\n\n\"Climate change is causing global temperatures to rise. This leads to melting ice caps, rising sea levels, and more extreme weather events. Scientists recommend reducing carbon emissions through renewable energy, sustainable transportation, and energy-efficient buildings.\"",
+      "variables": {
+        "n": "3"
+      }
+    },
+    {
+      "id": "tldr-generation",
+      "category": "summarization",
+      "prompt": "Provide a TL;DR (Too Long; Didn't Read) summary of this GitHub pull request description:\n\n\"This PR adds comprehensive error handling to the authentication module. Previously, failed login attempts would crash the application. Now, all errors are properly caught and logged. Users receive clear error messages instead of cryptic stack traces. Tests have been added to cover all error cases.\""
+    }
+  ]
+}

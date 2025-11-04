@@ -1,0 +1,47 @@
+# Licensed under the Apache License, Version 2.0 <LICENSE-APACHE or
+# https://www.apache.org/licenses/LICENSE-2.0> or the MIT license
+# <LICENSE-MIT or https://opensource.org/licenses/MIT>, at your
+# option. This file may not be copied, modified, or distributed
+# except according to those terms.
+
+[package]
+name = "llm-test-bench-datasets"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+license.workspace = true
+repository.workspace = true
+homepage.workspace = true
+rust-version.workspace = true
+description = "Dataset management for LLM Test Bench"
+keywords = ["llm", "testing", "datasets", "benchmarking"]
+categories = ["development-tools::testing"]
+
+[dependencies]
+# Serialization
+serde = { workspace = true }
+serde_json = { workspace = true }
+serde_yaml = "0.9"
+
+# Validation
+serde_valid = "0.18"
+
+# Template engine
+regex = "1.10"
+
+# Error handling
+anyhow = { workspace = true }
+thiserror = { workspace = true }
+
+# Logging
+tracing = { workspace = true }
+
+# File I/O and path handling
+dirs = "5.0"
+
+[dev-dependencies]
+tempfile = "3.10"
+
+[lib]
+name = "llm_test_bench_datasets"
+path = "src/lib.rs"

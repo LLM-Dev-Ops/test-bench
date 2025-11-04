@@ -1,0 +1,30 @@
+{
+  "name": "summarization-tasks",
+  "description": "Text summarization and comprehension tests",
+  "version": "1.0.0",
+  "defaults": {
+    "temperature": 0.3,
+    "max_tokens": 200
+  },
+  "test_cases": [
+    {
+      "id": "news-summary-1",
+      "category": "summarization",
+      "prompt": "Summarize the following news article in 2-3 sentences:\n\nThe Federal Reserve announced today that it will raise interest rates by 0.25 percentage points, marking the third consecutive increase this year. The decision comes as inflation continues to exceed the central bank's 2% target, reaching 3.7% in recent months. Economists are divided on whether these increases will be sufficient to bring inflation under control without triggering a recession.",
+      "references": ["Federal Reserve", "interest rates", "inflation", "0.25"]
+    },
+    {
+      "id": "technical-abstract",
+      "category": "summarization",
+      "prompt": "Create a one-sentence summary of this technical concept:\n\nMachine learning is a subset of artificial intelligence that enables systems to learn and improve from experience without being explicitly programmed. It focuses on developing computer programs that can access data and use it to learn for themselves through pattern recognition and statistical analysis.",
+      "expected": "machine learning",
+      "references": ["AI", "learn from data", "patterns"]
+    },
+    {
+      "id": "story-tldr",
+      "category": "summarization",
+      "prompt": "Provide a TL;DR (too long; didn't read) summary of this story:\n\nSarah had always dreamed of visiting Paris. After years of saving, she finally booked her trip. However, the day before departure, she lost her passport. Frantically searching, she found it tucked in an old book. She made her flight and had the trip of a lifetime.",
+      "references": ["Sarah", "Paris", "passport", "lost and found", "successful trip"]
+    }
+  ]
+}

@@ -1,0 +1,70 @@
+name: reasoning-tasks
+description: Logical reasoning and problem-solving tasks
+version: 1.0.0
+
+defaults:
+  temperature: 0.7
+  max_tokens: 300
+
+test_cases:
+  - id: logic-puzzle-1
+    category: reasoning
+    prompt: |
+      Three people are in a room: Alice, Bob, and Carol.
+      - Alice always tells the truth
+      - Bob always lies
+      - Carol sometimes tells the truth and sometimes lies
+
+      Alice says: "Bob is lying."
+      Bob says: "Carol is telling the truth."
+      Carol says: "I am lying."
+
+      Who is telling the truth? Explain your reasoning step by step.
+    expected: Alice
+    references:
+      - Alice tells the truth
+      - logical contradiction
+      - Carol's statement creates paradox
+
+  - id: math-word-problem
+    category: reasoning
+    prompt: |
+      If a train travels {{distance}} km at {{speed}} km/h,
+      how long does the journey take in hours? Show your work.
+    variables:
+      distance: "240"
+      speed: "80"
+    expected: "3 hours"
+
+  - id: pattern-recognition
+    category: reasoning
+    prompt: |
+      What comes next in this sequence: 2, 4, 8, 16, 32, ?
+      Explain the pattern you identified.
+    expected: "64"
+    references:
+      - powers of 2
+      - doubling
+      - "2^n"
+
+  - id: analogy-completion
+    category: reasoning
+    prompt: |
+      Complete the analogy:
+      Book is to Reading as Fork is to _____
+      Explain your reasoning.
+    expected: Eating
+    references:
+      - tool
+      - purpose
+      - eating
+
+  - id: counterfactual-reasoning
+    category: reasoning
+    prompt: |
+      If the speed of light were half its actual value, how would this affect
+      our daily lives? Provide 3 specific examples.
+    references:
+      - communication delays
+      - satellite systems
+      - GPS accuracy

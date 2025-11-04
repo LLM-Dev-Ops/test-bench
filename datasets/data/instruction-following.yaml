@@ -1,0 +1,54 @@
+name: instruction-following
+description: Instruction adherence tests
+version: "1.0.0"
+
+defaults:
+  temperature: 0.3
+  max_tokens: 400
+
+test_cases:
+  - id: format-numbered-list
+    category: instruction-following
+    prompt: "List {{n}} fruits. Format your response as a numbered list with no additional text."
+    variables:
+      n: "three"
+    references:
+      - "1."
+      - "2."
+      - "3."
+
+  - id: format-json
+    category: instruction-following
+    prompt: 'Provide information about a cat in JSON format with exactly these fields: name (string), age (number), color (string). Do not include any text before or after the JSON.'
+    references:
+      - "{"
+      - '"name"'
+      - '"age"'
+      - '"color"'
+
+  - id: multi-step-instructions
+    category: instruction-following
+    prompt: |
+      Follow these steps exactly:
+      1. Write a haiku about coding
+      2. Explain what a haiku is
+      3. Count the syllables in your haiku
+
+      Number each section (1, 2, 3).
+
+  - id: word-limit
+    category: instruction-following
+    prompt: "Explain quantum computing in exactly {{words}} words. No more, no less."
+    variables:
+      words: "50"
+
+  - id: avoid-word
+    category: instruction-following
+    prompt: "Explain how to make a sandwich without using the word 'bread'."
+
+  - id: format-csv
+    category: instruction-following
+    prompt: "Create a CSV table with 3 rows of sample employee data. Columns: id, name, department, salary. Include the header row."
+    references:
+      - "id,name,department,salary"
+      - ","

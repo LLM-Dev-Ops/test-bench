@@ -1,0 +1,125 @@
+{
+  "dataset_name": "coding-tasks",
+  "provider_name": "openai",
+  "total_tests": 6,
+  "started_at": "2025-11-04T12:30:45Z",
+  "completed_at": "2025-11-04T12:31:20Z",
+  "total_duration_ms": 35000,
+  "summary": {
+    "total": 6,
+    "succeeded": 4,
+    "failed": 1,
+    "timeout": 1,
+    "skipped": 0,
+    "success_rate": 0.6666666666666666,
+    "avg_duration_ms": 5854.5,
+    "p50_duration_ms": 1342.0,
+    "p95_duration_ms": 30000.0,
+    "p99_duration_ms": 30000.0,
+    "min_duration_ms": 156,
+    "max_duration_ms": 30000,
+    "total_tokens": 1840,
+    "avg_tokens_per_request": 460.0,
+    "total_cost": 0.02685
+  },
+  "results": [
+    {
+      "test_id": "test-1",
+      "category": "coding",
+      "status": "success",
+      "response": {
+        "id": "resp-1",
+        "model": "gpt-4",
+        "content": "def fizzbuzz(n):\n    for i in range(1, n+1):\n        if i % 15 == 0:\n            print('FizzBuzz')\n        elif i % 3 == 0:\n            print('Fizz')\n        elif i % 5 == 0:\n            print('Buzz')\n        else:\n            print(i)",
+        "usage": {
+          "prompt_tokens": 300,
+          "completion_tokens": 150,
+          "total_tokens": 450
+        },
+        "finish_reason": "stop",
+        "created_at": 1730721045
+      },
+      "error": null,
+      "duration_ms": 1234,
+      "timestamp": "2025-11-04T12:30:45Z"
+    },
+    {
+      "test_id": "test-2",
+      "category": "coding",
+      "status": "success",
+      "response": {
+        "id": "resp-2",
+        "model": "gpt-4",
+        "content": "fn reverse_string(s: &mut String) {\n    *s = s.chars().rev().collect();\n}",
+        "usage": {
+          "prompt_tokens": 200,
+          "completion_tokens": 120,
+          "total_tokens": 320
+        },
+        "finish_reason": "stop",
+        "created_at": 1730721046
+      },
+      "error": null,
+      "duration_ms": 987,
+      "timestamp": "2025-11-04T12:30:46Z"
+    },
+    {
+      "test_id": "test-3",
+      "category": "reasoning",
+      "status": "failure",
+      "response": null,
+      "error": "API rate limit exceeded",
+      "duration_ms": 156,
+      "timestamp": "2025-11-04T12:30:47Z"
+    },
+    {
+      "test_id": "test-4",
+      "category": "summarization",
+      "status": "success",
+      "response": {
+        "id": "resp-4",
+        "model": "gpt-4",
+        "content": "This article discusses the importance of asynchronous programming in modern web applications. It covers key concepts like promises, async/await, and event loops.",
+        "usage": {
+          "prompt_tokens": 400,
+          "completion_tokens": 180,
+          "total_tokens": 580
+        },
+        "finish_reason": "stop",
+        "created_at": 1730721049
+      },
+      "error": null,
+      "duration_ms": 2100,
+      "timestamp": "2025-11-04T12:30:49Z"
+    },
+    {
+      "test_id": "test-5",
+      "category": "coding",
+      "status": "timeout",
+      "response": null,
+      "error": "Request timed out",
+      "duration_ms": 30000,
+      "timestamp": "2025-11-04T12:31:19Z"
+    },
+    {
+      "test_id": "test-6",
+      "category": "reasoning",
+      "status": "success",
+      "response": {
+        "id": "resp-6",
+        "model": "gpt-4",
+        "content": "Based on the given statements:\n- Alice always tells the truth, so Bob is indeed lying\n- Since Bob lies, Carol is NOT telling the truth\n- Carol's statement creates a paradox if she's lying\nTherefore, Alice is telling the truth.",
+        "usage": {
+          "prompt_tokens": 320,
+          "completion_tokens": 170,
+          "total_tokens": 490
+        },
+        "finish_reason": "stop",
+        "created_at": 1730721080
+      },
+      "error": null,
+      "duration_ms": 1450,
+      "timestamp": "2025-11-04T12:31:20Z"
+    }
+  ]
+}

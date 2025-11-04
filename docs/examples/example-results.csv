@@ -1,0 +1,7 @@
+test_id,category,status,duration_ms,tokens,cost,model,prompt_length,response_length,prompt_tokens,completion_tokens,finish_reason,error,timestamp
+test-1,coding,Success,1234,450,0.006000,gpt-4,120,330,300,150,stop,,2025-11-04T12:30:45Z
+test-2,coding,Success,987,320,0.004800,gpt-4,95,225,200,120,stop,,2025-11-04T12:30:46Z
+test-3,reasoning,Failure,156,0,0.000000,,,,,,,API rate limit exceeded,2025-11-04T12:30:47Z
+test-4,summarization,Success,2100,580,0.008700,gpt-4,250,330,400,180,stop,,2025-11-04T12:30:49Z
+test-5,coding,Timeout,30000,0,0.000000,,,,,,,Request timed out,2025-11-04T12:31:19Z
+test-6,reasoning,Success,1450,490,0.007350,gpt-4,180,310,320,170,stop,,2025-11-04T12:31:20Z

@@ -1,0 +1,95 @@
+{
+  "name": "coding-tasks",
+  "description": "Programming challenges in multiple languages",
+  "version": "1.0.0",
+  "defaults": {
+    "temperature": 0.0,
+    "max_tokens": 500
+  },
+  "test_cases": [
+    {
+      "id": "fizzbuzz-python",
+      "category": "coding",
+      "prompt": "Write a Python function that implements FizzBuzz for numbers 1 to {{n}}.",
+      "variables": {
+        "n": "100"
+      },
+      "expected": "def fizzbuzz",
+      "references": [
+        "for i in range",
+        "if i % 15",
+        "FizzBuzz"
+      ]
+    },
+    {
+      "id": "reverse-string-rust",
+      "category": "coding",
+      "prompt": "Write a Rust function to reverse a string in-place.",
+      "expected": "fn reverse",
+      "references": [
+        "chars()",
+        "rev()",
+        "collect()"
+      ]
+    },
+    {
+      "id": "fibonacci-javascript",
+      "category": "coding",
+      "prompt": "Implement a {{lang}} function to calculate the nth Fibonacci number using recursion.",
+      "variables": {
+        "lang": "JavaScript"
+      },
+      "expected": "function",
+      "references": [
+        "fibonacci",
+        "return"
+      ]
+    },
+    {
+      "id": "palindrome-checker",
+      "category": "coding",
+      "prompt": "Write a {{lang}} function that checks if a string is a palindrome (case-insensitive).",
+      "variables": {
+        "lang": "Python"
+      },
+      "expected": "def",
+      "references": [
+        "lower()",
+        "=="
+      ]
+    },
+    {
+      "id": "array-sum",
+      "category": "coding",
+      "prompt": "Create a function in {{lang}} that sums all elements in an array.",
+      "variables": {
+        "lang": "TypeScript"
+      },
+      "expected": "function"
+    },
+    {
+      "id": "binary-search",
+      "category": "coding",
+      "prompt": "Implement a binary search algorithm in {{lang}}. Include comments explaining the logic.",
+      "variables": {
+        "lang": "Python"
+      },
+      "expected": "def binary_search",
+      "references": [
+        "while",
+        "mid",
+        "left",
+        "right"
+      ]
+    },
+    {
+      "id": "find-duplicates",
+      "category": "coding",
+      "prompt": "Write a {{lang}} function to find all duplicate elements in an array.",
+      "variables": {
+        "lang": "JavaScript"
+      },
+      "expected": "function"
+    }
+  ]
+}

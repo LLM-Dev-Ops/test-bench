@@ -1,0 +1,144 @@
+PHASE 3, MILESTONE 3.1 - DATASET MANAGEMENT SYSTEM
+===================================================
+COMPLETE FILE MANIFEST
+
+CREATED FILES (10):
+-------------------
+1. /workspaces/llm-test-bench/datasets/src/schema.rs
+   - Dataset and TestCase schema definitions
+   - serde_valid validation
+   - Builder pattern methods
+   - 11 unit tests
+   - ~350 lines
+
+2. /workspaces/llm-test-bench/datasets/src/template.rs
+   - Template engine with regex
+   - Variable substitution {{variable}}
+   - 21 unit tests
+   - ~280 lines
+
+3. /workspaces/llm-test-bench/datasets/src/tests.rs
+   - Integration tests
+   - 19 end-to-end tests
+   - Round-trip serialization tests
+   - ~340 lines
+
+4. /workspaces/llm-test-bench/datasets/data/coding-tasks.json
+   - 7 programming challenge test cases
+   - Template variables for language selection
+   - Expected outputs and references
+
+5. /workspaces/llm-test-bench/datasets/data/reasoning-tasks.yaml
+   - 5 logic puzzle and math test cases
+   - Pattern recognition and deduction
+   - YAML format example
+
+6. /workspaces/llm-test-bench/datasets/data/summarization-tasks.json
+   - 4 text summarization test cases
+   - Article summaries, bullet points, TL;DR
+
+7. /workspaces/llm-test-bench/datasets/data/instruction-following.yaml
+   - 6 instruction adherence test cases
+   - Format constraints (JSON, CSV, lists)
+   - Word limits and restrictions
+
+8. /workspaces/llm-test-bench/datasets/data/creative-writing.json
+   - 6 creative generation test cases
+   - Stories, haikus, product descriptions
+   - High temperature for creativity
+
+9. /workspaces/llm-test-bench/datasets/README.md
+   - Comprehensive usage guide
+   - API documentation
+   - Examples for all features
+   - ~400 lines
+
+10. /workspaces/llm-test-bench/PHASE3_MILESTONE3.1_COMPLETE.md
+    - Complete implementation report
+    - Architecture documentation
+    - Integration guide
+    - ~700 lines
+
+MODIFIED FILES (4):
+-------------------
+1. /workspaces/llm-test-bench/datasets/Cargo.toml
+   - Added serde_yaml = "0.9"
+   - Added serde_valid = "0.18"
+   - Added regex = "1.10"
+
+2. /workspaces/llm-test-bench/datasets/src/lib.rs
+   - Added schema, template, tests modules
+   - Re-exports for convenience
+   - Updated documentation
+   - Removed duplicate Dataset definitions
+
+3. /workspaces/llm-test-bench/datasets/src/loader.rs
+   - Added YAML support
+   - Added validation on load
+   - Added save_yaml() method
+   - 8 unit tests
+
+4. /workspaces/llm-test-bench/datasets/src/builtin.rs
+   - Complete rewrite with 5 datasets
+   - 28 total test cases
+   - Template variables in many tests
+   - 6 validation tests
+   - ~544 lines
+
+STATISTICS:
+-----------
+Total Files Created: 10
+Total Files Modified: 4
+Total Lines of Code: ~1,800
+Total Tests: 46+
+Total Datasets: 5
+Total Test Cases: 28
+Documentation Lines: ~1,100
+
+BUILT-IN DATASETS:
+------------------
+1. coding-tasks (7 tests)
+   - FizzBuzz, string reverse, Fibonacci, palindrome, etc.
+   - Template variables for language selection
+
+2. reasoning-tasks (5 tests)
+   - Logic puzzles, math word problems
+   - Pattern recognition, river crossing
+
+3. summarization-tasks (4 tests)
+   - Article summaries, bullet points
+   - Key points extraction, TL;DR
+
+4. instruction-following (6 tests)
+   - Format constraints (JSON, CSV, lists)
+   - Word limits, multi-step instructions
+
+5. creative-writing (6 tests)
+   - Story openings, haikus, product descriptions
+   - Metaphors, limericks, dialogues
+
+TESTING BREAKDOWN:
+------------------
+schema.rs:    11 tests
+template.rs:  21 tests
+loader.rs:     8 tests
+builtin.rs:    6 tests
+tests.rs:     19 tests
+-------------
+TOTAL:        46+ tests
+
+DEPENDENCIES ADDED:
+-------------------
+- serde_yaml = "0.9"    (YAML parsing)
+- serde_valid = "0.18"  (Schema validation)
+- regex = "1.10"        (Template engine)
+
+INTEGRATION POINTS:
+-------------------
+Ready for Milestone 3.2 (Benchmark Runner):
+- Dataset loading via DatasetLoader
+- Template rendering via TemplateEngine
+- Schema validation via serde_valid
+- Built-in datasets via builtin module
+
+All code is production-ready with comprehensive tests and documentation.

@@ -1,0 +1,50 @@
+{
+  "name": "coding-tasks",
+  "description": "Basic coding challenges in multiple languages",
+  "version": "1.0.0",
+  "defaults": {
+    "temperature": 0.0,
+    "max_tokens": 500
+  },
+  "test_cases": [
+    {
+      "id": "fizzbuzz-python",
+      "category": "coding",
+      "prompt": "Write a Python function that implements FizzBuzz for numbers 1 to {{n}}. Return only the code, no explanation.",
+      "variables": {
+        "n": "100"
+      },
+      "expected": "def fizzbuzz",
+      "references": ["for i in range", "if i % 15", "FizzBuzz"]
+    },
+    {
+      "id": "reverse-string-rust",
+      "category": "coding",
+      "prompt": "Write a Rust function to reverse a string in-place. Return only the code.",
+      "expected": "fn reverse",
+      "references": ["chars()", "rev()", "collect()"]
+    },
+    {
+      "id": "fibonacci-javascript",
+      "category": "coding",
+      "prompt": "Implement a {{lang}} function to calculate the nth Fibonacci number using recursion. Return only the code.",
+      "variables": {
+        "lang": "JavaScript"
+      },
+      "references": ["function", "fibonacci", "return"]
+    },
+    {
+      "id": "palindrome-check",
+      "category": "coding",
+      "prompt": "Write a function in any language that checks if a string is a palindrome. Include test cases.",
+      "references": ["palindrome", "reverse", "toLowerCase"]
+    },
+    {
+      "id": "binary-search",
+      "category": "algorithms",
+      "prompt": "Implement binary search in Python with proper handling of edge cases. Return code with comments.",
+      "expected": "def binary_search",
+      "references": ["mid = (left + right) // 2", "while left <= right"]
+    }
+  ]
+}

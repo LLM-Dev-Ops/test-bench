@@ -1,0 +1,27 @@
+# Clippy configuration for LLM Test Bench
+# https://doc.rust-lang.org/clippy/configuration.html
+
+# Maximum cognitive complexity before triggering warning
+cognitive-complexity-threshold = 30
+
+# Minimum number of lines for doc comments
+doc-valid-idents = ["LLM", "API", "HTTP", "JSON", "TOML", "CLI", "GPT", "OpenAI"]
+
+# Maximum number of single char bindings
+single-char-binding-names-threshold = 4
+
+# Minimum number of struct fields before suggesting visibility marker
+too-many-arguments-threshold = 7
+
+# Maximum struct field visibility before suggesting private
+type-complexity-threshold = 250
+
+# Maximum vec size before suggesting Box
+vec-box-size-threshold = 4096
+
+# Allowed/disallowed names
+disallowed-names = ["foo", "bar", "baz", "quux"]
+
+# Standard library imports
+std-instead-of-core = false
+std-instead-of-alloc = false

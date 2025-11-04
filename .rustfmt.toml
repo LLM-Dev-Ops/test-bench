@@ -1,0 +1,67 @@
+# Rust formatting configuration for LLM Test Bench
+# https://rust-lang.github.io/rustfmt/
+
+edition = "2021"
+
+# Imports
+imports_granularity = "Crate"
+group_imports = "StdExternalCrate"
+
+# Line width
+max_width = 100
+comment_width = 80
+wrap_comments = true
+
+# Formatting style
+use_small_heuristics = "Default"
+fn_call_width = 80
+struct_lit_width = 18
+struct_variant_width = 35
+array_width = 60
+chain_width = 60
+
+# Blank lines
+blank_lines_upper_bound = 1
+blank_lines_lower_bound = 0
+
+# Indentation
+hard_tabs = false
+tab_spaces = 4
+
+# Match formatting
+match_block_trailing_comma = true
+match_arm_blocks = true
+match_arm_leading_pipes = "Never"
+
+# Formatting options
+format_code_in_doc_comments = true
+format_strings = true
+format_macro_matchers = true
+format_macro_bodies = true
+normalize_comments = true
+normalize_doc_attributes = true
+
+# Reordering
+reorder_imports = true
+reorder_modules = true
+
+# Trailing
+trailing_comma = "Vertical"
+trailing_semicolon = true
+
+# Where clauses
+where_single_line = true
+
+# Error on unable to get comments or string literals within max_width, or they are left with
+# trailing whitespaces
+error_on_line_overflow = false
+error_on_unformatted = false
+
+# Control flow
+control_brace_style = "AlwaysSameLine"
+brace_style = "SameLineWhere"
+indent_style = "Block"
+overflow_delimited_expr = true
+
+# Module visibility
+newline_style = "Unix"

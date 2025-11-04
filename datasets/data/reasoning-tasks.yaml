@@ -1,0 +1,54 @@
+name: reasoning-tasks
+description: Logical reasoning and problem-solving tasks
+version: "1.0.0"
+
+defaults:
+  temperature: 0.7
+  max_tokens: 300
+
+test_cases:
+  - id: logic-puzzle-truthtellers
+    category: reasoning
+    prompt: |
+      Three people are in a room: Alice, Bob, and Carol.
+      - Alice always tells the truth
+      - Bob always lies
+      - Carol sometimes tells the truth and sometimes lies
+
+      Alice says: "Bob is lying."
+      Bob says: "Carol is telling the truth."
+      Carol says: "I am lying."
+
+      Who is telling the truth? Explain your reasoning.
+    expected: "Alice"
+    references:
+      - "Alice tells the truth"
+      - "logical contradiction"
+
+  - id: math-word-problem-distance
+    category: reasoning
+    prompt: "If a train travels {{distance}} km at {{speed}} km/h, how long does the journey take in hours? Show your calculation."
+    variables:
+      distance: "240"
+      speed: "80"
+    expected: "3 hours"
+
+  - id: pattern-recognition
+    category: reasoning
+    prompt: "What comes next in this sequence: 2, 4, 8, 16, 32, ?"
+    expected: "64"
+
+  - id: age-problem
+    category: reasoning
+    prompt: "Alice is twice as old as Bob. In 5 years, Alice will be 1.5 times as old as Bob. How old are they now?"
+    expected: "10"
+    references:
+      - "Alice: 10"
+      - "Bob: 5"
+
+  - id: river-crossing
+    category: reasoning
+    prompt: "A farmer needs to cross a river with a fox, a chicken, and a bag of grain. The boat can only carry the farmer and one item. If left alone, the fox will eat the chicken, and the chicken will eat the grain. How can the farmer get everything across safely?"
+    references:
+      - "chicken first"
+      - "come back alone"

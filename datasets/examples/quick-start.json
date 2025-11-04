@@ -1,0 +1,25 @@
+{
+  "name": "quick-start",
+  "description": "Simple 3-test dataset for getting started with benchmarking",
+  "version": "1.0.0",
+  "test_cases": [
+    {
+      "id": "hello-world",
+      "category": "basic",
+      "prompt": "Say 'Hello, World!' in a friendly way."
+    },
+    {
+      "id": "simple-math",
+      "category": "basic",
+      "prompt": "What is 2 + 2? Answer with just the number."
+    },
+    {
+      "id": "creative-greeting",
+      "category": "creative",
+      "prompt": "Write a creative greeting for someone named {{name}}.",
+      "variables": {
+        "name": "Alice"
+      }
+    }
+  ]
+}

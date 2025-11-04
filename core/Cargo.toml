@@ -1,0 +1,63 @@
+[package]
+name = "llm-test-bench-core"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+authors.workspace = true
+repository.workspace = true
+homepage.workspace = true
+rust-version.workspace = true
+description = "Core library for LLM Test Bench - business logic and provider integrations"
+
+[dependencies]
+# Async runtime
+tokio = { workspace = true }
+
+# HTTP client
+reqwest = { workspace = true }
+
+# Serialization
+serde = { workspace = true }
+serde_json = { workspace = true }
+
+# Configuration
+config = { workspace = true }
+toml = { workspace = true }
+
+# Error handling
+anyhow = { workspace = true }
+thiserror = { workspace = true }
+
+# Logging
+tracing = { workspace = true }
+
+# Async trait support
+async-trait = "0.1"
+
+# Validation
+serde_valid = { version = "0.20" }
+
+# Utilities
+dirs = "5.0"  # For finding config directories
+chrono = { version = "0.4", features = ["serde"] }  # Timestamps
+futures = "0.3"  # Stream utilities
+reqwest-eventsource = "0.6"  # SSE streaming
+pin-project = "1.1"  # Pin projection for custom streams
+
+# Benchmarking
+indicatif = { workspace = true }  # Progress bars
+csv = { workspace = true }  # CSV export
+
+# Datasets integration
+llm-test-bench-datasets = { version = "0.1.0", path = "../datasets" }
+
+[dev-dependencies]
+tokio = { workspace = true, features = ["test-util"] }
+predicates = { workspace = true }
+tempfile = "3.10"  # For testing config file creation
+wiremock = "0.6"  # HTTP mocking for unit tests
+mockall = "0.13"  # Trait mocking
+
+[lib]
+name = "llm_test_bench_core"
+path = "src/lib.rs"
