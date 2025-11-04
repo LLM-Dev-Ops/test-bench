@@ -6,11 +6,11 @@ LLM Test Bench provides comprehensive support for **13 LLM providers**, covering
 
 | Provider | Models | Streaming | Context Window | Use Case |
 |----------|--------|-----------|----------------|----------|
-| **OpenAI** | GPT-4o, o1, GPT-4 Turbo, GPT-3.5 (22+ models) | ✅ | Up to 128K | Industry-leading quality, reasoning |
-| **Anthropic** | Claude Sonnet 4, Claude 3.5, Claude 3 (11+ models) | ✅ | Up to 200K | Long context, safety-focused |
-| **Google AI** | Gemini 2.0, Gemini 1.5 Pro/Flash (13+ models) | ✅ | Up to 2M | Multimodal, massive context |
+| **OpenAI** | GPT-5, GPT-4.5, GPT-4.1, o3-mini, GPT-4o (29+ models) | ✅ | Up to 128K | Industry-leading quality, reasoning |
+| **Anthropic** | Claude Opus 4, Sonnet 4.5, Sonnet 4, Claude 3.5/3 (17+ models) | ✅ | Up to 200K | Long context, safety-focused |
+| **Google AI** | Gemini 2.5, Gemini 2.0, Gemini 1.5 Pro/Flash (16+ models) | ✅ | Up to 2M | Multimodal, massive context, computer use |
+| **Mistral AI** | Mistral Code, Magistral, Voxtral (7+ models) | ✅ | Varies | Code generation, multilingual, audio |
 | **Cohere** | Command, Command R/R+ | ✅ | Up to 128K | Enterprise RAG, search |
-| **Mistral AI** | Mistral 7B, Mixtral 8x7B, Large | ✅ | Up to 32K | Open weights, efficient |
 | **Azure OpenAI** | GPT-4, GPT-3.5 (Azure-hosted) | ✅ | Up to 128K | Enterprise compliance |
 | **Groq** | Llama 3, Mixtral, Gemma | ✅ | Up to 32K | Ultra-fast inference |
 | **Together AI** | Llama 2/3, Mixtral, CodeLlama | ✅ | Up to 32K | Open models at scale |
@@ -28,9 +28,20 @@ LLM Test Bench provides comprehensive support for **13 LLM providers**, covering
 
 **Most popular commercial LLM provider with industry-leading models.**
 
-#### Supported Models (22+ models)
+#### Supported Models (29+ models)
 
-**GPT-4o Series (Latest Multimodal Flagship)**
+**GPT-5 Series (Latest Generation - August 2025)**
+- `gpt-5` - Most advanced OpenAI model (Released Aug 7, 2025)
+
+**GPT-4.5 Series (February 2025)**
+- `gpt-4.5` - Enhanced GPT-4 variant (Released Feb 27, 2025)
+- `gpt-4.5-2025-02-27` - February 2025 snapshot
+
+**GPT-4.1 Series (April 2025)**
+- `gpt-4.1` - Improved GPT-4 variant (Released Apr 2025)
+- `gpt-4.1-2025-04` - April 2025 snapshot
+
+**GPT-4o Series (Multimodal Flagship)**
 - `gpt-4o` - Latest GPT-4o (128K context, vision, audio)
 - `gpt-4o-2024-11-20` - November 2024 snapshot
 - `gpt-4o-2024-08-06` - August 2024 snapshot
@@ -38,8 +49,9 @@ LLM Test Bench provides comprehensive support for **13 LLM providers**, covering
 - `gpt-4o-mini` - Faster, more affordable variant (128K context)
 - `gpt-4o-mini-2024-07-18` - July 2024 snapshot
 
-**o1 Series (Advanced Reasoning Models)**
-- `o1` - Latest reasoning model
+**o-Series (Advanced Reasoning Models)**
+- `o3-mini` - Latest reasoning model (Released Jan 2025)
+- `o1` - Advanced reasoning model
 - `o1-preview` - Preview of o1 capabilities
 - `o1-preview-2024-09-12` - September 2024 snapshot
 - `o1-mini` - Smaller, faster reasoning model
@@ -92,13 +104,21 @@ llm-test-bench compare \
 
 **Safety-focused provider with industry-leading context windows.**
 
-#### Supported Models (11+ models)
+#### Supported Models (17+ models)
 
-**Claude Sonnet 4 (Latest Generation)**
-- `claude-sonnet-4` - Latest Claude Sonnet 4
+**Claude Opus 4 (Latest Generation - May 2025)**
+- `claude-opus-4` - Most capable Claude model (Released May 2025)
+- `claude-opus-4-20250501` - May 2025 snapshot
+
+**Claude Sonnet 4.5 (Latest Flagship - September 2025)**
+- `claude-sonnet-4.5` - Latest Claude Sonnet (Released Sept 2025)
+- `claude-sonnet-4.5-20250901` - September 2025 snapshot
+
+**Claude Sonnet 4 (May 2025)**
+- `claude-sonnet-4` - Claude Sonnet 4 (Released May 2025)
 - `claude-sonnet-4-20250514` - May 2025 snapshot
 
-**Claude 3.5 Series (Current Flagship)**
+**Claude 3.5 Series**
 - `claude-3-5-sonnet-latest` - Latest Claude 3.5 Sonnet (200K context)
 - `claude-3-5-sonnet-20241022` - October 2024 snapshot
 - `claude-3-5-sonnet-20240620` - June 2024 snapshot
@@ -142,9 +162,14 @@ llm-test-bench compare \
 
 **Google's multimodal models with massive context windows.**
 
-#### Supported Models (13+ models)
+#### Supported Models (16+ models)
 
-**Gemini 2.0 Series (Latest Generation)**
+**Gemini 2.5 Series (Latest Generation - 2025)**
+- `gemini-2.5-pro` - Most advanced Gemini model (Released 2025)
+- `gemini-2.5-computer-use` - Autonomous agent with computer control (Released Oct 7, 2025)
+- `gemini-2.5-computer-use-20251007` - October 2025 snapshot
+
+**Gemini 2.0 Series**
 - `gemini-2.0-flash-exp` - Experimental Gemini 2.0 Flash (1M+ context)
 - `gemini-2.0-flash-thinking-exp-1219` - Extended thinking mode (experimental)
 
@@ -192,7 +217,54 @@ llm-test-bench compare \
 
 ---
 
-### 4. Cohere
+### 4. Mistral AI
+
+**French AI company providing open and commercial models with strong code and multilingual capabilities.**
+
+#### Supported Models (7+ models)
+
+**Mistral Code (June 2025)**
+- `mistral-code` - Code-specialized model (Released Jun 4, 2025)
+- `mistral-code-20250604` - June 2025 snapshot
+
+**Magistral Family (Enterprise Models - June 2025)**
+- `magistral-large` - Large enterprise model (Released June 2025)
+- `magistral-medium` - Medium enterprise model (Released June 2025)
+- `magistral-small` - Small enterprise model (Released June 2025)
+
+**Voxtral (Audio Model - July 2025)**
+- `voxtral-small` - Audio-specialized model (Released Jul 2025)
+- `voxtral-small-20250701` - July 2025 snapshot
+
+#### Configuration
+```toml
+[[providers]]
+name = "mistral"
+api_key_env = "MISTRAL_API_KEY"
+base_url = "https://api.mistral.ai/v1"
+default_model = "mistral-code"
+timeout_seconds = 120
+max_retries = 3
+```
+
+#### CLI Usage
+```bash
+# Benchmark with Mistral Code
+llm-test-bench bench \
+  --dataset coding-tasks.json \
+  --providers mistral \
+  --models mistral-code
+
+# Test audio model
+llm-test-bench bench \
+  --dataset audio-transcripts.json \
+  --providers mistral \
+  --models voxtral-small
+```
+
+---
+
+### 5. Cohere
 
 **Enterprise-focused provider with strong RAG capabilities.**
 
@@ -221,32 +293,6 @@ llm-test-bench bench \
   --dataset enterprise-qa.json \
   --providers cohere \
   --models command-r-plus,command-r
-```
-
----
-
-### 5. Mistral AI
-
-**European provider with open weights and strong performance.**
-
-#### Supported Models
-- `mistral-tiny` - Small, fast (32K context)
-- `mistral-small` - Balanced (32K)
-- `mistral-medium` - Capable (32K)
-- `mistral-large-latest` - Most capable (32K)
-- `open-mistral-7b` - Open weights, 7B params (32K)
-- `open-mixtral-8x7b` - Mixture of experts, 8x7B (32K)
-- `open-mixtral-8x22b` - Larger MoE (64K)
-
-#### Configuration
-```toml
-[[providers]]
-name = "mistral"
-api_key_env = "MISTRAL_API_KEY"
-base_url = "https://api.mistral.ai/v1"
-default_model = "mistral-large-latest"
-timeout_seconds = 120
-max_retries = 3
 ```
 
 ---

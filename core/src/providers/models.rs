@@ -40,12 +40,24 @@ pub const GPT_4O_2024_05_13: &str = "gpt-4o-2024-05-13";
 pub const GPT_4O_MINI: &str = "gpt-4o-mini";
 pub const GPT_4O_MINI_2024_07_18: &str = "gpt-4o-mini-2024-07-18";
 
-/// OpenAI o1 models (Reasoning models)
+/// OpenAI o-series models (Reasoning models)
 pub const O1: &str = "o1";
 pub const O1_PREVIEW: &str = "o1-preview";
 pub const O1_PREVIEW_2024_09_12: &str = "o1-preview-2024-09-12";
 pub const O1_MINI: &str = "o1-mini";
 pub const O1_MINI_2024_09_12: &str = "o1-mini-2024-09-12";
+pub const O3_MINI: &str = "o3-mini";
+
+/// OpenAI GPT-5 (Latest generation)
+pub const GPT_5: &str = "gpt-5";
+
+/// OpenAI GPT-4.5
+pub const GPT_4_5: &str = "gpt-4.5";
+pub const GPT_4_5_2025_02_27: &str = "gpt-4.5-2025-02-27";
+
+/// OpenAI GPT-4.1
+pub const GPT_4_1: &str = "gpt-4.1";
+pub const GPT_4_1_2025_04: &str = "gpt-4.1-2025-04";
 
 /// OpenAI GPT-4 Turbo
 pub const GPT_4_TURBO: &str = "gpt-4-turbo";
@@ -67,7 +79,15 @@ pub const GPT_35_TURBO_1106: &str = "gpt-3.5-turbo-1106";
 // Anthropic Claude Models
 // ================================
 
-/// Claude Sonnet 4 (Latest generation - if available)
+/// Claude Opus 4 (Latest generation)
+pub const CLAUDE_OPUS_4: &str = "claude-opus-4";
+pub const CLAUDE_OPUS_4_20250501: &str = "claude-opus-4-20250501";
+
+/// Claude Sonnet 4.5 (Latest Sonnet)
+pub const CLAUDE_SONNET_4_5: &str = "claude-sonnet-4.5";
+pub const CLAUDE_SONNET_4_5_20250901: &str = "claude-sonnet-4.5-20250901";
+
+/// Claude Sonnet 4
 pub const CLAUDE_SONNET_4: &str = "claude-sonnet-4";
 pub const CLAUDE_SONNET_4_20250514: &str = "claude-sonnet-4-20250514";
 
@@ -94,7 +114,12 @@ pub const CLAUDE_3_HAIKU_20240307: &str = "claude-3-haiku-20240307";
 // Google Gemini Models
 // ================================
 
-/// Gemini 2.0 (Latest generation)
+/// Gemini 2.5 (Latest generation)
+pub const GEMINI_2_5_PRO: &str = "gemini-2.5-pro";
+pub const GEMINI_2_5_COMPUTER_USE: &str = "gemini-2.5-computer-use";
+pub const GEMINI_2_5_COMPUTER_USE_20251007: &str = "gemini-2.5-computer-use-20251007";
+
+/// Gemini 2.0
 pub const GEMINI_2_0_FLASH_EXP: &str = "gemini-2.0-flash-exp";
 pub const GEMINI_2_0_FLASH_THINKING_EXP: &str = "gemini-2.0-flash-thinking-exp-1219";
 
@@ -116,11 +141,36 @@ pub const GEMINI_PRO: &str = "gemini-pro";
 pub const GEMINI_PRO_VISION: &str = "gemini-pro-vision";
 
 // ================================
+// Mistral AI Models
+// ================================
+
+/// Mistral Code (Code-specialized model)
+pub const MISTRAL_CODE: &str = "mistral-code";
+pub const MISTRAL_CODE_20250604: &str = "mistral-code-20250604";
+
+/// Magistral Family (Enterprise models)
+pub const MAGISTRAL_LARGE: &str = "magistral-large";
+pub const MAGISTRAL_MEDIUM: &str = "magistral-medium";
+pub const MAGISTRAL_SMALL: &str = "magistral-small";
+
+/// Voxtral (Audio model)
+pub const VOXTRAL_SMALL: &str = "voxtral-small";
+pub const VOXTRAL_SMALL_20250701: &str = "voxtral-small-20250701";
+
+// ================================
 // Model Lists
 // ================================
 
 /// All supported OpenAI models
 pub const OPENAI_MODELS: &[&str] = &[
+    // GPT-5 (Latest generation)
+    GPT_5,
+    // GPT-4.5
+    GPT_4_5,
+    GPT_4_5_2025_02_27,
+    // GPT-4.1
+    GPT_4_1,
+    GPT_4_1_2025_04,
     // GPT-4o
     GPT_4O,
     GPT_4O_2024_11_20,
@@ -129,12 +179,13 @@ pub const OPENAI_MODELS: &[&str] = &[
     // GPT-4o-mini
     GPT_4O_MINI,
     GPT_4O_MINI_2024_07_18,
-    // o1 reasoning models
+    // o-series reasoning models
     O1,
     O1_PREVIEW,
     O1_PREVIEW_2024_09_12,
     O1_MINI,
     O1_MINI_2024_09_12,
+    O3_MINI,
     // GPT-4 Turbo
     GPT_4_TURBO,
     GPT_4_TURBO_2024_04_09,
@@ -152,6 +203,12 @@ pub const OPENAI_MODELS: &[&str] = &[
 
 /// All supported Anthropic Claude models
 pub const ANTHROPIC_MODELS: &[&str] = &[
+    // Claude Opus 4 (Latest generation)
+    CLAUDE_OPUS_4,
+    CLAUDE_OPUS_4_20250501,
+    // Claude Sonnet 4.5
+    CLAUDE_SONNET_4_5,
+    CLAUDE_SONNET_4_5_20250901,
     // Claude Sonnet 4
     CLAUDE_SONNET_4,
     CLAUDE_SONNET_4_20250514,
@@ -173,6 +230,10 @@ pub const ANTHROPIC_MODELS: &[&str] = &[
 
 /// All supported Google Gemini models
 pub const GOOGLE_MODELS: &[&str] = &[
+    // Gemini 2.5 (Latest generation)
+    GEMINI_2_5_PRO,
+    GEMINI_2_5_COMPUTER_USE,
+    GEMINI_2_5_COMPUTER_USE_20251007,
     // Gemini 2.0
     GEMINI_2_0_FLASH_EXP,
     GEMINI_2_0_FLASH_THINKING_EXP,
@@ -190,6 +251,20 @@ pub const GOOGLE_MODELS: &[&str] = &[
     // Gemini 1.0
     GEMINI_PRO,
     GEMINI_PRO_VISION,
+];
+
+/// All supported Mistral AI models
+pub const MISTRAL_MODELS: &[&str] = &[
+    // Mistral Code
+    MISTRAL_CODE,
+    MISTRAL_CODE_20250604,
+    // Magistral Family
+    MAGISTRAL_LARGE,
+    MAGISTRAL_MEDIUM,
+    MAGISTRAL_SMALL,
+    // Voxtral (Audio)
+    VOXTRAL_SMALL,
+    VOXTRAL_SMALL_20250701,
 ];
 
 /// Get model metadata by model ID
@@ -318,14 +393,21 @@ mod tests {
     #[test]
     fn test_openai_models_list() {
         assert!(OPENAI_MODELS.len() > 0);
+        assert!(OPENAI_MODELS.contains(&GPT_5));
+        assert!(OPENAI_MODELS.contains(&GPT_4_5));
+        assert!(OPENAI_MODELS.contains(&GPT_4_1));
         assert!(OPENAI_MODELS.contains(&GPT_4O));
         assert!(OPENAI_MODELS.contains(&GPT_4O_MINI));
         assert!(OPENAI_MODELS.contains(&O1_PREVIEW));
+        assert!(OPENAI_MODELS.contains(&O3_MINI));
     }
 
     #[test]
     fn test_anthropic_models_list() {
         assert!(ANTHROPIC_MODELS.len() > 0);
+        assert!(ANTHROPIC_MODELS.contains(&CLAUDE_OPUS_4));
+        assert!(ANTHROPIC_MODELS.contains(&CLAUDE_SONNET_4_5));
+        assert!(ANTHROPIC_MODELS.contains(&CLAUDE_SONNET_4));
         assert!(ANTHROPIC_MODELS.contains(&CLAUDE_3_5_SONNET_LATEST));
         assert!(ANTHROPIC_MODELS.contains(&CLAUDE_3_5_HAIKU_LATEST));
     }
@@ -333,8 +415,18 @@ mod tests {
     #[test]
     fn test_google_models_list() {
         assert!(GOOGLE_MODELS.len() > 0);
+        assert!(GOOGLE_MODELS.contains(&GEMINI_2_5_PRO));
+        assert!(GOOGLE_MODELS.contains(&GEMINI_2_5_COMPUTER_USE));
         assert!(GOOGLE_MODELS.contains(&GEMINI_2_0_FLASH_EXP));
         assert!(GOOGLE_MODELS.contains(&GEMINI_1_5_PRO));
+    }
+
+    #[test]
+    fn test_mistral_models_list() {
+        assert!(MISTRAL_MODELS.len() > 0);
+        assert!(MISTRAL_MODELS.contains(&MISTRAL_CODE));
+        assert!(MISTRAL_MODELS.contains(&MAGISTRAL_LARGE));
+        assert!(MISTRAL_MODELS.contains(&VOXTRAL_SMALL));
     }
 
     #[test]
