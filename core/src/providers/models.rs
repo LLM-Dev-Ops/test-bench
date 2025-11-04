@@ -368,7 +368,7 @@ pub fn get_model_metadata(model_id: &str) -> Option<ModelMetadata> {
 
         // Google Gemini 1.5 Flash
         GEMINI_1_5_FLASH | GEMINI_1_5_FLASH_LATEST | GEMINI_1_5_FLASH_002 => Some(ModelMetadata {
-            id: model_id,
+            id: GEMINI_1_5_FLASH,
             display_name: "Gemini 1.5 Flash",
             provider: "google",
             capabilities: ModelCapabilities {

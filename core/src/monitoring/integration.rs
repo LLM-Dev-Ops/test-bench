@@ -63,12 +63,12 @@ impl Provider for MonitoredProvider {
                 // Record token usage
                 self.monitoring.record_tokens(
                     provider_name,
-                    response.usage.prompt_tokens,
-                    response.usage.completion_tokens,
+                    response.usage.prompt_tokens as u64,
+                    response.usage.completion_tokens as u64,
                 );
 
                 // Estimate cost (simplified - should use actual pricing)
-                let cost = Self::estimate_cost(&model, response.usage.prompt_tokens, response.usage.completion_tokens);
+                let cost = Self::estimate_cost(&model, response.usage.prompt_tokens as u64, response.usage.completion_tokens as u64);
                 self.monitoring.record_cost(provider_name, cost);
 
                 // Emit detailed event
@@ -80,11 +80,11 @@ impl Provider for MonitoredProvider {
                         request_id: request_id.clone(),
                         latency: Some(latency),
                         tokens: Some(TokenUsage {
-                            input_tokens: response.usage.prompt_tokens,
-                            output_tokens: response.usage.completion_tokens,
-                            total_tokens: response.usage.total_tokens,
+                            input_tokens: response.usage.prompt_tokens as u64,
+                            output_tokens: response.usage.completion_tokens as u64,
+                            total_tokens: response.usage.total_tokens as u64,
                         }),
-                        cost: Some(Self::estimate_cost(&model, response.usage.prompt_tokens, response.usage.completion_tokens)),
+                        cost: Some(Self::estimate_cost(&model, response.usage.prompt_tokens as u64, response.usage.completion_tokens as u64)),
                         error: None,
                     }),
                 );
@@ -93,7 +93,7 @@ impl Provider for MonitoredProvider {
             Err(ref e) => {
                 // Record error
                 let error_type = match e {
-                    ProviderError::RateLimitExceeded(_) => "rate_limit",
+                    ProviderError::RateLimitExceeded { .. } => "rate_limit",
                     ProviderError::AuthenticationError(_) => "auth_error",
                     ProviderError::InvalidRequest(_) => "invalid_request",
                     ProviderError::NetworkError(_) => "network_error",

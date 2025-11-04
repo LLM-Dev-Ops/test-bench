@@ -384,7 +384,7 @@ impl Coordinator {
         let summaries: Vec<WorkerSummary> = workers
             .into_iter()
             .map(|w| WorkerSummary {
-                worker_id: w.id,
+                worker_id: w.id.clone(),
                 address: w.address.clone(),
                 status: w.status.to_string(),
                 current_tasks: w.current_tasks,
