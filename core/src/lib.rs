@@ -15,6 +15,15 @@
 //! - `providers`: LLM provider implementations (OpenAI, Anthropic, etc.)
 //! - `evaluators`: Evaluation metrics (perplexity, faithfulness, relevance, coherence)
 //! - `benchmarks`: Benchmarking logic and reporting
+//! - `orchestration`: Multi-model comparison, ranking, and routing
+//! - `analytics`: Statistical analysis and cost optimization
+//! - `visualization`: HTML dashboard generation with interactive charts
+//! - `multimodal`: Multi-modal support for vision, audio, and video
+//! - `monitoring`: Real-time monitoring with Prometheus and WebSocket dashboards
+//! - `plugins`: WASM-based plugin system for extensibility
+//! - `api`: REST, GraphQL, and WebSocket API server
+//! - `distributed`: Coordinator-worker distributed architecture
+//! - `database`: PostgreSQL database backend
 
 #![warn(missing_docs)]
 #![warn(clippy::all)]
@@ -24,6 +33,15 @@ pub mod config;
 pub mod providers;
 pub mod evaluators;
 pub mod benchmarks;
+pub mod orchestration;
+pub mod analytics;
+pub mod visualization;
+pub mod multimodal;
+pub mod monitoring;
+pub mod plugins;
+pub mod api;
+pub mod distributed;
+pub mod database;
 
 /// Library version
 pub const VERSION: &str = env!("CARGO_PKG_VERSION");
@@ -33,6 +51,25 @@ pub mod prelude {
     pub use crate::config::Config;
     pub use crate::providers::Provider;
     pub use crate::evaluators::Evaluator;
+    pub use crate::multimodal::{
+        MultiModalRequest, MultiModalResponse, ImageInput, AudioInput,
+    };
+    pub use crate::monitoring::{
+        MonitoringSystem, MonitoringConfig, MonitoringEvent, EventBus,
+    };
+    pub use crate::plugins::{
+        PluginSystem, PluginManager, PluginType, PluginInput, PluginOutput,
+    };
+    pub use crate::api::{
+        ApiServer, ApiConfig, AppState, ApiError, ApiResult,
+    };
+    pub use crate::distributed::{
+        Coordinator, CoordinatorConfig, Worker, WorkerConfig,
+        JobRequest, JobStatus, ClusterMetrics,
+    };
+    pub use crate::database::{
+        Database, DatabaseConfig, DatabaseError, DatabaseResult,
+    };
 }
 
 #[cfg(test)]

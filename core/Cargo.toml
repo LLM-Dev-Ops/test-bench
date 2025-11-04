@@ -43,10 +43,59 @@ chrono = { version = "0.4", features = ["serde"] }  # Timestamps
 futures = "0.3"  # Stream utilities
 reqwest-eventsource = "0.6"  # SSE streaming
 pin-project = "1.1"  # Pin projection for custom streams
+lru = "0.12"  # LRU cache for evaluation results
+siphasher = "1.0"  # Fast hashing for cache keys
 
 # Benchmarking
 indicatif = { workspace = true }  # Progress bars
 csv = { workspace = true }  # CSV export
+
+# Statistical analysis
+statrs = "0.17"  # Statistical functions
+
+# Visualization
+tera = "1.20"  # Template engine
+
+# Text analysis
+unicode-segmentation = "1.11"  # Text tokenization
+regex = "1.10"  # Pattern matching for discourse markers
+
+# Multi-modal support
+base64 = "0.21"  # Base64 encoding/decoding for images and audio
+
+# Real-time monitoring
+prometheus = "0.13"  # Prometheus metrics export
+axum = { version = "0.7", features = ["ws", "macros"] }  # Web framework with WebSocket support
+tower = "0.4"  # Middleware and service utilities
+tower-http = { version = "0.5", features = ["cors", "trace"] }  # HTTP middleware
+tokio-tungstenite = "0.21"  # WebSocket protocol
+parking_lot = "0.12"  # High-performance synchronization primitives
+
+# Plugin system (WASM)
+wasmtime = "19.0"  # WASM runtime
+wasmtime-wasi = "19.0"  # WASI support for plugins
+serde_bytes = "0.11"  # Efficient byte serialization for plugin communication
+
+# API server
+async-graphql = "7.0"  # GraphQL implementation
+async-graphql-axum = "7.0"  # GraphQL integration with Axum
+utoipa = { version = "4.2", features = ["axum_extras"] }  # OpenAPI documentation
+utoipa-swagger-ui = { version = "6.0", features = ["axum"] }  # Swagger UI
+jsonwebtoken = "9.2"  # JWT authentication
+bcrypt = "0.15"  # Password hashing
+tower-governor = "0.3"  # Rate limiting
+uuid = { version = "1.7", features = ["v4", "serde"] }  # UUID generation
+
+# Distributed architecture
+tonic = "0.11"  # gRPC framework
+prost = "0.12"  # Protocol buffers
+tokio-stream = "0.1"  # Async stream utilities
+dashmap = "5.5"  # Concurrent hash map
+crossbeam = "0.8"  # Concurrent data structures and channels
+num_cpus = "1.16"  # CPU core detection
+
+# Database backend (PostgreSQL)
+sqlx = { version = "0.7", features = ["runtime-tokio", "postgres", "chrono", "uuid", "json", "migrate"] }
 
 # Datasets integration
 llm-test-bench-datasets = { version = "0.1.0", path = "../datasets" }
