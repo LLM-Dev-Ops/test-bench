@@ -39,7 +39,7 @@ pub struct RestApi;
 
 impl RestApi {
     /// Create REST API router
-    pub fn router<S: Clone + Send + Sync + 'static>() -> Router<S> {
+    pub fn router<S: Clone + Send + Sync + 'static>() -> Router<Arc<S>> {
         Router::new()
             .route("/health", get(health_check))
             .route("/v1/completions", post(create_completion::<S>))

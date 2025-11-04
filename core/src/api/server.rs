@@ -201,7 +201,7 @@ impl ApiServer {
             info!("Enabling REST API at /v1/*");
             let rest_router = RestApi::router::<AppState>()
                 .with_state(self.state.clone());
-            app = app.nest("/v1", rest_router);
+            app = app.merge(rest_router);
         }
 
         // GraphQL API
@@ -244,20 +244,25 @@ impl ApiServer {
 
         let schema = self.state.graphql_schema.clone();
 
+        async fn graphql_handler(
+            schema: axum::extract::Extension<async_graphql::Schema<QueryRoot, EmptyMutation, EmptySubscription>>,
+            req: GraphQLRequest,
+        ) -> GraphQLResponse {
+            schema.execute(req.into_inner()).await.into()
+        }
+
+        async fn graphiql_handler() -> axum::response::Html<String> {
+            axum::response::Html(
+                GraphiQLSource::build()
+                    .endpoint("/graphql")
+                    .finish()
+            )
+        }
+
         Router::new()
-            .route("/", axum::routing::post(
-                |req: GraphQLRequest| async move {
-                    let response = schema.execute(req.into_inner()).await;
-                    GraphQLResponse::from(response)
-                }
-            ))
-            .route("/", axum::routing::get(|| async {
-                axum::response::Html(
-                    GraphiQLSource::build()
-                        .endpoint("/graphql")
-                        .finish()
-                )
-            }))
+            .route("/", axum::routing::post(graphql_handler))
+            .route("/", axum::routing::get(graphiql_handler))
+            .layer(axum::extract::Extension(schema))
     }
 
     /// Build Swagger UI router
@@ -269,6 +274,7 @@ impl ApiServer {
 
         SwaggerUi::new("/swagger-ui")
             .url("/api-docs/openapi.json", openapi)
+            .into()
     }
 
     /// Start the API server
