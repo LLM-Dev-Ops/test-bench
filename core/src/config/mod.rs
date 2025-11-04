@@ -36,7 +36,8 @@ use std::path::{Path, PathBuf};
 
 // Re-export all public types from models module
 pub use models::{
-    BenchmarkConfig, Config, EvaluationConfig, Metric, ProviderConfig,
+    AnalyticsConfig, BenchmarkConfig, Config, DashboardConfig, EvaluationConfig, Metric,
+    OrchestrationConfig, ProviderConfig,
 };
 
 /// Default configuration file name

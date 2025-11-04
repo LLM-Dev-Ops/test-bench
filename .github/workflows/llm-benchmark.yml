@@ -1,0 +1,170 @@
+name: LLM Benchmark
+
+on:
+  schedule:
+    - cron: '0 0 * * *'  # Daily at midnight UTC
+  workflow_dispatch:
+    inputs:
+      dataset:
+        description: 'Dataset to benchmark'
+        required: false
+        default: 'datasets/examples/coding-tasks.json'
+      providers:
+        description: 'Providers to test (comma-separated)'
+        required: false
+        default: 'openai,anthropic'
+      metrics:
+        description: 'Evaluation metrics (comma-separated)'
+        required: false
+        default: 'faithfulness,relevance'
+
+jobs:
+  benchmark:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Rust toolchain
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          profile: minimal
+          override: true
+
+      - name: Cache cargo registry
+        uses: actions/cache@v3
+        with:
+          path: ~/.cargo/registry
+          key: ${{ runner.os }}-cargo-registry-${{ hashFiles('**/Cargo.lock') }}
+
+      - name: Cache cargo index
+        uses: actions/cache@v3
+        with:
+          path: ~/.cargo/git
+          key: ${{ runner.os }}-cargo-index-${{ hashFiles('**/Cargo.lock') }}
+
+      - name: Cache target directory
+        uses: actions/cache@v3
+        with:
+          path: target
+          key: ${{ runner.os }}-cargo-build-target-${{ hashFiles('**/Cargo.lock') }}
+
+      - name: Build LLM Test Bench
+        run: cargo build --release --locked
+
+      - name: Run benchmark
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: |
+          ./target/release/llm-test-bench bench \
+            --dataset ${{ github.event.inputs.dataset || 'datasets/examples/coding-tasks.json' }} \
+            --providers ${{ github.event.inputs.providers || 'openai,anthropic' }} \
+            --metrics ${{ github.event.inputs.metrics || 'faithfulness,relevance' }} \
+            --output ./results \
+            --export json \
+            --dashboard
+
+      - name: Generate comparison dashboard
+        if: success()
+        run: |
+          ./target/release/llm-test-bench dashboard \
+            --results ./results/*.json \
+            --theme auto \
+            --output benchmark-dashboard.html
+
+      - name: Upload benchmark results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: benchmark-results-${{ github.run_number }}
+          path: |
+            ./results/*.json
+            benchmark-dashboard.html
+          retention-days: 90
+
+      - name: Analyze for regressions
+        if: success()
+        run: |
+          # Compare with baseline if exists
+          if [ -f "./baseline/baseline.json" ]; then
+            ./target/release/llm-test-bench analyze \
+              --baseline ./baseline/baseline.json \
+              --comparison ./results/openai-results.json \
+              --metric faithfulness \
+              --fail-on-regression \
+              --confidence-level 0.95
+          fi
+
+      - name: Comment PR with results
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const results = fs.readFileSync('./results/summary.json', 'utf8');
+            const summary = JSON.parse(results);
+
+            const comment = `## 🤖 LLM Benchmark Results
+
+            **Providers Tested:** ${summary.providers.join(', ')}
+            **Total Tests:** ${summary.total_tests}
+            **Success Rate:** ${summary.success_rate}%
+            **Average Latency:** ${summary.avg_latency_ms}ms
+
+            ### Evaluation Metrics
+            - **Faithfulness:** ${summary.metrics.faithfulness.toFixed(2)}
+            - **Relevance:** ${summary.metrics.relevance.toFixed(2)}
+
+            [View Full Dashboard](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})
+            `;
+
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: comment
+            });
+
+  cost-optimization:
+    runs-on: ubuntu-latest
+    needs: benchmark
+    if: success()
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Rust toolchain
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          profile: minimal
+          override: true
+
+      - name: Build LLM Test Bench
+        run: cargo build --release --locked
+
+      - name: Download benchmark results
+        uses: actions/download-artifact@v4
+        with:
+          name: benchmark-results-${{ github.run_number }}
+          path: ./results
+
+      - name: Run cost optimization analysis
+        run: |
+          ./target/release/llm-test-bench optimize \
+            --current-model gpt-4 \
+            --monthly-requests 100000 \
+            --quality-threshold 0.80 \
+            --history ./results/*.json \
+            --output cost-optimization-report.json
+
+      - name: Upload optimization report
+        uses: actions/upload-artifact@v4
+        with:
+          name: cost-optimization-${{ github.run_number }}
+          path: cost-optimization-report.json
+          retention-days: 90

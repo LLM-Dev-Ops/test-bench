@@ -1,0 +1,222 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="dashboard-header">
+    <h1>{{ title }}</h1>
+    <div class="dashboard-meta">
+        <span>💰 <strong>Analysis Type:</strong> Cost Efficiency</span>
+        <span>🕐 <strong>Generated:</strong> {{ timestamp }}</span>
+    </div>
+</div>
+
+<!-- Summary Cards -->
+<div class="summary-cards">
+    {% for card in summary_cards %}
+    <div class="card {{ card.card_class }}">
+        <h3>{{ card.title }}</h3>
+        <div class="value">{{ card.value }}</div>
+        {% if card.change %}
+        <div class="change">{{ card.change }}</div>
+        {% endif %}
+    </div>
+    {% endfor %}
+</div>
+
+<!-- Cost Analysis Charts -->
+<div class="chart-container">
+    <h2>💵 Cost Breakdown by Model</h2>
+    <canvas id="costBreakdownChart"></canvas>
+</div>
+
+<div class="grid-2">
+    <div class="chart-container">
+        <h2>⚖️ Cost per Request</h2>
+        <canvas id="costPerRequestChart"></canvas>
+    </div>
+
+    <div class="chart-container">
+        <h2>🎯 Cost Efficiency Score</h2>
+        <canvas id="efficiencyChart"></canvas>
+    </div>
+</div>
+
+<!-- Cost Optimization Recommendations -->
+<div class="table-container">
+    <h2>💡 Cost Optimization Recommendations</h2>
+    <div style="padding: 20px;">
+        <ul style="list-style: none; padding: 0;">
+            <li style="padding: 12px; border-left: 3px solid var(--success); margin-bottom: 10px; background: var(--light);">
+                <strong>Best Value:</strong> Model X offers the best cost-to-quality ratio for your workload.
+            </li>
+            <li style="padding: 12px; border-left: 3px solid var(--info); margin-bottom: 10px; background: var(--light);">
+                <strong>Token Optimization:</strong> Reduce prompt size by 20% to lower costs without impacting quality.
+            </li>
+            <li style="padding: 12px; border-left: 3px solid var(--warning); margin-bottom: 10px; background: var(--light);">
+                <strong>Caching:</strong> Implement response caching to reduce redundant API calls by 30%.
+            </li>
+            <li style="padding: 12px; border-left: 3px solid var(--primary); margin-bottom: 10px; background: var(--light);">
+                <strong>Batch Processing:</strong> Group similar requests together to optimize token usage.
+            </li>
+        </ul>
+    </div>
+</div>
+
+<!-- Detailed Cost Table -->
+<div class="table-container">
+    <h2>📊 Detailed Cost Analysis</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Model</th>
+                <th>Total Requests</th>
+                <th>Total Tokens</th>
+                <th>Avg Cost/Request</th>
+                <th>Total Cost</th>
+                <th>Quality Score</th>
+                <th>Value Rating</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for result in results %}
+            <tr>
+                <td><strong>{{ result.model }}</strong></td>
+                <td>{{ result.latency_ms }}</td>
+                <td>{{ result.test_name }}</td>
+                <td>${{ result.cost | round(precision=5) }}</td>
+                <td>${{ result.coherence | round(precision=4) }}</td>
+                <td>{{ result.faithfulness | round(precision=1) }}%</td>
+                <td>
+                    <span class="badge badge-{{ result.status_class }}">
+                        {{ result.relevance | round(precision=1) }}
+                    </span>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
+
+{% block charts %}
+<script>
+    // Configure Chart.js defaults
+    Chart.defaults.font.family = "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif";
+    Chart.defaults.color = getComputedStyle(document.documentElement).getPropertyValue('--text').trim();
+
+    // Cost breakdown chart
+    const costBreakdownCtx = document.getElementById('costBreakdownChart').getContext('2d');
+    new Chart(costBreakdownCtx, {
+        type: 'bar',
+        data: {{ latency_data_json | safe }},
+        options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            plugins: {
+                legend: {
+                    display: true,
+                    position: 'top'
+                },
+                tooltip: {
+                    mode: 'index',
+                    intersect: false,
+                    callbacks: {
+                        label: function(context) {
+                            const label = context.dataset.label || '';
+                            const value = context.parsed.y;
+                            return `${label}: $${value.toFixed(4)}`;
+                        }
+                    }
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: 'Total Cost ($)'
+                    },
+                    grid: {
+                        color: 'rgba(0, 0, 0, 0.05)'
+                    }
+                },
+                x: {
+                    grid: {
+                        display: false
+                    }
+                }
+            }
+        }
+    });
+
+    // Cost per request chart
+    const costPerRequestCtx = document.getElementById('costPerRequestChart').getContext('2d');
+    new Chart(costPerRequestCtx, {
+        type: 'bar',
+        data: {{ metrics_data_json | safe }},
+        options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            indexAxis: 'y',
+            plugins: {
+                legend: {
+                    display: false
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            const value = context.parsed.x;
+                            return `Cost: $${value.toFixed(5)}`;
+                        }
+                    }
+                }
+            },
+            scales: {
+                x: {
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: 'Cost per Request ($)'
+                    },
+                    grid: {
+                        color: 'rgba(0, 0, 0, 0.05)'
+                    }
+                },
+                y: {
+                    grid: {
+                        display: false
+                    }
+                }
+            }
+        }
+    });
+
+    // Efficiency score radar
+    const efficiencyCtx = document.getElementById('efficiencyChart').getContext('2d');
+    new Chart(efficiencyCtx, {
+        type: 'radar',
+        data: {{ status_data_json | safe }},
+        options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            plugins: {
+                legend: {
+                    display: true,
+                    position: 'top'
+                }
+            },
+            scales: {
+                r: {
+                    beginAtZero: true,
+                    max: 1.0,
+                    ticks: {
+                        stepSize: 0.2
+                    },
+                    grid: {
+                        color: 'rgba(0, 0, 0, 0.05)'
+                    }
+                }
+            }
+        }
+    });
+</script>
+{% endblock %}

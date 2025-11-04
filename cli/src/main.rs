@@ -2,9 +2,10 @@ use clap::{Parser, Subcommand};
 use std::process;
 
 mod commands;
+mod error;
 mod output;
 
-use commands::{bench, config, eval, test};
+use commands::{analyze, bench, compare, config, dashboard, eval, optimize, test};
 
 /// LLM Test Bench - Production-grade CLI for testing and benchmarking LLM applications
 #[derive(Parser)]
@@ -41,6 +42,22 @@ enum Commands {
     #[command(visible_alias = "e")]
     Eval(eval::EvalArgs),
 
+    /// Compare multiple models on the same prompt or dataset
+    #[command(visible_alias = "c")]
+    Compare(compare::CompareArgs),
+
+    /// Generate interactive HTML dashboards from results
+    #[command(visible_alias = "d")]
+    Dashboard(dashboard::DashboardArgs),
+
+    /// Perform statistical analysis comparing baseline and new results
+    #[command(visible_alias = "a")]
+    Analyze(analyze::AnalyzeArgs),
+
+    /// Recommend cost-optimized model alternatives
+    #[command(visible_alias = "o")]
+    Optimize(optimize::OptimizeArgs),
+
     /// Configuration management commands
     #[command(subcommand)]
     Config(config::ConfigCommands),
@@ -75,6 +92,10 @@ async fn main() {
         Commands::Test(args) => test::execute(args, cli.verbose).await,
         Commands::Bench(args) => bench::execute(args, cli.verbose).await,
         Commands::Eval(args) => eval::execute(args, cli.verbose).await,
+        Commands::Compare(args) => compare::execute(args, cli.verbose).await,
+        Commands::Dashboard(args) => dashboard::execute(args, cli.verbose).await,
+        Commands::Analyze(args) => analyze::execute(args, cli.verbose).await,
+        Commands::Optimize(args) => optimize::execute(args, cli.verbose).await,
         Commands::Config(cmd) => config::execute(cmd, cli.verbose).await,
         Commands::Completions { shell } => {
             generate_completions(shell);

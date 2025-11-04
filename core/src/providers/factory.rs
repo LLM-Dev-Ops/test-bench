@@ -13,8 +13,19 @@ use std::collections::HashMap;
 use std::sync::Arc;
 
 use super::anthropic::AnthropicProvider;
+use super::azure_openai::AzureOpenAIProvider;
+use super::bedrock::BedrockProvider;
+use super::cohere::CohereProvider;
 use super::error::ProviderError;
+use super::google::GoogleProvider;
+use super::groq::GroqProvider;
+use super::huggingface::HuggingFaceProvider;
+use super::mistral::MistralProvider;
+use super::ollama::OllamaProvider;
 use super::openai::OpenAIProvider;
+use super::perplexity::PerplexityProvider;
+use super::replicate::ReplicateProvider;
+use super::together::TogetherProvider;
 use super::traits::Provider;
 use crate::config::models::ProviderConfig;
 
@@ -52,6 +63,17 @@ impl ProviderFactory {
     /// By default, the following providers are registered:
     /// - `openai` - OpenAI API (GPT models)
     /// - `anthropic` - Anthropic API (Claude models)
+    /// - `google` - Google AI (Gemini models)
+    /// - `cohere` - Cohere (Command models)
+    /// - `mistral` - Mistral AI
+    /// - `groq` - Groq (fast inference)
+    /// - `together` - Together AI
+    /// - `huggingface` - Hugging Face Inference API
+    /// - `ollama` - Ollama (local models)
+    /// - `azure-openai` - Azure OpenAI
+    /// - `bedrock` - AWS Bedrock
+    /// - `replicate` - Replicate
+    /// - `perplexity` - Perplexity AI
     ///
     /// # Examples
     ///
@@ -66,6 +88,17 @@ impl ProviderFactory {
         // Register built-in providers
         registry.insert("openai".to_string(), create_openai as _);
         registry.insert("anthropic".to_string(), create_anthropic as _);
+        registry.insert("google".to_string(), create_google as _);
+        registry.insert("cohere".to_string(), create_cohere as _);
+        registry.insert("mistral".to_string(), create_mistral as _);
+        registry.insert("groq".to_string(), create_groq as _);
+        registry.insert("together".to_string(), create_together as _);
+        registry.insert("huggingface".to_string(), create_huggingface as _);
+        registry.insert("ollama".to_string(), create_ollama as _);
+        registry.insert("azure-openai".to_string(), create_azure_openai as _);
+        registry.insert("bedrock".to_string(), create_bedrock as _);
+        registry.insert("replicate".to_string(), create_replicate as _);
+        registry.insert("perplexity".to_string(), create_perplexity as _);
 
         Self { _registry: registry }
     }
@@ -113,8 +146,19 @@ impl ProviderFactory {
         match provider_name.to_lowercase().as_str() {
             "openai" => create_openai(config),
             "anthropic" => create_anthropic(config),
+            "google" => create_google(config),
+            "cohere" => create_cohere(config),
+            "mistral" => create_mistral(config),
+            "groq" => create_groq(config),
+            "together" => create_together(config),
+            "huggingface" => create_huggingface(config),
+            "ollama" => create_ollama(config),
+            "azure-openai" | "azure_openai" => create_azure_openai(config),
+            "bedrock" => create_bedrock(config),
+            "replicate" => create_replicate(config),
+            "perplexity" => create_perplexity(config),
             _ => Err(ProviderError::InvalidRequest(format!(
-                "Unknown provider: {}. Supported providers: openai, anthropic",
+                "Unknown provider: {}. Supported providers: openai, anthropic, google, cohere, mistral, groq, together, huggingface, ollama, azure-openai, bedrock, replicate, perplexity",
                 provider_name
             ))),
         }
@@ -180,7 +224,21 @@ impl ProviderFactory {
     /// assert!(providers.contains(&"anthropic".to_string()));
     /// ```
     pub fn available_providers(&self) -> Vec<String> {
-        vec!["openai".to_string(), "anthropic".to_string()]
+        vec![
+            "openai".to_string(),
+            "anthropic".to_string(),
+            "google".to_string(),
+            "cohere".to_string(),
+            "mistral".to_string(),
+            "groq".to_string(),
+            "together".to_string(),
+            "huggingface".to_string(),
+            "ollama".to_string(),
+            "azure-openai".to_string(),
+            "bedrock".to_string(),
+            "replicate".to_string(),
+            "perplexity".to_string(),
+        ]
     }
 }
 
@@ -219,6 +277,109 @@ fn create_anthropic(config: &ProviderConfig) -> Result<Box<dyn Provider>, Provid
         AnthropicProvider::with_base_url(api_key, config.base_url.clone())
     };
 
+    Ok(Box::new(provider))
+}
+
+/// Creates a Google AI provider instance from configuration.
+fn create_google(config: &ProviderConfig) -> Result<Box<dyn Provider>, ProviderError> {
+    let api_key = std::env::var(&config.api_key_env)
+        .map_err(|_| ProviderError::InvalidApiKey)?;
+
+    let provider = GoogleProvider::with_base_url(api_key, config.base_url.clone())?;
+    Ok(Box::new(provider))
+}
+
+/// Creates a Cohere provider instance from configuration.
+fn create_cohere(config: &ProviderConfig) -> Result<Box<dyn Provider>, ProviderError> {
+    let api_key = std::env::var(&config.api_key_env)
+        .map_err(|_| ProviderError::InvalidApiKey)?;
+
+    let provider = CohereProvider::with_base_url(api_key, config.base_url.clone())?;
+    Ok(Box::new(provider))
+}
+
+/// Creates a Mistral AI provider instance from configuration.
+fn create_mistral(config: &ProviderConfig) -> Result<Box<dyn Provider>, ProviderError> {
+    let api_key = std::env::var(&config.api_key_env)
+        .map_err(|_| ProviderError::InvalidApiKey)?;
+
+    let provider = MistralProvider::with_base_url(api_key, config.base_url.clone())?;
+    Ok(Box::new(provider))
+}
+
+/// Creates a Groq provider instance from configuration.
+fn create_groq(config: &ProviderConfig) -> Result<Box<dyn Provider>, ProviderError> {
+    let api_key = std::env::var(&config.api_key_env)
+        .map_err(|_| ProviderError::InvalidApiKey)?;
+
+    let provider = GroqProvider::with_base_url(api_key, config.base_url.clone())?;
+    Ok(Box::new(provider))
+}
+
+/// Creates a Together AI provider instance from configuration.
+fn create_together(config: &ProviderConfig) -> Result<Box<dyn Provider>, ProviderError> {
+    let api_key = std::env::var(&config.api_key_env)
+        .map_err(|_| ProviderError::InvalidApiKey)?;
+
+    let provider = TogetherProvider::with_base_url(api_key, config.base_url.clone())?;
+    Ok(Box::new(provider))
+}
+
+/// Creates a Hugging Face provider instance from configuration.
+fn create_huggingface(config: &ProviderConfig) -> Result<Box<dyn Provider>, ProviderError> {
+    let api_key = std::env::var(&config.api_key_env)
+        .map_err(|_| ProviderError::InvalidApiKey)?;
+
+    let provider = HuggingFaceProvider::with_base_url(api_key, config.base_url.clone())?;
+    Ok(Box::new(provider))
+}
+
+/// Creates an Ollama provider instance from configuration.
+fn create_ollama(config: &ProviderConfig) -> Result<Box<dyn Provider>, ProviderError> {
+    // Ollama doesn't require an API key, use base_url from config
+    let provider = OllamaProvider::with_base_url(config.base_url.clone())?;
+    Ok(Box::new(provider))
+}
+
+/// Creates an Azure OpenAI provider instance from configuration.
+fn create_azure_openai(config: &ProviderConfig) -> Result<Box<dyn Provider>, ProviderError> {
+    let api_key = std::env::var(&config.api_key_env)
+        .map_err(|_| ProviderError::InvalidApiKey)?;
+
+    // For Azure, we need deployment name and endpoint from config
+    // Using default_model as deployment name
+    let provider = AzureOpenAIProvider::new(api_key, config.base_url.clone(), config.default_model.clone())?;
+    Ok(Box::new(provider))
+}
+
+/// Creates an AWS Bedrock provider instance from configuration.
+fn create_bedrock(config: &ProviderConfig) -> Result<Box<dyn Provider>, ProviderError> {
+    // AWS Bedrock requires AWS credentials
+    let access_key = std::env::var("AWS_ACCESS_KEY_ID")
+        .map_err(|_| ProviderError::InvalidApiKey)?;
+    let secret_key = std::env::var("AWS_SECRET_ACCESS_KEY")
+        .map_err(|_| ProviderError::InvalidApiKey)?;
+    let region = std::env::var("AWS_REGION").unwrap_or_else(|_| "us-east-1".to_string());
+
+    let provider = BedrockProvider::new(region, access_key, secret_key)?;
+    Ok(Box::new(provider))
+}
+
+/// Creates a Replicate provider instance from configuration.
+fn create_replicate(config: &ProviderConfig) -> Result<Box<dyn Provider>, ProviderError> {
+    let api_key = std::env::var(&config.api_key_env)
+        .map_err(|_| ProviderError::InvalidApiKey)?;
+
+    let provider = ReplicateProvider::with_base_url(api_key, config.base_url.clone())?;
+    Ok(Box::new(provider))
+}
+
+/// Creates a Perplexity AI provider instance from configuration.
+fn create_perplexity(config: &ProviderConfig) -> Result<Box<dyn Provider>, ProviderError> {
+    let api_key = std::env::var(&config.api_key_env)
+        .map_err(|_| ProviderError::InvalidApiKey)?;
+
+    let provider = PerplexityProvider::with_base_url(api_key, config.base_url.clone())?;
     Ok(Box::new(provider))
 }
 

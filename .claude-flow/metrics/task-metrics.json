@@ -6,5 +6,13 @@
     "duration": 12.21927599999998,
     "timestamp": 1762232459124,
     "metadata": {}
+  },
+  {
+    "id": "cmd-swarm-1762263771549",
+    "type": "swarm",
+    "success": true,
+    "duration": 18.668854999999894,
+    "timestamp": 1762263771568,
+    "metadata": {}
   }
 ]

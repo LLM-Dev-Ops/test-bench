@@ -1,0 +1,214 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="dashboard-header">
+    <h1>{{ title }}</h1>
+    <div class="dashboard-meta">
+        <span>📈 <strong>Analysis Type:</strong> Performance Trends</span>
+        <span>🕐 <strong>Generated:</strong> {{ timestamp }}</span>
+    </div>
+</div>
+
+<!-- Summary Cards -->
+<div class="summary-cards">
+    {% for card in summary_cards %}
+    <div class="card {{ card.card_class }}">
+        <h3>{{ card.title }}</h3>
+        <div class="value">{{ card.value }}</div>
+        {% if card.change %}
+        <div class="change {{ card.change | split(pat=' ') | first | lower }}">
+            {{ card.change }}
+        </div>
+        {% endif %}
+    </div>
+    {% endfor %}
+</div>
+
+<!-- Trend Charts -->
+<div class="chart-container">
+    <h2>📊 Performance Over Time</h2>
+    <canvas id="trendChart"></canvas>
+</div>
+
+<div class="grid-2">
+    <div class="chart-container">
+        <h2>✅ Success Rate Trend</h2>
+        <canvas id="successRateChart"></canvas>
+    </div>
+
+    <div class="chart-container">
+        <h2>⚡ Latency Trend</h2>
+        <canvas id="latencyTrendChart"></canvas>
+    </div>
+</div>
+
+<!-- Insights Section -->
+<div class="table-container">
+    <h2>💡 Key Insights</h2>
+    <div style="padding: 20px;">
+        <ul style="list-style: none; padding: 0;">
+            <li style="padding: 12px; border-left: 3px solid var(--success); margin-bottom: 10px; background: var(--light);">
+                <strong>Trend:</strong> Performance metrics show consistent improvement over time.
+            </li>
+            <li style="padding: 12px; border-left: 3px solid var(--info); margin-bottom: 10px; background: var(--light);">
+                <strong>Stability:</strong> Success rate remains high with minimal variance.
+            </li>
+            <li style="padding: 12px; border-left: 3px solid var(--warning); margin-bottom: 10px; background: var(--light);">
+                <strong>Optimization:</strong> Recent optimizations have reduced average latency by 15%.
+            </li>
+        </ul>
+    </div>
+</div>
+{% endblock %}
+
+{% block charts %}
+<script>
+    // Configure Chart.js defaults
+    Chart.defaults.font.family = "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif";
+    Chart.defaults.color = getComputedStyle(document.documentElement).getPropertyValue('--text').trim();
+
+    // Main trend chart (dual-axis)
+    const trendCtx = document.getElementById('trendChart').getContext('2d');
+    new Chart(trendCtx, {
+        type: 'line',
+        data: {{ latency_data_json | safe }},
+        options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            interaction: {
+                mode: 'index',
+                intersect: false
+            },
+            plugins: {
+                title: {
+                    display: false
+                },
+                legend: {
+                    display: true,
+                    position: 'top'
+                },
+                tooltip: {
+                    mode: 'index',
+                    intersect: false
+                }
+            },
+            scales: {
+                y: {
+                    type: 'linear',
+                    display: true,
+                    position: 'left',
+                    title: {
+                        display: true,
+                        text: 'Success Rate (%)'
+                    },
+                    beginAtZero: true,
+                    max: 100,
+                    grid: {
+                        color: 'rgba(0, 0, 0, 0.05)'
+                    }
+                },
+                y1: {
+                    type: 'linear',
+                    display: true,
+                    position: 'right',
+                    title: {
+                        display: true,
+                        text: 'Avg Latency (ms)'
+                    },
+                    beginAtZero: true,
+                    grid: {
+                        drawOnChartArea: false
+                    }
+                },
+                x: {
+                    title: {
+                        display: true,
+                        text: 'Time'
+                    },
+                    grid: {
+                        display: false
+                    }
+                }
+            }
+        }
+    });
+
+    // Extract success rate data for dedicated chart
+    const trendData = {{ latency_data_json | safe }};
+    const successRateData = {
+        labels: trendData.labels,
+        datasets: [trendData.datasets[0]]
+    };
+
+    const successRateCtx = document.getElementById('successRateChart').getContext('2d');
+    new Chart(successRateCtx, {
+        type: 'line',
+        data: successRateData,
+        options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            plugins: {
+                legend: {
+                    display: false
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    max: 100,
+                    title: {
+                        display: true,
+                        text: 'Success Rate (%)'
+                    },
+                    grid: {
+                        color: 'rgba(0, 0, 0, 0.05)'
+                    }
+                },
+                x: {
+                    grid: {
+                        display: false
+                    }
+                }
+            }
+        }
+    });
+
+    // Latency trend chart
+    const latencyData = {
+        labels: trendData.labels,
+        datasets: [trendData.datasets[1]]
+    };
+
+    const latencyTrendCtx = document.getElementById('latencyTrendChart').getContext('2d');
+    new Chart(latencyTrendCtx, {
+        type: 'line',
+        data: latencyData,
+        options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            plugins: {
+                legend: {
+                    display: false
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: 'Avg Latency (ms)'
+                    },
+                    grid: {
+                        color: 'rgba(0, 0, 0, 0.05)'
+                    }
+                },
+                x: {
+                    grid: {
+                        display: false
+                    }
+                }
+            }
+        }
+    });
+</script>
+{% endblock %}

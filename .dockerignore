@@ -1,0 +1,44 @@
+# Git
+.git
+.gitignore
+
+# Build artifacts
+target/
+**/*.rs.bk
+*.pdb
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Documentation (built separately)
+docs/
+*.md
+!README.md
+
+# Test data
+results/
+bench-results/
+
+# Node modules (if any)
+node_modules/
+package-lock.json
+
+# Environment
+.env
+.env.local
+
+# Cache
+.cache/
+~/.cache/
+
+# Temporary files
+*.tmp
+*.log

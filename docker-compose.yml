@@ -1,0 +1,101 @@
+version: '3.8'
+
+services:
+  llm-test-bench:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: llm-test-bench:latest
+    container_name: llm-test-bench
+    environment:
+      # API Keys (set in .env file)
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
+
+      # Configuration
+      - RUST_LOG=${RUST_LOG:-info}
+      - LLM_TEST_BENCH_CONFIG=/data/config.toml
+
+      # Evaluation settings
+      - LLM_TEST_BENCH_EVALUATION__JUDGE_PROVIDER=${JUDGE_PROVIDER:-openai}
+      - LLM_TEST_BENCH_EVALUATION__JUDGE_MODEL=${JUDGE_MODEL:-gpt-4}
+      - LLM_TEST_BENCH_EVALUATION__CACHE_ENABLED=${CACHE_ENABLED:-true}
+
+    volumes:
+      # Mount datasets
+      - ./datasets:/data/datasets:ro
+
+      # Mount results directory
+      - ./results:/data/results:rw
+
+      # Mount cache directory
+      - llm-cache:/data/cache:rw
+
+      # Mount configuration (optional)
+      - ./config.toml:/data/config.toml:ro
+
+    # Override command for specific operations
+    # Uncomment and modify as needed:
+
+    # Run benchmark
+    # command: >
+    #   bench
+    #   --dataset /data/datasets/coding-tasks.json
+    #   --providers openai,anthropic
+    #   --metrics faithfulness,relevance
+    #   --output /data/results
+    #   --dashboard
+
+    # Compare models
+    # command: >
+    #   compare
+    #   --prompt "Explain quantum computing"
+    #   --models openai:gpt-4,anthropic:claude-3-opus
+    #   --statistical-tests
+    #   --output /data/results/comparison.html
+
+    # Generate dashboard
+    # command: >
+    #   dashboard
+    #   --results /data/results/*.json
+    #   --theme dark
+    #   --output /data/results/dashboard.html
+
+    # Analyze performance
+    # command: >
+    #   analyze
+    #   --baseline /data/results/baseline.json
+    #   --comparison /data/results/latest.json
+    #   --fail-on-regression
+
+    # Optimize costs
+    # command: >
+    #   optimize
+    #   --current-model gpt-4
+    #   --monthly-requests 100000
+    #   --quality-threshold 0.80
+
+    # Resource limits
+    deploy:
+      resources:
+        limits:
+          cpus: '2.0'
+          memory: 2G
+        reservations:
+          cpus: '0.5'
+          memory: 512M
+
+    # Restart policy
+    restart: unless-stopped
+
+    # Networking
+    networks:
+      - llm-network
+
+volumes:
+  llm-cache:
+    driver: local
+
+networks:
+  llm-network:
+    driver: bridge

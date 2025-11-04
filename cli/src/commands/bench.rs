@@ -44,6 +44,22 @@ pub struct BenchArgs {
     /// Path to custom configuration file
     #[arg(long)]
     pub config: Option<PathBuf>,
+
+    /// Evaluation metrics to run (comma-separated)
+    #[arg(long, value_delimiter = ',')]
+    pub metrics: Option<Vec<String>>,
+
+    /// Judge model for evaluations (overrides config)
+    #[arg(long)]
+    pub judge_model: Option<String>,
+
+    /// Judge provider (openai, anthropic)
+    #[arg(long)]
+    pub judge_provider: Option<String>,
+
+    /// Generate HTML dashboard after benchmark
+    #[arg(long)]
+    pub dashboard: bool,
 }
 
 #[derive(Debug, Clone, clap::ValueEnum)]
@@ -74,6 +90,12 @@ pub async fn execute(args: BenchArgs, verbose: bool) -> Result<()> {
         println!("  Concurrency: {}", args.concurrency);
         println!("  Output: {}", args.output.display());
         println!("  Export format: {:?}", args.export);
+        if let Some(ref metrics) = args.metrics {
+            println!("  Metrics: {}", metrics.join(", "));
+        }
+        if args.dashboard {
+            println!("  Generate dashboard: Yes");
+        }
         println!();
     }
 
@@ -158,6 +180,26 @@ pub async fn execute(args: BenchArgs, verbose: bool) -> Result<()> {
 
         // Print summary
         print_summary(&results, provider_name);
+        println!();
+    }
+
+    // Run evaluations if metrics specified
+    if let Some(ref metrics) = args.metrics {
+        println!();
+        println!("{} Running evaluations...", "▶".green().bold());
+        println!("  Metrics: {}", metrics.join(", "));
+        println!("  {} Note: Full evaluation integration pending Phase 4 completion", "ℹ".blue());
+        // TODO: Integrate with evaluation system when available
+        println!();
+    }
+
+    // Generate dashboard if requested
+    if args.dashboard {
+        println!();
+        println!("{} Generating dashboard...", "▶".green());
+        let dashboard_path = args.output.join("benchmark-dashboard.html");
+        // TODO: Call dashboard generation
+        println!("  {} Dashboard would be generated at: {}", "ℹ".blue(), dashboard_path.display());
         println!();
     }
 

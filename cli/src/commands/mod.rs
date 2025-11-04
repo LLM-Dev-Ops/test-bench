@@ -1,4 +1,8 @@
-pub mod config;
-pub mod test;
+pub mod analyze;
 pub mod bench;
+pub mod compare;
+pub mod config;
+pub mod dashboard;
 pub mod eval;
+pub mod optimize;
+pub mod test;

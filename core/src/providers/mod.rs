@@ -133,6 +133,17 @@ pub mod types;
 // Provider implementations
 pub mod anthropic;
 pub mod openai;
+pub mod google;
+pub mod cohere;
+pub mod mistral;
+pub mod groq;
+pub mod together;
+pub mod huggingface;
+pub mod ollama;
+pub mod azure_openai;
+pub mod bedrock;
+pub mod replicate;
+pub mod perplexity;
 
 // Re-export commonly used types
 pub use error::ProviderError;
@@ -144,4 +155,15 @@ pub use types::{
 
 // Re-export provider implementations
 pub use anthropic::AnthropicProvider;
+pub use azure_openai::AzureOpenAIProvider;
+pub use bedrock::BedrockProvider;
+pub use cohere::CohereProvider;
+pub use google::GoogleProvider;
+pub use groq::GroqProvider;
+pub use huggingface::HuggingFaceProvider;
+pub use mistral::MistralProvider;
+pub use ollama::OllamaProvider;
 pub use openai::OpenAIProvider;
+pub use perplexity::PerplexityProvider;
+pub use replicate::ReplicateProvider;
+pub use together::TogetherProvider;

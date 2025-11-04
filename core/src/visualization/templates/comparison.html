@@ -1,0 +1,189 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="dashboard-header">
+    <h1>{{ title }}</h1>
+    <div class="dashboard-meta">
+        <span>⚖️ <strong>Comparison Type:</strong> Model Performance</span>
+        <span>🕐 <strong>Generated:</strong> {{ timestamp }}</span>
+    </div>
+</div>
+
+<!-- Summary Cards -->
+<div class="summary-cards">
+    {% for card in summary_cards %}
+    <div class="card {{ card.card_class }}">
+        <h3>{{ card.title }}</h3>
+        <div class="value">{{ card.value }}</div>
+        {% if card.change %}
+        <div class="change">{{ card.change }}</div>
+        {% endif %}
+    </div>
+    {% endfor %}
+</div>
+
+<!-- Comparison Charts -->
+<div class="chart-container">
+    <h2>📊 Model Performance Comparison</h2>
+    <canvas id="comparisonChart"></canvas>
+</div>
+
+<div class="chart-container">
+    <h2>💰 Cost vs Quality Analysis</h2>
+    <canvas id="scatterChart"></canvas>
+</div>
+
+<!-- Rankings Table -->
+<div class="table-container">
+    <h2>🏆 Model Rankings</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Rank</th>
+                <th>Model</th>
+                <th>Success Rate</th>
+                <th>Avg Latency</th>
+                <th>P95 Latency</th>
+                <th>Total Cost</th>
+                <th>Score</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for result in results %}
+            <tr>
+                <td><strong>#{{ loop.index }}</strong></td>
+                <td>{{ result.model }}</td>
+                <td>
+                    <span class="badge badge-success">
+                        {{ result.faithfulness | round(precision=1) }}%
+                    </span>
+                </td>
+                <td>{{ result.latency_ms }}ms</td>
+                <td>{{ result.coherence }}ms</td>
+                <td>${{ result.cost | round(precision=4) }}</td>
+                <td>{{ result.relevance | round(precision=2) }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
+
+{% block charts %}
+<script>
+    // Configure Chart.js defaults
+    Chart.defaults.font.family = "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif";
+    Chart.defaults.color = getComputedStyle(document.documentElement).getPropertyValue('--text').trim();
+
+    // Multi-metric comparison chart
+    const comparisonCtx = document.getElementById('comparisonChart').getContext('2d');
+    new Chart(comparisonCtx, {
+        type: 'bar',
+        data: {{ latency_data_json | safe }},
+        options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            interaction: {
+                mode: 'index',
+                intersect: false
+            },
+            plugins: {
+                title: {
+                    display: false
+                },
+                legend: {
+                    display: true,
+                    position: 'top'
+                },
+                tooltip: {
+                    mode: 'index',
+                    intersect: false
+                }
+            },
+            scales: {
+                y: {
+                    type: 'linear',
+                    display: true,
+                    position: 'left',
+                    title: {
+                        display: true,
+                        text: 'Success Rate (%)'
+                    },
+                    beginAtZero: true,
+                    max: 100,
+                    grid: {
+                        color: 'rgba(0, 0, 0, 0.05)'
+                    }
+                },
+                y1: {
+                    type: 'linear',
+                    display: true,
+                    position: 'right',
+                    title: {
+                        display: true,
+                        text: 'Latency (ms)'
+                    },
+                    beginAtZero: true,
+                    grid: {
+                        drawOnChartArea: false
+                    }
+                },
+                x: {
+                    grid: {
+                        display: false
+                    }
+                }
+            }
+        }
+    });
+
+    // Cost vs Quality scatter plot
+    const scatterCtx = document.getElementById('scatterChart').getContext('2d');
+    new Chart(scatterCtx, {
+        type: 'scatter',
+        data: {{ metrics_data_json | safe }},
+        options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            plugins: {
+                legend: {
+                    display: true,
+                    position: 'top'
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            const point = context.raw;
+                            return `${point.label}: Cost $${point.x.toFixed(4)}, Quality ${point.y.toFixed(1)}%`;
+                        }
+                    }
+                }
+            },
+            scales: {
+                x: {
+                    type: 'linear',
+                    position: 'bottom',
+                    title: {
+                        display: true,
+                        text: 'Total Cost ($)'
+                    },
+                    grid: {
+                        color: 'rgba(0, 0, 0, 0.05)'
+                    }
+                },
+                y: {
+                    title: {
+                        display: true,
+                        text: 'Quality Score (%)'
+                    },
+                    beginAtZero: true,
+                    max: 100,
+                    grid: {
+                        color: 'rgba(0, 0, 0, 0.05)'
+                    }
+                }
+            }
+        }
+    });
+</script>
+{% endblock %}

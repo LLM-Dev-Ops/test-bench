@@ -1,0 +1,191 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="dashboard-header">
+    <h1>{{ title }}</h1>
+    <div class="dashboard-meta">
+        <span>📊 <strong>Dataset:</strong> {{ dataset_name }}</span>
+        {% if provider_name %}
+        <span>🤖 <strong>Provider:</strong> {{ provider_name }}</span>
+        {% endif %}
+        <span>🕐 <strong>Executed:</strong> {{ timestamp }}</span>
+    </div>
+</div>
+
+<!-- Summary Cards -->
+<div class="summary-cards">
+    {% for card in summary_cards %}
+    <div class="card {{ card.card_class }}">
+        <h3>{{ card.title }}</h3>
+        <div class="value">{{ card.value }}</div>
+        {% if card.change %}
+        <div class="change">{{ card.change }}</div>
+        {% endif %}
+    </div>
+    {% endfor %}
+</div>
+
+<!-- Charts Grid -->
+<div class="grid-2">
+    <div class="chart-container">
+        <h2>📈 Latency Distribution</h2>
+        <canvas id="latencyChart"></canvas>
+    </div>
+
+    <div class="chart-container">
+        <h2>🎯 Test Status Distribution</h2>
+        <canvas id="statusChart"></canvas>
+    </div>
+</div>
+
+<div class="chart-container">
+    <h2>⚡ Evaluation Metrics</h2>
+    <canvas id="metricsChart"></canvas>
+</div>
+
+<!-- Detailed Results Table -->
+<div class="table-container">
+    <h2>📋 Detailed Test Results</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Test ID</th>
+                <th>Model</th>
+                <th>Status</th>
+                <th>Faithfulness</th>
+                <th>Relevance</th>
+                <th>Coherence</th>
+                <th>Latency</th>
+                <th>Cost</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for result in results %}
+            <tr>
+                <td><strong>{{ result.test_name }}</strong></td>
+                <td>{{ result.model }}</td>
+                <td>
+                    <span class="badge badge-{{ result.status_class }}">
+                        {{ result.status }}
+                    </span>
+                </td>
+                <td>{{ result.faithfulness | round(precision=2) }}</td>
+                <td>{{ result.relevance | round(precision=2) }}</td>
+                <td>{{ result.coherence | round(precision=2) }}</td>
+                <td>{{ result.latency_ms }}ms</td>
+                <td>${{ result.cost | round(precision=4) }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
+
+{% block charts %}
+<script>
+    // Configure Chart.js defaults
+    Chart.defaults.font.family = "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif";
+    Chart.defaults.color = getComputedStyle(document.documentElement).getPropertyValue('--text').trim();
+
+    // Latency distribution histogram
+    const latencyCtx = document.getElementById('latencyChart').getContext('2d');
+    new Chart(latencyCtx, {
+        type: 'bar',
+        data: {{ latency_data_json | safe }},
+        options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            plugins: {
+                title: {
+                    display: false
+                },
+                legend: {
+                    display: true,
+                    position: 'top'
+                },
+                tooltip: {
+                    mode: 'index',
+                    intersect: false
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: 'Number of Requests'
+                    },
+                    grid: {
+                        color: 'rgba(0, 0, 0, 0.05)'
+                    }
+                },
+                x: {
+                    title: {
+                        display: true,
+                        text: 'Latency Range'
+                    },
+                    grid: {
+                        display: false
+                    }
+                }
+            }
+        }
+    });
+
+    // Status distribution pie chart
+    const statusCtx = document.getElementById('statusChart').getContext('2d');
+    new Chart(statusCtx, {
+        type: 'doughnut',
+        data: {{ status_data_json | safe }},
+        options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            plugins: {
+                legend: {
+                    position: 'right'
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            const label = context.label || '';
+                            const value = context.parsed || 0;
+                            const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                            const percentage = ((value / total) * 100).toFixed(1);
+                            return `${label}: ${value} (${percentage}%)`;
+                        }
+                    }
+                }
+            }
+        }
+    });
+
+    // Evaluation metrics radar chart
+    const metricsCtx = document.getElementById('metricsChart').getContext('2d');
+    new Chart(metricsCtx, {
+        type: 'radar',
+        data: {{ metrics_data_json | safe }},
+        options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            plugins: {
+                legend: {
+                    display: true,
+                    position: 'top'
+                }
+            },
+            scales: {
+                r: {
+                    beginAtZero: true,
+                    max: 1.0,
+                    ticks: {
+                        stepSize: 0.2
+                    },
+                    grid: {
+                        color: 'rgba(0, 0, 0, 0.05)'
+                    }
+                }
+            }
+        }
+    });
+</script>
+{% endblock %}
