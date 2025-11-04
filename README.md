@@ -38,38 +38,55 @@ LLM Test Bench is a powerful, enterprise-grade framework built in Rust for compr
 #### 🤖 Multi-Provider LLM Support
 
 **OpenAI (27 models)**
-- **GPT-5** (Latest generation, Aug 2025)
-- **GPT-4.5** (Feb 2025) - Enhanced capabilities
-- **GPT-4.1** (Apr 2025) - Improved performance
-- GPT-4o, GPT-4o-mini (Multimodal flagships)
-- **o3-mini** (Jan 2025), o1, o1-preview, o1-mini (Advanced reasoning)
-- GPT-4 Turbo, GPT-4 (128K context)
-- GPT-3.5 Turbo
+```
+gpt-5
+gpt-4.5, gpt-4.5-2025-02-27
+gpt-4.1, gpt-4.1-2025-04
+gpt-4o, gpt-4o-2024-11-20, gpt-4o-2024-08-06, gpt-4o-2024-05-13
+gpt-4o-mini, gpt-4o-mini-2024-07-18
+o1, o1-preview, o1-preview-2024-09-12, o1-mini, o1-mini-2024-09-12, o3-mini
+gpt-4-turbo, gpt-4-turbo-2024-04-09, gpt-4-turbo-preview
+gpt-4-0125-preview, gpt-4-1106-preview
+gpt-4, gpt-4-0613
+gpt-3.5-turbo, gpt-3.5-turbo-0125, gpt-3.5-turbo-1106
+```
 
 **Anthropic (15 models)**
-- **Claude Opus 4** (May 2025 - Most capable)
-- **Claude Sonnet 4.5** (Sept 2025 - Latest flagship)
-- **Claude Sonnet 4** (May 2025)
-- Claude 3.5 Sonnet, Claude 3.5 Haiku
-- Claude 3 Opus, Sonnet, Haiku (200K context)
+```
+claude-opus-4, claude-opus-4-20250501
+claude-sonnet-4.5, claude-sonnet-4.5-20250901
+claude-sonnet-4, claude-sonnet-4-20250514
+claude-3-5-sonnet-latest, claude-3-5-sonnet-20241022, claude-3-5-sonnet-20240620
+claude-3-5-haiku-latest, claude-3-5-haiku-20241022
+claude-3-opus-latest, claude-3-opus-20240229
+claude-3-sonnet-20240229
+claude-3-haiku-20240307
+```
 
 **Google Gemini (16 models)**
-- **Gemini 2.5 Pro** (2025 - Latest generation)
-- **Gemini 2.5 Computer Use** (Oct 2025 - Autonomous agent capabilities)
-- Gemini 2.0 Flash (Extended thinking)
-- Gemini 1.5 Pro, Flash (2M+ token context)
-- Gemini Pro Vision (Multimodal)
+```
+gemini-2.5-pro
+gemini-2.5-computer-use, gemini-2.5-computer-use-20251007
+gemini-2.0-flash-exp, gemini-2.0-flash-thinking-exp-1219
+gemini-1.5-pro, gemini-1.5-pro-latest, gemini-1.5-pro-002, gemini-1.5-pro-001
+gemini-1.5-flash, gemini-1.5-flash-latest, gemini-1.5-flash-002
+gemini-1.5-flash-001, gemini-1.5-flash-8b
+gemini-pro, gemini-pro-vision
+```
 
 **Mistral AI (7 models)**
-- **Mistral Code** (Jun 2025 - Code-specialized)
-- **Magistral Family** (Jun 2025 - Large, Medium, Small)
-- **Voxtral Small** (Jul 2025 - Audio model)
+```
+mistral-code, mistral-code-20250604
+magistral-large, magistral-medium, magistral-small
+voxtral-small, voxtral-small-20250701
+```
 
 **Additional Providers**
-- **Azure OpenAI**: Enterprise-grade OpenAI models
+- **Azure OpenAI**: All OpenAI models via Azure endpoints
 - **AWS Bedrock**: Claude, Llama, Titan, and more
+- **Cohere**: Command, Command R/R+
 - **Open Source**: Ollama, Hugging Face, Together AI, Replicate
-- **Specialized**: Cohere, Groq, Perplexity AI
+- **Specialized**: Groq, Perplexity AI
 
 #### 📈 Advanced Evaluation Metrics
 - **Perplexity Analysis**: Statistical language model evaluation
@@ -161,13 +178,22 @@ cp .env.example .env
 ### Basic Usage
 
 ```bash
-# Run a simple benchmark
-llm-test-bench bench --provider openai --model gpt-4 --prompt "Explain quantum computing"
+# Run a simple benchmark with GPT-5
+llm-test-bench bench --provider openai --model gpt-5 --prompt "Explain quantum computing"
 
-# Compare multiple models
+# Test with Claude Opus 4
+llm-test-bench bench --provider anthropic --model claude-opus-4 --prompt "Code review this function"
+
+# Use Gemini 2.5 Computer Use
+llm-test-bench bench --provider google --model gemini-2.5-computer-use --prompt "Automate this task"
+
+# Compare multiple models across providers
 llm-test-bench compare \
-  --models "openai:gpt-4,anthropic:claude-3-sonnet" \
+  --models "openai:gpt-5,anthropic:claude-opus-4,google:gemini-2.5-pro" \
   --prompt "Write a Python function to sort a list"
+
+# Benchmark code models
+llm-test-bench bench --provider mistral --model mistral-code --prompt "Implement binary search"
 
 # Analyze results
 llm-test-bench analyze --results benchmark_results.json
