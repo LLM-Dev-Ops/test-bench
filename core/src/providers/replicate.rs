@@ -87,7 +87,7 @@ impl Provider for ReplicateProvider {
             .json(&body)
             .send()
             .await
-            .map_err(|e| ProviderError::NetworkError(e.to_string()))?;
+            .map_err(|e| ProviderError::NetworkError(e))?;
 
         let status = response.status().as_u16();
         if !response.status().is_success() {
@@ -96,7 +96,7 @@ impl Provider for ReplicateProvider {
             return Err(ProviderError::ApiError { status, message: text });
         }
 
-        let text = response.text().await.map_err(|e| ProviderError::NetworkError(e.to_string()))?;
+        let text = response.text().await.map_err(|e| ProviderError::NetworkError(e))?;
 
         #[derive(Deserialize)]
         struct PredictionResponse {
@@ -125,7 +125,7 @@ impl Provider for ReplicateProvider {
                 .header("Authorization", format!("Token {}", self.api_key))
                 .send()
                 .await
-                .map_err(|e| ProviderError::NetworkError(e.to_string()))?;
+                .map_err(|e| ProviderError::NetworkError(e))?;
 
             let poll_text = poll_response.text().await.unwrap_or_default();
 

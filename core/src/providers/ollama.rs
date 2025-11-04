@@ -80,7 +80,7 @@ impl Provider for OllamaProvider {
             .json(&body)
             .send()
             .await
-            .map_err(|e| ProviderError::NetworkError(e.to_string()))?;
+            .map_err(|e| ProviderError::NetworkError(e))?;
 
         let status = response.status().as_u16();
         if !response.status().is_success() {
@@ -89,7 +89,7 @@ impl Provider for OllamaProvider {
             return Err(ProviderError::ApiError { status, message: text });
         }
 
-        let text = response.text().await.map_err(|e| ProviderError::NetworkError(e.to_string()))?;
+        let text = response.text().await.map_err(|e| ProviderError::NetworkError(e))?;
 
         #[derive(Deserialize)]
         struct OllamaResponse {
@@ -131,7 +131,7 @@ impl Provider for OllamaProvider {
             .json(&body)
             .send()
             .await
-            .map_err(|e| ProviderError::NetworkError(e.to_string()))?;
+            .map_err(|e| ProviderError::NetworkError(e))?;
 
         if !response.status().is_success() {
             let status = response.status().as_u16();
@@ -152,7 +152,7 @@ impl Provider for OllamaProvider {
                     }
                     Ok(String::new())
                 }
-                Err(e) => Err(ProviderError::NetworkError(e.to_string())),
+                Err(e) => Err(ProviderError::NetworkError(e)),
             }
         });
 

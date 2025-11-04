@@ -15,10 +15,9 @@ use chrono::Utc;
 
 use crate::plugins::{
     types::{
-        PluginError, PluginInfo, PluginInput, PluginOutput, PluginManifest,
-        PluginMetadata, PluginType, PluginStatus, PluginCapability, ResourceLimits,
+        PluginError, PluginInfo, PluginMetadata, PluginConfig, PluginPermissions,
     },
-    api::{PluginApi, PluginHooks},
+    api::{PluginApi, PluginInput, PluginOutput, wasm_interface},
     runtime::{WasmRuntime, RuntimeConfig, WasmInstance},
     loader::PluginLoader,
 };

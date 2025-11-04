@@ -258,7 +258,7 @@ impl Provider for GoogleProvider {
             .json(&body)
             .send()
             .await
-            .map_err(|e| ProviderError::NetworkError(e.to_string()))?;
+            .map_err(|e| ProviderError::NetworkError(e))?;
 
         let status = response.status().as_u16();
 
@@ -270,7 +270,7 @@ impl Provider for GoogleProvider {
         }
 
         let text = response.text().await
-            .map_err(|e| ProviderError::NetworkError(e.to_string()))?;
+            .map_err(|e| ProviderError::NetworkError(e))?;
 
         self.parse_completion_response(&text)
     }
@@ -291,7 +291,7 @@ impl Provider for GoogleProvider {
             .json(&body)
             .send()
             .await
-            .map_err(|e| ProviderError::NetworkError(e.to_string()))?;
+            .map_err(|e| ProviderError::NetworkError(e))?;
 
         if !response.status().is_success() {
             let status = response.status().as_u16();
@@ -333,7 +333,7 @@ impl Provider for GoogleProvider {
                     }
                     Ok(String::new())
                 }
-                Err(e) => Err(ProviderError::NetworkError(e.to_string())),
+                Err(e) => Err(ProviderError::NetworkError(e)),
             }
         });
 

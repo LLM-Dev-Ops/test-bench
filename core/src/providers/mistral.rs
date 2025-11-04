@@ -78,7 +78,7 @@ impl Provider for MistralProvider {
             .json(&body)
             .send()
             .await
-            .map_err(|e| ProviderError::NetworkError(e.to_string()))?;
+            .map_err(|e| ProviderError::NetworkError(e))?;
 
         let status = response.status().as_u16();
 
@@ -88,7 +88,7 @@ impl Provider for MistralProvider {
             return Err(ProviderError::ApiError { status, message: text });
         }
 
-        let text = response.text().await.map_err(|e| ProviderError::NetworkError(e.to_string()))?;
+        let text = response.text().await.map_err(|e| ProviderError::NetworkError(e))?;
 
         #[derive(Deserialize)]
         struct MistralResponse {
@@ -150,7 +150,7 @@ impl Provider for MistralProvider {
             .json(&body)
             .send()
             .await
-            .map_err(|e| ProviderError::NetworkError(e.to_string()))?;
+            .map_err(|e| ProviderError::NetworkError(e))?;
 
         if !response.status().is_success() {
             let status = response.status().as_u16();
@@ -177,7 +177,7 @@ impl Provider for MistralProvider {
                     }
                     Ok(String::new())
                 }
-                Err(e) => Err(ProviderError::NetworkError(e.to_string())),
+                Err(e) => Err(ProviderError::NetworkError(e)),
             }
         });
 

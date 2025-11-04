@@ -115,9 +115,13 @@ impl WasmRuntime {
         let mut store = self.create_store(wasi_ctx)?;
 
         // Add WASI to linker if enabled
+        // TODO: Update to wasmtime 19.0 WASI API
+        // The WASI API has changed significantly in wasmtime 19.0
+        // For now, plugins will run without WASI support
         if self.config.enable_wasi {
-            wasmtime_wasi::command::add_to_linker::<StoreData>(&mut linker)
-                .context("Failed to add WASI to linker")?;
+            tracing::warn!("WASI support is temporarily disabled pending API migration to wasmtime 19.0");
+            // wasmtime_wasi::command::add_to_linker::<StoreData>(&mut linker)
+            //     .context("Failed to add WASI to linker")?;
         }
 
         // Instantiate the module

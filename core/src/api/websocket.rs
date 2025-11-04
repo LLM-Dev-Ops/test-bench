@@ -6,6 +6,7 @@
 
 //! WebSocket API implementation for real-time updates.
 
+use std::sync::Arc;
 use axum::{
     extract::{
         ws::{Message, WebSocket, WebSocketUpgrade},
@@ -15,7 +16,6 @@ use axum::{
 };
 use futures::{sink::SinkExt, stream::StreamExt};
 use serde::{Deserialize, Serialize};
-use std::sync::Arc;
 use tokio::sync::broadcast;
 use tracing::{debug, error, info, warn};
 
@@ -144,8 +144,9 @@ async fn handle_socket(socket: WebSocket, state: Arc<WsState>) {
     // Subscribe to broadcast channel
     let mut rx = state.tx.subscribe();
 
-    // Track subscribed topics for this connection
-    let mut subscribed_topics: Vec<String> = Vec::new();
+    // Track subscribed topics for this connection (shared between tasks)
+    let subscribed_topics = Arc::new(parking_lot::RwLock::new(Vec::<String>::new()));
+    let subscribed_topics_send = subscribed_topics.clone();
 
     // Send welcome message
     let welcome = WsMessage::Ack {
@@ -166,7 +167,8 @@ async fn handle_socket(socket: WebSocket, state: Arc<WsState>) {
             // Filter messages based on subscriptions
             let should_send = match &msg {
                 WsMessage::Event { topic, .. } => {
-                    subscribed_topics.is_empty() || subscribed_topics.contains(topic)
+                    let topics = subscribed_topics_send.read();
+                    topics.is_empty() || topics.contains(topic)
                 }
                 _ => true, // Always send non-event messages
             };
@@ -203,9 +205,10 @@ async fn handle_socket(socket: WebSocket, state: Arc<WsState>) {
                             match ws_msg {
                                 WsMessage::Subscribe { topics } => {
                                     info!("Client subscribing to topics: {:?}", topics);
+                                    let mut subs = subscribed_topics.write();
                                     for topic in &topics {
-                                        if !subscribed_topics.contains(topic) {
-                                            subscribed_topics.push(topic.clone());
+                                        if !subs.contains(topic) {
+                                            subs.push(topic.clone());
                                         }
                                     }
 
