@@ -6,9 +6,9 @@ LLM Test Bench provides comprehensive support for **13 LLM providers**, covering
 
 | Provider | Models | Streaming | Context Window | Use Case |
 |----------|--------|-----------|----------------|----------|
-| **OpenAI** | GPT-4, GPT-4 Turbo, GPT-3.5 | ✅ | Up to 128K | Industry-leading quality |
-| **Anthropic** | Claude 3 Opus, Sonnet, Haiku, Claude 3.5 | ✅ | Up to 200K | Long context, safety-focused |
-| **Google AI** | Gemini Pro, Gemini 1.5 Pro/Flash | ✅ | Up to 1M | Multimodal, massive context |
+| **OpenAI** | GPT-4o, o1, GPT-4 Turbo, GPT-3.5 (22+ models) | ✅ | Up to 128K | Industry-leading quality, reasoning |
+| **Anthropic** | Claude Sonnet 4, Claude 3.5, Claude 3 (11+ models) | ✅ | Up to 200K | Long context, safety-focused |
+| **Google AI** | Gemini 2.0, Gemini 1.5 Pro/Flash (13+ models) | ✅ | Up to 2M | Multimodal, massive context |
 | **Cohere** | Command, Command R/R+ | ✅ | Up to 128K | Enterprise RAG, search |
 | **Mistral AI** | Mistral 7B, Mixtral 8x7B, Large | ✅ | Up to 32K | Open weights, efficient |
 | **Azure OpenAI** | GPT-4, GPT-3.5 (Azure-hosted) | ✅ | Up to 128K | Enterprise compliance |
@@ -28,13 +28,38 @@ LLM Test Bench provides comprehensive support for **13 LLM providers**, covering
 
 **Most popular commercial LLM provider with industry-leading models.**
 
-#### Supported Models
-- `gpt-4` - Most capable model (8K context)
-- `gpt-4-32k` - Extended context (32K)
-- `gpt-4-turbo` - Latest, fastest GPT-4 (128K context)
+#### Supported Models (22+ models)
+
+**GPT-4o Series (Latest Multimodal Flagship)**
+- `gpt-4o` - Latest GPT-4o (128K context, vision, audio)
+- `gpt-4o-2024-11-20` - November 2024 snapshot
+- `gpt-4o-2024-08-06` - August 2024 snapshot
+- `gpt-4o-2024-05-13` - May 2024 snapshot
+- `gpt-4o-mini` - Faster, more affordable variant (128K context)
+- `gpt-4o-mini-2024-07-18` - July 2024 snapshot
+
+**o1 Series (Advanced Reasoning Models)**
+- `o1` - Latest reasoning model
+- `o1-preview` - Preview of o1 capabilities
+- `o1-preview-2024-09-12` - September 2024 snapshot
+- `o1-mini` - Smaller, faster reasoning model
+- `o1-mini-2024-09-12` - September 2024 snapshot
+
+**GPT-4 Turbo Series**
+- `gpt-4-turbo` - Latest GPT-4 Turbo (128K context)
+- `gpt-4-turbo-2024-04-09` - April 2024 snapshot
 - `gpt-4-turbo-preview` - Preview features
-- `gpt-3.5-turbo` - Fast, cost-effective (4K context)
-- `gpt-3.5-turbo-16k` - Extended context (16K)
+- `gpt-4-0125-preview` - January 2025 preview
+- `gpt-4-1106-preview` - November 2023 preview
+
+**GPT-4 Classic**
+- `gpt-4` - Original GPT-4 (8K context)
+- `gpt-4-0613` - June 2023 snapshot
+
+**GPT-3.5 Turbo**
+- `gpt-3.5-turbo` - Fast, cost-effective (16K context)
+- `gpt-3.5-turbo-0125` - January 2025 snapshot
+- `gpt-3.5-turbo-1106` - November 2023 snapshot
 
 #### Configuration
 ```toml
@@ -67,11 +92,24 @@ llm-test-bench compare \
 
 **Safety-focused provider with industry-leading context windows.**
 
-#### Supported Models
-- `claude-3-opus-20240229` - Most capable (200K context)
+#### Supported Models (11+ models)
+
+**Claude Sonnet 4 (Latest Generation)**
+- `claude-sonnet-4` - Latest Claude Sonnet 4
+- `claude-sonnet-4-20250514` - May 2025 snapshot
+
+**Claude 3.5 Series (Current Flagship)**
+- `claude-3-5-sonnet-latest` - Latest Claude 3.5 Sonnet (200K context)
+- `claude-3-5-sonnet-20241022` - October 2024 snapshot
+- `claude-3-5-sonnet-20240620` - June 2024 snapshot
+- `claude-3-5-haiku-latest` - Latest Claude 3.5 Haiku (fast, affordable)
+- `claude-3-5-haiku-20241022` - October 2024 snapshot
+
+**Claude 3 Series**
+- `claude-3-opus-latest` - Most capable Claude 3 (200K context)
+- `claude-3-opus-20240229` - February 2024 snapshot
 - `claude-3-sonnet-20240229` - Balanced performance (200K)
 - `claude-3-haiku-20240307` - Fast, affordable (200K)
-- `claude-3-5-sonnet-20240620` - Latest, most advanced (200K)
 
 #### Configuration
 ```toml
@@ -104,12 +142,28 @@ llm-test-bench compare \
 
 **Google's multimodal models with massive context windows.**
 
-#### Supported Models
-- `gemini-pro` - Balanced model (30K context)
-- `gemini-pro-vision` - Multimodal (30K)
-- `gemini-1.5-pro` - Advanced, 1M context
-- `gemini-1.5-flash` - Fast inference, 1M context
-- `gemini-ultra` - Most capable (30K)
+#### Supported Models (13+ models)
+
+**Gemini 2.0 Series (Latest Generation)**
+- `gemini-2.0-flash-exp` - Experimental Gemini 2.0 Flash (1M+ context)
+- `gemini-2.0-flash-thinking-exp-1219` - Extended thinking mode (experimental)
+
+**Gemini 1.5 Pro (Extended Context)**
+- `gemini-1.5-pro` - Latest Gemini 1.5 Pro (2M token context)
+- `gemini-1.5-pro-latest` - Always-latest pointer
+- `gemini-1.5-pro-002` - Version 002 (stable)
+- `gemini-1.5-pro-001` - Version 001
+
+**Gemini 1.5 Flash (Fast Variant)**
+- `gemini-1.5-flash` - Latest Gemini 1.5 Flash (1M token context)
+- `gemini-1.5-flash-latest` - Always-latest pointer
+- `gemini-1.5-flash-002` - Version 002 (stable)
+- `gemini-1.5-flash-001` - Version 001
+- `gemini-1.5-flash-8b` - Lightweight 8B parameter model
+
+**Gemini 1.0 Series**
+- `gemini-pro` - Original Gemini Pro (30K context)
+- `gemini-pro-vision` - Multimodal capabilities (30K context)
 
 #### Configuration
 ```toml

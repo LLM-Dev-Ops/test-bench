@@ -58,7 +58,7 @@ impl Default for Config {
             ProviderConfig {
                 api_key_env: "OPENAI_API_KEY".to_string(),
                 base_url: "https://api.openai.com/v1".to_string(),
-                default_model: "gpt-4-turbo".to_string(),
+                default_model: "gpt-4o".to_string(),  // Updated to latest GPT-4o
                 timeout_seconds: 30,
                 max_retries: 3,
                 rate_limit_rpm: None,
@@ -71,7 +71,20 @@ impl Default for Config {
             ProviderConfig {
                 api_key_env: "ANTHROPIC_API_KEY".to_string(),
                 base_url: "https://api.anthropic.com/v1".to_string(),
-                default_model: "claude-3-sonnet-20240229".to_string(),
+                default_model: "claude-3-5-sonnet-latest".to_string(),  // Updated to Claude 3.5 Sonnet
+                timeout_seconds: 30,
+                max_retries: 3,
+                rate_limit_rpm: None,
+            },
+        );
+
+        // Default Google provider
+        providers.insert(
+            "google".to_string(),
+            ProviderConfig {
+                api_key_env: "GOOGLE_API_KEY".to_string(),
+                base_url: "https://generativelanguage.googleapis.com/v1beta".to_string(),
+                default_model: "gemini-1.5-pro".to_string(),  // Added Google Gemini
                 timeout_seconds: 30,
                 max_retries: 3,
                 rate_limit_rpm: None,
@@ -348,6 +361,7 @@ mod tests {
         let config = Config::default();
         assert!(config.providers.contains_key("openai"));
         assert!(config.providers.contains_key("anthropic"));
+        assert!(config.providers.contains_key("google"));
     }
 
     #[test]

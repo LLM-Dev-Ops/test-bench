@@ -35,9 +35,24 @@ LLM Test Bench is a powerful, enterprise-grade framework built in Rust for compr
 ### Core Capabilities
 
 #### 🤖 Multi-Provider LLM Support
-- **OpenAI**: GPT-4, GPT-3.5-Turbo, GPT-4-Turbo
-- **Anthropic**: Claude 3 (Opus, Sonnet, Haiku), Claude 3.5 Sonnet
-- **Google**: Gemini Pro, Gemini Pro Vision
+
+**OpenAI (22+ models)**
+- GPT-4o, GPT-4o-mini (Latest multimodal flagships)
+- o1, o1-preview, o1-mini (Advanced reasoning models)
+- GPT-4 Turbo, GPT-4 (128K context)
+- GPT-3.5 Turbo
+
+**Anthropic (11+ models)**
+- Claude Sonnet 4 (Latest generation)
+- Claude 3.5 Sonnet, Claude 3.5 Haiku (Current flagships)
+- Claude 3 Opus, Sonnet, Haiku (200K context)
+
+**Google Gemini (13+ models)**
+- Gemini 2.0 Flash (Latest with extended thinking)
+- Gemini 1.5 Pro, Flash (2M+ token context)
+- Gemini Pro Vision (Multimodal)
+
+**Additional Providers**
 - **Azure OpenAI**: Enterprise-grade OpenAI models
 - **AWS Bedrock**: Claude, Llama, Titan, and more
 - **Open Source**: Ollama, Hugging Face, Together AI, Replicate

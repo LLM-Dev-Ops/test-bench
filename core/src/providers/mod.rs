@@ -127,6 +127,7 @@
 // Core modules
 pub mod error;
 pub mod factory;
+pub mod models;
 pub mod traits;
 pub mod types;
 
