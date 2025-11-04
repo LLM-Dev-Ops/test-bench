@@ -225,7 +225,7 @@ async fn handle_socket(socket: WebSocket, state: Arc<WsState>) {
                                 }
                                 WsMessage::Unsubscribe { topics } => {
                                     info!("Client unsubscribing from topics: {:?}", topics);
-                                    subscribed_topics.retain(|t| !topics.contains(t));
+                                    subscribed_topics.write().retain(|t| !topics.contains(t));
                                 }
                                 WsMessage::Ping { timestamp } => {
                                     debug!("Received ping at {}", timestamp);

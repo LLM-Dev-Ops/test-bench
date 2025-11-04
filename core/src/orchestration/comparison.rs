@@ -271,7 +271,7 @@ impl ComparisonEngine {
                 let cost = self.estimate_cost(&response, model_config);
 
                 // Evaluate the response
-                let evaluation_scores = self.evaluate_response(prompt, &response.content, config);
+                let evaluation_scores = self.evaluate_response(prompt, &response.content, config).await;
 
                 ModelResult {
                     model_config: model_config.clone(),
@@ -296,7 +296,7 @@ impl ComparisonEngine {
     }
 
     /// Evaluate a model's response using registered evaluators.
-    fn evaluate_response(
+    async fn evaluate_response(
         &self,
         prompt: &str,
         response: &str,
@@ -306,7 +306,7 @@ impl ComparisonEngine {
 
         for metric in &config.metrics {
             if let Some(evaluator) = self.evaluators.get(metric) {
-                match evaluator.evaluate(prompt, response) {
+                match evaluator.evaluate(prompt, response).await {
                     Ok(result) => {
                         scores.insert(metric.clone(), result.score);
                     }

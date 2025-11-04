@@ -197,8 +197,8 @@ impl Provider for OllamaProvider {
         let url = format!("{}/api/tags", self.base_url);
         match self.client.get(&url).send().await {
             Ok(resp) if resp.status().is_success() => Ok(()),
-            Ok(resp) => Err(ProviderError::NetworkError(format!("Ollama server returned status: {}", resp.status()))),
-            Err(e) => Err(ProviderError::NetworkError(format!("Cannot connect to Ollama: {}", e))),
+            Ok(resp) => Err(ProviderError::InvalidRequest(format!("Ollama server returned status: {}", resp.status()))),
+            Err(e) => Err(ProviderError::NetworkError(e)),
         }
     }
 

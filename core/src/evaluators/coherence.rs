@@ -361,7 +361,7 @@ Do not include any other text or explanation."#,
         let word_count = count_words(text);
 
         // Base score starts high
-        let mut score = 0.85;
+        let mut score: f64 = 0.85;
 
         // Penalize for violations
         for violation in violations {

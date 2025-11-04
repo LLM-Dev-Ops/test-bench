@@ -60,17 +60,16 @@ impl Provider for MonitoredProvider {
                 // Record successful request
                 self.monitoring.record_latency(provider_name, latency);
 
-                if let Some(ref usage) = response.usage {
-                    self.monitoring.record_tokens(
-                        provider_name,
-                        usage.prompt_tokens,
-                        usage.completion_tokens,
-                    );
+                // Record token usage
+                self.monitoring.record_tokens(
+                    provider_name,
+                    response.usage.prompt_tokens,
+                    response.usage.completion_tokens,
+                );
 
-                    // Estimate cost (simplified - should use actual pricing)
-                    let cost = Self::estimate_cost(&model, usage.prompt_tokens, usage.completion_tokens);
-                    self.monitoring.record_cost(provider_name, cost);
-                }
+                // Estimate cost (simplified - should use actual pricing)
+                let cost = Self::estimate_cost(&model, response.usage.prompt_tokens, response.usage.completion_tokens);
+                self.monitoring.record_cost(provider_name, cost);
 
                 // Emit detailed event
                 let event = MonitoringEvent::new(
@@ -80,14 +79,12 @@ impl Provider for MonitoredProvider {
                         model: model.clone(),
                         request_id: request_id.clone(),
                         latency: Some(latency),
-                        tokens: response.usage.as_ref().map(|u| TokenUsage {
-                            input_tokens: u.prompt_tokens,
-                            output_tokens: u.completion_tokens,
-                            total_tokens: u.total_tokens,
+                        tokens: Some(TokenUsage {
+                            input_tokens: response.usage.prompt_tokens,
+                            output_tokens: response.usage.completion_tokens,
+                            total_tokens: response.usage.total_tokens,
                         }),
-                        cost: response.usage.as_ref().map(|u| {
-                            Self::estimate_cost(&model, u.prompt_tokens, u.completion_tokens)
-                        }),
+                        cost: Some(Self::estimate_cost(&model, response.usage.prompt_tokens, response.usage.completion_tokens)),
                         error: None,
                     }),
                 );

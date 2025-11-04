@@ -227,7 +227,7 @@ impl ModelRouter {
 
         Ok(ModelSelection {
             model_config: selected.clone(),
-            reasoning,
+            reasoning: reasoning.clone(),
             expected_quality: profile.map(|p| p.typical_quality).unwrap_or(0.7),
             expected_latency_ms: profile.map(|p| p.avg_latency_ms).unwrap_or(1000),
             expected_cost: profile.map(|p| p.cost_per_1k_tokens * 0.1).unwrap_or(0.001),
