@@ -682,6 +682,7 @@ fn interpret_results(
             metric,
             t_result.p_value,
             effect_magnitude,
+            effect_size,
             metric,
             percent_change,
             baseline_mean,
@@ -692,7 +693,7 @@ fn interpret_results(
             "No statistically significant difference in {} (p={:.4}). \
              Effect size is {} (d={:.2}). \
              Observed change of {:.1}% could be due to random variation.",
-            metric, t_result.p_value, effect_magnitude, percent_change
+            metric, t_result.p_value, effect_magnitude, effect_size, percent_change
         )
     }
 }
