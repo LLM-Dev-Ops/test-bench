@@ -71,7 +71,7 @@ base64 = "0.21"  # Base64 encoding/decoding for images and audio
 prometheus = "0.13"  # Prometheus metrics export
 axum = { version = "0.7", features = ["ws", "macros"] }  # Web framework with WebSocket support
 tower = "0.4"  # Middleware and service utilities
-tower-http = { version = "0.5", features = ["cors", "trace"] }  # HTTP middleware
+tower-http = { version = "0.5", features = ["cors", "trace", "compression-full"] }  # HTTP middleware
 tokio-tungstenite = "0.21"  # WebSocket protocol
 parking_lot = "0.12"  # High-performance synchronization primitives
 
@@ -98,11 +98,15 @@ dashmap = "5.5"  # Concurrent hash map
 crossbeam = "0.8"  # Concurrent data structures and channels
 num_cpus = "1.16"  # CPU core detection
 
-# Database backend (PostgreSQL)
-sqlx = { version = "0.7", features = ["runtime-tokio", "postgres", "chrono", "uuid", "json", "migrate"] }
+# Database backend (PostgreSQL) - optional
+sqlx = { version = "0.7", features = ["runtime-tokio", "postgres", "chrono", "uuid", "json", "migrate"], optional = true }
 
 # Datasets integration
 llm-test-bench-datasets = { version = "0.1.0", path = "../datasets" }
+
+[features]
+default = []
+database = ["sqlx"]
 
 [dev-dependencies]
 tokio = { workspace = true, features = ["test-util"] }

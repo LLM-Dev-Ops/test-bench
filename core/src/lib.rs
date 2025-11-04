@@ -41,6 +41,7 @@ pub mod monitoring;
 pub mod plugins;
 pub mod api;
 pub mod distributed;
+#[cfg(feature = "database")]
 pub mod database;
 
 /// Library version
