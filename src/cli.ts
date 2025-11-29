@@ -23,7 +23,7 @@ async function main(): Promise<void> {
     console.error('');
     console.error('Please install the CLI using one of these methods:');
     console.error('  1. cargo install llm-test-bench');
-    console.error('  2. Download from https://github.com/globalbusinessadvisors/llm-test-bench/releases');
+    console.error('  2. Download from https://github.com/LLM-Dev-Ops/test-bench/releases');
     console.error('');
     console.error('Or set CARGO_HOME environment variable to point to your Rust installation.');
     process.exit(1);

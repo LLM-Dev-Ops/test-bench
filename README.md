@@ -6,7 +6,7 @@
 
 [![CI](https://img.shields.io/github/actions/workflow/status/globalbusinessadvisors/llm-test-bench/llm-benchmark.yml?branch=main&label=CI&logo=github)](https://github.com/globalbusinessadvisors/llm-test-bench/actions)
 [![Crates.io](https://img.shields.io/crates/v/llm-test-bench?logo=rust)](https://crates.io/crates/llm-test-bench)
-[![npm](https://img.shields.io/npm/v/llm-test-bench?logo=npm)](https://www.npmjs.com/package/llm-test-bench)
+[![npm](https://img.shields.io/npm/v/@llm-dev-ops/test-bench?logo=npm)](https://www.npmjs.com/package/@llm-dev-ops/test-bench)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Rust Version](https://img.shields.io/badge/rust-1.75%2B-blue.svg)](https://www.rust-lang.org)
 
@@ -146,10 +146,13 @@ llm-test-bench --version
 
 ```bash
 # Install globally
-npm install -g llm-test-bench
+npm install -g @llm-dev-ops/test-bench
 
 # Or use with npx (no installation required)
-npx llm-test-bench --help
+npx @llm-dev-ops/test-bench --help
+
+# Alias for convenience
+alias ltb='npx @llm-dev-ops/test-bench'
 ```
 
 #### Option 3: Build from Source

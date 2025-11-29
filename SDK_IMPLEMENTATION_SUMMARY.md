@@ -390,7 +390,7 @@ npm run build      # Successful build
 ### Basic Usage
 
 ```typescript
-import { LLMTestBench } from 'llm-test-bench';
+import { LLMTestBench } from '@llm-dev-ops/test-bench';
 
 const ltb = new LLMTestBench();
 
@@ -406,7 +406,7 @@ console.log(results.summary);
 ### Provider-Specific Client
 
 ```typescript
-import { LLMTestBench, ProviderClientFactory } from 'llm-test-bench';
+import { LLMTestBench, ProviderClientFactory } from '@llm-dev-ops/test-bench';
 
 const ltb = new LLMTestBench();
 const factory = new ProviderClientFactory(ltb);
@@ -419,7 +419,7 @@ console.log(response.content);
 ### Evaluation
 
 ```typescript
-import { LLMTestBench, createEvaluator } from 'llm-test-bench';
+import { LLMTestBench, createEvaluator } from '@llm-dev-ops/test-bench';
 
 const ltb = new LLMTestBench();
 const evaluator = createEvaluator(ltb);
