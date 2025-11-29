@@ -9,12 +9,13 @@
  */
 
 import { spawn } from 'child_process';
+
 import { findCLIPath } from './utils/cli-executor.js';
 
 /**
  * Main CLI function
  */
-async function main(): Promise<void> {
+function main(): void {
   // Find the CLI binary
   const cliPath = findCLIPath();
 
@@ -63,7 +64,9 @@ async function main(): Promise<void> {
 }
 
 // Run the CLI
-main().catch((err) => {
+try {
+  main();
+} catch (err) {
   console.error('Unexpected error:', err);
   process.exit(1);
-});
+}

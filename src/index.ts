@@ -45,4 +45,5 @@ export const VERSION = '0.1.2';
  * Default export for convenience
  */
 import { LLMTestBench } from './core/llm-test-bench.js';
+
 export default LLMTestBench;

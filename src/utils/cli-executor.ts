@@ -5,6 +5,7 @@
  */
 
 import { spawn } from 'child_process';
+
 import { CLIResult } from '../types/index.js';
 
 /**
@@ -46,7 +47,7 @@ export async function executeCLI<T = unknown>(
     let timedOut = false;
 
     const child = spawn(cliPath, options.args, {
-      cwd: options.cwd || process.cwd(),
+      cwd: options.cwd ?? process.cwd(),
       env: {
         ...process.env,
         ...options.env,

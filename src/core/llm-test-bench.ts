@@ -60,7 +60,7 @@ export class LLMTestBench {
    * @throws {Error} If CLI binary cannot be found
    */
   constructor(config: SDKConfig = {}) {
-    const resolvedCliPath = config.cliPath || findCLIPath();
+    const resolvedCliPath = config.cliPath ?? findCLIPath();
     if (!resolvedCliPath) {
       throw new Error(
         'LLM Test Bench CLI not found. Please install it via cargo or npm, or provide cliPath in config.'
@@ -70,10 +70,10 @@ export class LLMTestBench {
     this.cliPath = resolvedCliPath;
     this.config = {
       cliPath: resolvedCliPath,
-      workingDir: config.workingDir || process.cwd(),
+      workingDir: config.workingDir ?? process.cwd(),
       verbose: config.verbose ?? false,
-      env: config.env || {},
-      timeout: config.timeout || 120000, // 2 minutes default
+      env: config.env ?? {},
+      timeout: config.timeout ?? 120000, // 2 minutes default
     };
   }
 

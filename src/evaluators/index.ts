@@ -4,12 +4,12 @@
  * Provides convenient functions for evaluating LLM responses.
  */
 
+import { LLMTestBench } from '../core/llm-test-bench.js';
 import type {
   EvaluationConfig,
   CombinedEvaluationResults,
   EvaluatorType,
 } from '../types/index.js';
-import { LLMTestBench } from '../core/llm-test-bench.js';
 
 /**
  * Evaluator helper class
@@ -100,7 +100,7 @@ export class Evaluator {
     const config: EvaluationConfig = {
       evaluators: ['llm-as-judge'],
       customCriteria: options.criteria,
-      judgeModel: options.judgeModel || 'gpt-4',
+      judgeModel: options.judgeModel ?? 'gpt-4',
       referenceText: options.referenceText,
     };
 
