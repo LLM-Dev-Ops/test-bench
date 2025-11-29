@@ -1,8 +1,7 @@
 import { defineConfig } from 'tsup';
 
-// SDK package build configuration (no CLI)
 export default defineConfig({
-  entry: ['src/index.ts'],
+  entry: ['src/cli.ts'],
   format: ['esm'],
   dts: true,
   clean: true,
@@ -10,7 +9,6 @@ export default defineConfig({
   minify: false,
   splitting: false,
   treeshake: true,
-  external: ['openai'],
   platform: 'node',
   target: 'node18',
 });

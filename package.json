@@ -1,12 +1,9 @@
 {
-  "name": "@llm-dev-ops/test-bench",
+  "name": "@llm-dev-ops/test-bench-sdk",
   "version": "0.2.0",
-  "description": "A production-grade CLI framework for systematic testing, validation, and benchmarking of Large Language Model (LLM) applications",
+  "description": "TypeScript SDK for LLM Test Bench - A production-grade framework for testing, validation, and benchmarking of Large Language Models",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
-  "bin": {
-    "ltb": "./dist/cli.js"
-  },
   "type": "module",
   "engines": {
     "node": ">=18.0.0",

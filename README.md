@@ -6,7 +6,8 @@
 
 [![CI](https://img.shields.io/github/actions/workflow/status/globalbusinessadvisors/llm-test-bench/llm-benchmark.yml?branch=main&label=CI&logo=github)](https://github.com/globalbusinessadvisors/llm-test-bench/actions)
 [![Crates.io](https://img.shields.io/crates/v/llm-test-bench?logo=rust)](https://crates.io/crates/llm-test-bench)
-[![npm](https://img.shields.io/npm/v/@llm-dev-ops/test-bench?logo=npm)](https://www.npmjs.com/package/@llm-dev-ops/test-bench)
+[![npm SDK](https://img.shields.io/npm/v/@llm-dev-ops/test-bench-sdk?logo=npm&label=sdk)](https://www.npmjs.com/package/@llm-dev-ops/test-bench-sdk)
+[![npm CLI](https://img.shields.io/npm/v/@llm-dev-ops/test-bench-cli?logo=npm&label=cli)](https://www.npmjs.com/package/@llm-dev-ops/test-bench-cli)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Rust Version](https://img.shields.io/badge/rust-1.75%2B-blue.svg)](https://www.rust-lang.org)
 
@@ -144,15 +145,32 @@ llm-test-bench --version
 
 #### Option 2: Install via npm
 
+**CLI Package:**
 ```bash
-# Install globally
-npm install -g @llm-dev-ops/test-bench
+# Install CLI globally
+npm install -g @llm-dev-ops/test-bench-cli
 
 # Or use with npx (no installation required)
-npx @llm-dev-ops/test-bench --help
+npx @llm-dev-ops/test-bench-cli --help
 
-# Alias for convenience
-alias ltb='npx @llm-dev-ops/test-bench'
+# Use the ltb command
+ltb --version
+```
+
+**SDK Package (for programmatic use):**
+```bash
+# Install SDK in your project
+npm install @llm-dev-ops/test-bench-sdk
+
+# Use in TypeScript/JavaScript
+import { LLMTestBench } from '@llm-dev-ops/test-bench-sdk';
+
+const bench = new LLMTestBench();
+const results = await bench.benchmark({
+  provider: 'openai',
+  model: 'gpt-4',
+  prompts: ['Explain quantum computing']
+});
 ```
 
 #### Option 3: Build from Source

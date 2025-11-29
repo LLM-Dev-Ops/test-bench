@@ -1,0 +1,52 @@
+{
+  "name": "@llm-dev-ops/test-bench-cli",
+  "version": "0.2.0",
+  "description": "CLI wrapper for LLM Test Bench - A production-grade framework for testing and benchmarking Large Language Models",
+  "type": "module",
+  "bin": {
+    "ltb": "./dist/cli.js",
+    "llm-test-bench": "./dist/cli.js"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
+  },
+  "scripts": {
+    "build": "tsup",
+    "build:clean": "rm -rf dist && npm run build",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": [
+    "llm",
+    "testing",
+    "benchmark",
+    "cli",
+    "openai",
+    "anthropic",
+    "claude",
+    "gpt"
+  ],
+  "author": "LLM Test Bench Contributors",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/LLM-Dev-Ops/test-bench.git",
+    "directory": "cli-package"
+  },
+  "bugs": {
+    "url": "https://github.com/LLM-Dev-Ops/test-bench/issues"
+  },
+  "homepage": "https://github.com/LLM-Dev-Ops/test-bench#readme",
+  "publishConfig": {
+    "access": "public"
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "devDependencies": {
+    "@types/node": "^20.10.5",
+    "tsup": "^8.0.1",
+    "typescript": "^5.3.3"
+  }
+}
