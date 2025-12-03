@@ -104,9 +104,312 @@ sqlx = { version = "0.7", features = ["runtime-tokio", "postgres", "chrono", "uu
 # Datasets integration
 llm-test-bench-datasets = { version = "0.1.0", path = "../datasets" }
 
+# === Upstream Integration Dependencies (Phase 2B) ===
+# Provider SDKs
+async-openai = { workspace = true, optional = true }
+hf-hub = { workspace = true, optional = true }
+ollama-rs = { workspace = true, optional = true }
+
+# Observability
+opentelemetry = { workspace = true, optional = true }
+opentelemetry-semantic-conventions = { workspace = true, optional = true }
+opentelemetry-otlp = { workspace = true, optional = true }
+tracing-opentelemetry = { workspace = true, optional = true }
+
+# Evaluation Frameworks
+pyo3 = { workspace = true, optional = true }
+
+# Multi-Modal
+image = { workspace = true, optional = true }
+imageproc = { workspace = true, optional = true }
+rodio = { workspace = true, optional = true }
+hound = { workspace = true, optional = true }
+symphonia = { workspace = true, optional = true }
+
+# Storage
+lance = { workspace = true, optional = true }
+qdrant-client = { workspace = true, optional = true }
+redis = { workspace = true, optional = true }
+
+# Security & Privacy
+secrecy = { workspace = true, optional = true }
+
+# === LLM Dev Ops Suite Integration Dependencies (Phase 2B) ===
+# NOTE: These dependencies are commented out until the crates are published to crates.io
+# When available, uncomment the dependencies below and enable corresponding features
+# The feature flags remain active for structural preparation
+
+# Observability & Monitoring
+# llm-observatory = { workspace = true, optional = true }
+# llm-latency-lens = { workspace = true, optional = true }
+# llm-sentinel = { workspace = true, optional = true }
+
+# Configuration & Schema
+# llm-schema-registry = { workspace = true, optional = true }
+# llm-config-manager = { workspace = true, optional = true }
+
+# Integration & Connectivity
+# llm-connector-hub = { workspace = true, optional = true }
+# llm-inference-gateway = { workspace = true, optional = true }
+
+# Security & Policy
+# llm-shield = { workspace = true, optional = true }
+# llm-policy-engine = { workspace = true, optional = true }
+
+# Memory & Storage
+# llm-memory-graph = { workspace = true, optional = true }
+# llm-data-vault = { workspace = true, optional = true }
+
+# Development & Testing
+# llm-forge = { workspace = true, optional = true }
+# llm-simulator = { workspace = true, optional = true }
+# llm-benchmark-exchange = { workspace = true, optional = true }
+
+# Operations & Optimization
+# llm-auto-optimizer = { workspace = true, optional = true }
+# llm-incident-manager = { workspace = true, optional = true }
+# llm-cost-ops = { workspace = true, optional = true }
+# llm-orchestrator = { workspace = true, optional = true }
+
+# Governance & Registry
+# llm-governance-dashboard = { workspace = true, optional = true }
+# llm-registry = { workspace = true, optional = true }
+
+# Marketplace & Analytics
+# llm-marketplace = { workspace = true, optional = true }
+# llm-analytics-hub = { workspace = true, optional = true }
+
+# AI Assistance
+# llm-copilot-agent = { workspace = true, optional = true }
+
+# Advanced Features
+# llm-edge-agent = { workspace = true, optional = true }
+# llm-research-lab = { workspace = true, optional = true }
+
 [features]
 default = []
+
+# Existing features
 database = ["sqlx"]
+
+# === Individual Provider Features ===
+provider-google = []  # Implement via reqwest (no dedicated crate available)
+provider-openai-extended = ["dep:async-openai"]
+provider-huggingface = ["dep:hf-hub"]
+provider-ollama = ["dep:ollama-rs"]
+provider-cohere = []  # Implement via reqwest
+provider-mistral = []  # Implement via reqwest
+provider-together = []  # Implement via reqwest
+provider-replicate = []  # Implement via reqwest
+provider-vllm = []  # Implement via HTTP
+
+# === Provider Bundle ===
+all-providers = [
+    "provider-google",
+    "provider-openai-extended",
+    "provider-huggingface",
+    "provider-ollama",
+    "provider-cohere",
+    "provider-mistral",
+    "provider-together",
+    "provider-replicate",
+    "provider-vllm",
+]
+
+# === Observability Features ===
+observability-otel = [
+    "dep:opentelemetry",
+    "dep:opentelemetry-semantic-conventions",
+    "dep:opentelemetry-otlp",
+    "dep:tracing-opentelemetry",
+]
+observability-langsmith = []  # HTTP-based integration
+observability-phoenix = []  # HTTP-based integration
+observability-prometheus = []  # Already included in core
+
+# === Observability Bundle ===
+all-observability = [
+    "observability-otel",
+    "observability-langsmith",
+    "observability-phoenix",
+    "observability-prometheus",
+]
+
+# === Evaluation Features ===
+eval-python-bindings = ["dep:pyo3"]
+eval-ragas = ["eval-python-bindings"]
+eval-deepeval = ["eval-python-bindings"]
+eval-lm-harness = ["eval-python-bindings"]
+eval-helm = ["eval-python-bindings"]
+
+# === Evaluation Bundle ===
+all-eval = [
+    "eval-ragas",
+    "eval-deepeval",
+    "eval-lm-harness",
+    "eval-helm",
+]
+
+# === Multi-Modal Features ===
+multimodal-vision = ["dep:image", "dep:imageproc"]
+multimodal-audio = ["dep:rodio", "dep:hound", "dep:symphonia"]
+multimodal = ["multimodal-vision", "multimodal-audio"]
+
+# === Storage Features ===
+storage-lance = ["dep:lance"]
+storage-vector = ["dep:qdrant-client"]
+storage-redis = ["dep:redis"]
+storage-advanced = ["storage-lance", "storage-vector", "storage-redis"]
+
+# === Security Features ===
+security-crypto = ["dep:secrecy"]
+privacy-dp = ["security-crypto"]  # Differential privacy requires crypto
+
+# === Enterprise Bundle ===
+enterprise = [
+    "database",
+    "storage-advanced",
+    "security-crypto",
+    "privacy-dp",
+]
+
+# === Full Feature Set (Development/Testing) ===
+full = [
+    "all-providers",
+    "all-observability",
+    "all-eval",
+    "multimodal",
+    "enterprise",
+]
+
+# === CI/CD Feature (Common integrations only) ===
+ci = [
+    "provider-google",
+    "provider-ollama",
+    "observability-otel",
+    "multimodal-vision",
+]
+
+# === LLM Dev Ops Suite Integration Features (Phase 2B) ===
+# NOTE: Feature flags are ready for integration. When the dependencies are uncommented above,
+# uncomment the corresponding "dep:" lines below to activate each integration.
+
+# Observability & Monitoring Features
+suite-observatory = [] # Enable: ["dep:llm-observatory"]
+suite-latency-lens = [] # Enable: ["dep:llm-latency-lens"]
+suite-sentinel = [] # Enable: ["dep:llm-sentinel"]
+
+# Configuration & Schema Features
+suite-schema-registry = [] # Enable: ["dep:llm-schema-registry"]
+suite-config-manager = [] # Enable: ["dep:llm-config-manager"]
+
+# Integration & Connectivity Features
+suite-connector-hub = [] # Enable: ["dep:llm-connector-hub"]
+suite-inference-gateway = [] # Enable: ["dep:llm-inference-gateway"]
+
+# Security & Policy Features
+suite-shield = [] # Enable: ["dep:llm-shield"]
+suite-policy-engine = [] # Enable: ["dep:llm-policy-engine"]
+
+# Memory & Storage Features
+suite-memory-graph = [] # Enable: ["dep:llm-memory-graph"]
+suite-data-vault = [] # Enable: ["dep:llm-data-vault"]
+
+# Development & Testing Features
+suite-forge = [] # Enable: ["dep:llm-forge"]
+suite-simulator = [] # Enable: ["dep:llm-simulator"]
+suite-benchmark-exchange = [] # Enable: ["dep:llm-benchmark-exchange"]
+
+# Operations & Optimization Features
+suite-auto-optimizer = [] # Enable: ["dep:llm-auto-optimizer"]
+suite-incident-manager = [] # Enable: ["dep:llm-incident-manager"]
+suite-cost-ops = [] # Enable: ["dep:llm-cost-ops"]
+suite-orchestrator = [] # Enable: ["dep:llm-orchestrator"]
+
+# Governance & Registry Features
+suite-governance-dashboard = [] # Enable: ["dep:llm-governance-dashboard"]
+suite-registry = [] # Enable: ["dep:llm-registry"]
+
+# Marketplace & Analytics Features
+suite-marketplace = [] # Enable: ["dep:llm-marketplace"]
+suite-analytics-hub = [] # Enable: ["dep:llm-analytics-hub"]
+
+# AI Assistance Features
+suite-copilot-agent = [] # Enable: ["dep:llm-copilot-agent"]
+
+# Advanced Features
+suite-edge-agent = [] # Enable: ["dep:llm-edge-agent"]
+suite-research-lab = [] # Enable: ["dep:llm-research-lab"]
+
+# === Suite Bundle Features ===
+suite-observability = [
+    "suite-observatory",
+    "suite-latency-lens",
+    "suite-sentinel",
+]
+
+suite-config = [
+    "suite-schema-registry",
+    "suite-config-manager",
+]
+
+suite-integration = [
+    "suite-connector-hub",
+    "suite-inference-gateway",
+]
+
+suite-security = [
+    "suite-shield",
+    "suite-policy-engine",
+]
+
+suite-storage = [
+    "suite-memory-graph",
+    "suite-data-vault",
+]
+
+suite-development = [
+    "suite-forge",
+    "suite-simulator",
+    "suite-benchmark-exchange",
+]
+
+suite-operations = [
+    "suite-auto-optimizer",
+    "suite-incident-manager",
+    "suite-cost-ops",
+    "suite-orchestrator",
+]
+
+suite-governance = [
+    "suite-governance-dashboard",
+    "suite-registry",
+]
+
+suite-marketplace-bundle = [
+    "suite-marketplace",
+    "suite-analytics-hub",
+]
+
+suite-advanced = [
+    "suite-edge-agent",
+    "suite-research-lab",
+    "suite-copilot-agent",
+]
+
+# === All Suite Features ===
+suite-all = [
+    "suite-observability",
+    "suite-config",
+    "suite-integration",
+    "suite-security",
+    "suite-storage",
+    "suite-development",
+    "suite-operations",
+    "suite-governance",
+    "suite-marketplace-bundle",
+    "suite-advanced",
+]
 
 [dev-dependencies]
 tokio = { workspace = true, features = ["test-util"] }

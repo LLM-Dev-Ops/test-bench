@@ -85,6 +85,90 @@ predicates = "3.1"
 trycmd = "0.15"
 criterion = { version = "0.5", features = ["async_tokio"] }
 
+# === Upstream Integration Dependencies (Phase 2B) ===
+# Note: These are defined at workspace level but marked optional in dependent crates
+
+# === Provider SDKs ===
+async-openai = "0.20"
+hf-hub = "0.3"
+ollama-rs = "0.1"
+
+# === Observability ===
+opentelemetry = "0.21"
+opentelemetry-semantic-conventions = "0.13"
+opentelemetry-otlp = "0.14"
+tracing-opentelemetry = "0.22"
+
+# === Evaluation Frameworks ===
+pyo3 = "0.20"
+
+# === Multi-Modal ===
+image = "0.24"
+imageproc = "0.23"
+rodio = "0.17"
+hound = "3.5"
+symphonia = "0.5"
+
+# === Storage ===
+lance = "0.10"
+qdrant-client = "1.7"
+redis = { version = "0.24", features = ["tokio-comp", "connection-manager"] }
+
+# === Security & Privacy ===
+secrecy = "0.8"
+
+# === LLM Dev Ops Suite Integration Dependencies (Phase 2B) ===
+# NOTE: These dependencies are commented out until the crates are published to crates.io
+# When the crates become available, uncomment the relevant dependencies and enable the corresponding features
+# These represent the 25 repos in the LLM-Dev-Ops suite that test-bench will integrate with
+
+# Observability & Monitoring
+# llm-observatory = "0.1.0"
+# llm-latency-lens = "0.1.0"
+# llm-sentinel = "0.1.0"
+
+# Configuration & Schema
+# llm-schema-registry = "0.1.0"
+# llm-config-manager = "0.1.0"
+
+# Integration & Connectivity
+# llm-connector-hub = "0.1.0"
+# llm-inference-gateway = "0.1.0"
+
+# Security & Policy
+# llm-shield = "0.1.0"
+# llm-policy-engine = "0.1.0"
+
+# Memory & Storage
+# llm-memory-graph = "0.1.0"
+# llm-data-vault = "0.1.0"
+
+# Development & Testing
+# llm-forge = "0.1.0"
+# llm-simulator = "0.1.0"
+# llm-benchmark-exchange = "0.1.0"
+
+# Operations & Optimization
+# llm-auto-optimizer = "0.1.0"
+# llm-incident-manager = "0.1.0"
+# llm-cost-ops = "0.1.0"
+# llm-orchestrator = "0.1.0"
+
+# Governance & Registry
+# llm-governance-dashboard = "0.1.0"
+# llm-registry = "0.1.0"
+
+# Marketplace & Analytics
+# llm-marketplace = "0.1.0"
+# llm-analytics-hub = "0.1.0"
+
+# AI Assistance
+# llm-copilot-agent = "0.1.0"
+
+# Advanced Features
+# llm-edge-agent = "0.1.0"
+# llm-research-lab = "0.1.0"
+
 [profile.release]
 lto = true
 codegen-units = 1

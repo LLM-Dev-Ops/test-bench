@@ -18,8 +18,8 @@ name = "llm-test-bench"
 path = "src/main.rs"
 
 [dependencies]
-# Workspace crates
-llm-test-bench-core = { version = "0.1.0", path = "../core" }
+# Workspace crates (with default-features = false to allow feature selection)
+llm-test-bench-core = { version = "0.1.0", path = "../core", default-features = false }
 llm-test-bench-datasets = { version = "0.1.0", path = "../datasets" }
 
 # CLI framework
@@ -56,6 +56,103 @@ colored = { workspace = true }
 # Streaming
 futures = { workspace = true }
 futures-util = { workspace = true }
+
+[features]
+default = ["llm-test-bench-core/default"]
+
+# === Provider Features ===
+provider-google = ["llm-test-bench-core/provider-google"]
+provider-openai-extended = ["llm-test-bench-core/provider-openai-extended"]
+provider-huggingface = ["llm-test-bench-core/provider-huggingface"]
+provider-ollama = ["llm-test-bench-core/provider-ollama"]
+provider-cohere = ["llm-test-bench-core/provider-cohere"]
+provider-mistral = ["llm-test-bench-core/provider-mistral"]
+provider-together = ["llm-test-bench-core/provider-together"]
+provider-replicate = ["llm-test-bench-core/provider-replicate"]
+provider-vllm = ["llm-test-bench-core/provider-vllm"]
+
+# === Provider Bundles ===
+all-providers = ["llm-test-bench-core/all-providers"]
+
+# === Observability Features ===
+observability-otel = ["llm-test-bench-core/observability-otel"]
+observability-langsmith = ["llm-test-bench-core/observability-langsmith"]
+observability-phoenix = ["llm-test-bench-core/observability-phoenix"]
+observability-prometheus = ["llm-test-bench-core/observability-prometheus"]
+
+# === Observability Bundles ===
+all-observability = ["llm-test-bench-core/all-observability"]
+
+# === Evaluation Features ===
+eval-python-bindings = ["llm-test-bench-core/eval-python-bindings"]
+eval-ragas = ["llm-test-bench-core/eval-ragas"]
+eval-deepeval = ["llm-test-bench-core/eval-deepeval"]
+eval-lm-harness = ["llm-test-bench-core/eval-lm-harness"]
+eval-helm = ["llm-test-bench-core/eval-helm"]
+
+# === Evaluation Bundles ===
+all-eval = ["llm-test-bench-core/all-eval"]
+
+# === Multi-Modal Features ===
+multimodal-vision = ["llm-test-bench-core/multimodal-vision"]
+multimodal-audio = ["llm-test-bench-core/multimodal-audio"]
+multimodal = ["llm-test-bench-core/multimodal"]
+
+# === Storage Features ===
+storage-lance = ["llm-test-bench-core/storage-lance"]
+storage-vector = ["llm-test-bench-core/storage-vector"]
+storage-redis = ["llm-test-bench-core/storage-redis"]
+storage-advanced = ["llm-test-bench-core/storage-advanced"]
+
+# === Security Features ===
+security-crypto = ["llm-test-bench-core/security-crypto"]
+privacy-dp = ["llm-test-bench-core/privacy-dp"]
+
+# === Meta Bundles ===
+database = ["llm-test-bench-core/database"]
+enterprise = ["llm-test-bench-core/enterprise"]
+ci = ["llm-test-bench-core/ci"]
+full = ["llm-test-bench-core/full"]
+
+# === LLM Dev Ops Suite Features ===
+suite-observatory = ["llm-test-bench-core/suite-observatory"]
+suite-latency-lens = ["llm-test-bench-core/suite-latency-lens"]
+suite-sentinel = ["llm-test-bench-core/suite-sentinel"]
+suite-schema-registry = ["llm-test-bench-core/suite-schema-registry"]
+suite-config-manager = ["llm-test-bench-core/suite-config-manager"]
+suite-connector-hub = ["llm-test-bench-core/suite-connector-hub"]
+suite-inference-gateway = ["llm-test-bench-core/suite-inference-gateway"]
+suite-shield = ["llm-test-bench-core/suite-shield"]
+suite-policy-engine = ["llm-test-bench-core/suite-policy-engine"]
+suite-memory-graph = ["llm-test-bench-core/suite-memory-graph"]
+suite-data-vault = ["llm-test-bench-core/suite-data-vault"]
+suite-forge = ["llm-test-bench-core/suite-forge"]
+suite-simulator = ["llm-test-bench-core/suite-simulator"]
+suite-benchmark-exchange = ["llm-test-bench-core/suite-benchmark-exchange"]
+suite-auto-optimizer = ["llm-test-bench-core/suite-auto-optimizer"]
+suite-incident-manager = ["llm-test-bench-core/suite-incident-manager"]
+suite-cost-ops = ["llm-test-bench-core/suite-cost-ops"]
+suite-orchestrator = ["llm-test-bench-core/suite-orchestrator"]
+suite-governance-dashboard = ["llm-test-bench-core/suite-governance-dashboard"]
+suite-registry = ["llm-test-bench-core/suite-registry"]
+suite-marketplace = ["llm-test-bench-core/suite-marketplace"]
+suite-analytics-hub = ["llm-test-bench-core/suite-analytics-hub"]
+suite-copilot-agent = ["llm-test-bench-core/suite-copilot-agent"]
+suite-edge-agent = ["llm-test-bench-core/suite-edge-agent"]
+suite-research-lab = ["llm-test-bench-core/suite-research-lab"]
+
+# === Suite Bundle Features ===
+suite-observability = ["llm-test-bench-core/suite-observability"]
+suite-config = ["llm-test-bench-core/suite-config"]
+suite-integration = ["llm-test-bench-core/suite-integration"]
+suite-security = ["llm-test-bench-core/suite-security"]
+suite-storage = ["llm-test-bench-core/suite-storage"]
+suite-development = ["llm-test-bench-core/suite-development"]
+suite-operations = ["llm-test-bench-core/suite-operations"]
+suite-governance = ["llm-test-bench-core/suite-governance"]
+suite-marketplace-bundle = ["llm-test-bench-core/suite-marketplace-bundle"]
+suite-advanced = ["llm-test-bench-core/suite-advanced"]
+suite-all = ["llm-test-bench-core/suite-all"]
 
 [dev-dependencies]
 assert_cmd = { workspace = true }
