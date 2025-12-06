@@ -24,6 +24,17 @@
 //! - `api`: REST, GraphQL, and WebSocket API server
 //! - `distributed`: Coordinator-worker distributed architecture
 //! - `database`: PostgreSQL database backend
+//! - `infra`: LLM Dev Ops Infrastructure integration (Phase 2B)
+//!
+//! ## Infrastructure Integration
+//!
+//! Enable the `infra-core` feature for unified error handling, configuration,
+//! and tracing from the LLM-Dev-Ops/infra repository:
+//!
+//! ```toml
+//! [dependencies]
+//! llm-test-bench-core = { version = "0.1", features = ["infra-core"] }
+//! ```
 
 #![warn(missing_docs)]
 #![warn(clippy::all)]
@@ -43,6 +54,17 @@ pub mod api;
 pub mod distributed;
 #[cfg(feature = "database")]
 pub mod database;
+
+// LLM Dev Ops Infrastructure Integration (Phase 2B)
+// Enable via feature flags: infra-core, infra-testing, or infra-full
+#[cfg(any(
+    feature = "infra-errors-feature",
+    feature = "infra-config-feature",
+    feature = "infra-otel-feature",
+    feature = "infra-sim-feature",
+    feature = "infra-vector-feature"
+))]
+pub mod infra;
 
 /// Library version
 pub const VERSION: &str = env!("CARGO_PKG_VERSION");
@@ -72,6 +94,22 @@ pub mod prelude {
     pub use crate::database::{
         Database, DatabaseConfig, DatabaseError, DatabaseResult,
     };
+
+    // LLM Dev Ops Infra re-exports (Phase 2B)
+    #[cfg(feature = "infra-errors-feature")]
+    pub use infra_errors::{InfraError, InfraResult};
+
+    #[cfg(feature = "infra-config-feature")]
+    pub use infra_config::{ConfigLoader as InfraConfigLoader, ConfigFormat};
+
+    #[cfg(feature = "infra-otel-feature")]
+    pub use infra_otel::{OtelConfig, init as init_otel};
+
+    #[cfg(feature = "infra-sim-feature")]
+    pub use infra_sim::{MockBuilder, MockResponse, SimulatedClock};
+
+    #[cfg(feature = "infra-vector-feature")]
+    pub use infra_vector::{Vector, VectorIndex, cosine_similarity};
 }
 
 #[cfg(test)]

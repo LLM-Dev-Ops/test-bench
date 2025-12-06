@@ -104,13 +104,35 @@ sqlx = { version = "0.7", features = ["runtime-tokio", "postgres", "chrono", "uu
 # Datasets integration
 llm-test-bench-datasets = { version = "0.1.0", path = "../datasets" }
 
+# === LLM Dev Ops Infra Integration (Phase 2B - ACTIVE) ===
+# Foundation Layer (Layer 0) - Error handling
+infra-errors = { workspace = true, optional = true }
+
+# Utilities Layer (Layer 1) - Config, JSON, Crypto, ID
+infra-config = { workspace = true, optional = true }
+infra-json = { workspace = true, optional = true }
+infra-crypto = { workspace = true, optional = true }
+infra-id = { workspace = true, optional = true }
+
+# Services Layer (Layer 2) - Observability, HTTP, FS, Schema, Simulation, Audit
+infra-otel = { workspace = true, optional = true }
+infra-http = { workspace = true, optional = true }
+infra-fs = { workspace = true, optional = true }
+infra-schema = { workspace = true, optional = true }
+infra-sim = { workspace = true, optional = true }
+infra-audit = { workspace = true, optional = true }
+
+# Application Layer (Layer 3) - Vector operations, Auth
+infra-vector = { workspace = true, optional = true }
+infra-auth = { workspace = true, optional = true }
+
 # === Upstream Integration Dependencies (Phase 2B) ===
 # Provider SDKs
 async-openai = { workspace = true, optional = true }
 hf-hub = { workspace = true, optional = true }
 ollama-rs = { workspace = true, optional = true }
 
-# Observability
+# Observability (legacy - use infra-otel for new code)
 opentelemetry = { workspace = true, optional = true }
 opentelemetry-semantic-conventions = { workspace = true, optional = true }
 opentelemetry-otlp = { workspace = true, optional = true }
@@ -191,6 +213,56 @@ default = []
 
 # Existing features
 database = ["sqlx"]
+
+# === LLM Dev Ops Infra Features (Phase 2B - ACTIVE) ===
+# Foundation Layer
+infra-errors-feature = ["dep:infra-errors"]
+
+# Utilities Layer
+infra-config-feature = ["dep:infra-config", "infra-errors-feature"]
+infra-json-feature = ["dep:infra-json", "infra-errors-feature"]
+infra-crypto-feature = ["dep:infra-crypto", "infra-errors-feature"]
+infra-id-feature = ["dep:infra-id", "infra-errors-feature"]
+
+# Services Layer
+infra-otel-feature = ["dep:infra-otel", "infra-errors-feature"]
+infra-http-feature = ["dep:infra-http", "infra-errors-feature"]
+infra-fs-feature = ["dep:infra-fs", "infra-errors-feature"]
+infra-schema-feature = ["dep:infra-schema", "infra-errors-feature"]
+infra-sim-feature = ["dep:infra-sim", "infra-errors-feature"]
+infra-audit-feature = ["dep:infra-audit", "infra-errors-feature"]
+
+# Application Layer
+infra-vector-feature = ["dep:infra-vector", "infra-errors-feature"]
+infra-auth-feature = ["dep:infra-auth", "infra-errors-feature"]
+
+# Infra Bundle Features
+infra-core = [
+    "infra-errors-feature",
+    "infra-config-feature",
+    "infra-otel-feature",
+]
+
+infra-testing = [
+    "infra-sim-feature",
+    "infra-errors-feature",
+]
+
+infra-full = [
+    "infra-errors-feature",
+    "infra-config-feature",
+    "infra-json-feature",
+    "infra-crypto-feature",
+    "infra-id-feature",
+    "infra-otel-feature",
+    "infra-http-feature",
+    "infra-fs-feature",
+    "infra-schema-feature",
+    "infra-sim-feature",
+    "infra-audit-feature",
+    "infra-vector-feature",
+    "infra-auth-feature",
+]
 
 # === Individual Provider Features ===
 provider-google = []  # Implement via reqwest (no dedicated crate available)

@@ -117,7 +117,32 @@ redis = { version = "0.24", features = ["tokio-comp", "connection-manager"] }
 # === Security & Privacy ===
 secrecy = "0.8"
 
-# === LLM Dev Ops Suite Integration Dependencies (Phase 2B) ===
+# === LLM Dev Ops Infra Integration (Phase 2B - ACTIVE) ===
+# These dependencies connect test-bench to the shared infrastructure layer
+# Repository: https://github.com/LLM-Dev-Ops/infra
+
+# Foundation Layer (Layer 0)
+infra-errors = { git = "https://github.com/LLM-Dev-Ops/infra", version = "0.1.0" }
+
+# Utilities Layer (Layer 1)
+infra-config = { git = "https://github.com/LLM-Dev-Ops/infra", version = "0.1.0" }
+infra-json = { git = "https://github.com/LLM-Dev-Ops/infra", version = "0.1.0" }
+infra-crypto = { git = "https://github.com/LLM-Dev-Ops/infra", version = "0.1.0" }
+infra-id = { git = "https://github.com/LLM-Dev-Ops/infra", version = "0.1.0" }
+
+# Services Layer (Layer 2)
+infra-otel = { git = "https://github.com/LLM-Dev-Ops/infra", version = "0.1.0" }
+infra-http = { git = "https://github.com/LLM-Dev-Ops/infra", version = "0.1.0" }
+infra-fs = { git = "https://github.com/LLM-Dev-Ops/infra", version = "0.1.0" }
+infra-schema = { git = "https://github.com/LLM-Dev-Ops/infra", version = "0.1.0" }
+infra-sim = { git = "https://github.com/LLM-Dev-Ops/infra", version = "0.1.0" }
+infra-audit = { git = "https://github.com/LLM-Dev-Ops/infra", version = "0.1.0" }
+
+# Application Layer (Layer 3)
+infra-vector = { git = "https://github.com/LLM-Dev-Ops/infra", version = "0.1.0" }
+infra-auth = { git = "https://github.com/LLM-Dev-Ops/infra", version = "0.1.0" }
+
+# === LLM Dev Ops Suite Integration Dependencies (Phase 2B - PLACEHOLDER) ===
 # NOTE: These dependencies are commented out until the crates are published to crates.io
 # When the crates become available, uncomment the relevant dependencies and enable the corresponding features
 # These represent the 25 repos in the LLM-Dev-Ops suite that test-bench will integrate with
