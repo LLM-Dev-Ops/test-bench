@@ -126,6 +126,12 @@ infra-audit = { workspace = true, optional = true }
 infra-vector = { workspace = true, optional = true }
 infra-auth = { workspace = true, optional = true }
 
+# LLM-Specific Layer (Phase 2B) - Retry, Cache, Rate-Limit, LLM Client
+infra-retry = { workspace = true, optional = true }
+infra-cache = { workspace = true, optional = true }
+infra-rate-limit = { workspace = true, optional = true }
+infra-llm-client = { workspace = true, optional = true }
+
 # === Upstream Integration Dependencies (Phase 2B) ===
 # Provider SDKs
 async-openai = { workspace = true, optional = true }
@@ -236,6 +242,12 @@ infra-audit-feature = ["dep:infra-audit", "infra-errors-feature"]
 infra-vector-feature = ["dep:infra-vector", "infra-errors-feature"]
 infra-auth-feature = ["dep:infra-auth", "infra-errors-feature"]
 
+# LLM-Specific Layer (Phase 2B)
+infra-retry-feature = ["dep:infra-retry", "infra-errors-feature"]
+infra-cache-feature = ["dep:infra-cache", "infra-errors-feature"]
+infra-rate-limit-feature = ["dep:infra-rate-limit", "infra-errors-feature"]
+infra-llm-client-feature = ["dep:infra-llm-client", "infra-errors-feature", "infra-retry-feature", "infra-cache-feature", "infra-rate-limit-feature"]
+
 # Infra Bundle Features
 infra-core = [
     "infra-errors-feature",
@@ -262,6 +274,19 @@ infra-full = [
     "infra-audit-feature",
     "infra-vector-feature",
     "infra-auth-feature",
+    "infra-retry-feature",
+    "infra-cache-feature",
+    "infra-rate-limit-feature",
+    "infra-llm-client-feature",
+]
+
+# Infra LLM Bundle (Phase 2B) - All LLM-specific utilities
+infra-llm = [
+    "infra-errors-feature",
+    "infra-retry-feature",
+    "infra-cache-feature",
+    "infra-rate-limit-feature",
+    "infra-llm-client-feature",
 ]
 
 # === Individual Provider Features ===

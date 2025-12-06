@@ -168,3 +168,33 @@ pub use openai::OpenAIProvider;
 pub use perplexity::PerplexityProvider;
 pub use replicate::ReplicateProvider;
 pub use together::TogetherProvider;
+
+// === LLM Dev Ops Infra Integration (Phase 2B) ===
+//
+// When the `infra-llm` feature is enabled, providers can leverage:
+// - `infra-retry`: Advanced retry policies with exponential/linear/fibonacci backoff
+// - `infra-cache`: LRU response caching with TTL
+// - `infra-rate-limit`: Token bucket and sliding window rate limiters
+// - `infra-llm-client`: Unified client with built-in retry, cache, and rate limiting
+//
+// Example using infra utilities:
+// ```rust,ignore
+// use llm_test_bench_core::infra::prelude::*;
+//
+// // Create provider with infra rate limiting
+// let limiter = provider_limiter(ProviderType::OpenAI);
+// if limiter.try_acquire(estimated_tokens).is_allowed() {
+//     let response = provider.complete(request).await?;
+// }
+//
+// // Use infra retry policy
+// let response = retry_llm_call(|| async {
+//     provider.complete(request.clone()).await
+// }).await?;
+// ```
+
+#[cfg(feature = "infra-llm-client-feature")]
+pub mod infra_integration;
+
+#[cfg(feature = "infra-llm-client-feature")]
+pub use infra_integration::InfraEnhancedProvider;
