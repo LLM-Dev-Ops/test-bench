@@ -454,6 +454,8 @@ impl BenchmarkRunner {
         // Process test cases concurrently
         let results: Vec<TestResult> = stream::iter(&dataset.test_cases)
             .map(|test_case| {
+                // Clone test_case to avoid lifetime issues in async block
+                let test_case = test_case.clone();
                 let provider = Arc::clone(&provider);
                 let semaphore = Arc::clone(&semaphore);
                 let pb = pb.clone();
@@ -471,7 +473,7 @@ impl BenchmarkRunner {
                     }
 
                     // Run test case
-                    let result = Self::run_test_case(test_case, &provider, &config).await;
+                    let result = Self::run_test_case(&test_case, &provider, &config).await;
 
                     pb.inc(1);
                     result

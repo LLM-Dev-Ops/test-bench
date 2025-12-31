@@ -37,7 +37,8 @@
 //! ```
 
 use async_trait::async_trait;
-use llm_test_bench_datasets::{Dataset, DatasetLoader};
+use llm_test_bench_datasets::Dataset;
+use llm_test_bench_datasets::loader::DatasetLoader;
 use std::path::{Path, PathBuf};
 use thiserror::Error;
 

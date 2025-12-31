@@ -73,6 +73,10 @@ pub enum FleetRunnerError {
     #[error("IO error: {0}")]
     IoError(#[from] std::io::Error),
 
+    /// Serialization error
+    #[error("Serialization error: {0}")]
+    SerializationError(#[from] serde_json::Error),
+
     /// Repository execution failed
     #[error("Repository '{0}' execution failed: {1}")]
     RepositoryFailed(String, String),
@@ -335,38 +339,15 @@ impl FleetRunner {
     /// Aggregates individual benchmark results into fleet results.
     fn aggregate_results(
         &self,
-        manifest: &FleetManifest,
+        _manifest: &FleetManifest,
         benchmark_results: Vec<BenchmarkResults>,
-        run_id: String,
+        _run_id: String,
     ) -> FleetBenchmarkResults {
-        // Convert to repository results with proper metadata
-        let repository_results: Vec<RepositoryResults> = benchmark_results
-            .into_iter()
-            .enumerate()
-            .map(|(idx, br)| {
-                let repo_config = manifest.repositories.get(idx % manifest.repositories.len());
-                let repo_id = repo_config
-                    .map(|r| r.repo_id.clone())
-                    .unwrap_or_else(|| format!("repo-{}", idx));
-
-                let mut metadata = HashMap::new();
-                metadata.insert("run_id".to_string(), run_id.clone());
-
-                if let Some(config) = repo_config {
-                    metadata.insert("adapter".to_string(), config.adapter.clone());
-                }
-
-                RepositoryResults {
-                    repository_id: repo_id.clone(),
-                    repository_name: br.dataset_name.clone(),
-                    provider_name: br.provider_name.clone(),
-                    results: br,
-                    repository_metadata: metadata,
-                }
-            })
-            .collect();
-
-        FleetBenchmarkResults::from_repositories(manifest.fleet_id.clone(), repository_results)
+        // from_repositories handles the conversion internally
+        FleetBenchmarkResults::from_repositories(
+            _manifest.fleet_id.clone(),
+            benchmark_results,
+        )
     }
 
     /// Saves fleet results to disk in the specified formats.
@@ -394,9 +375,19 @@ impl FleetRunner {
                     let csv_dir = output_base.join("csv");
                     std::fs::create_dir_all(&csv_dir)?;
 
-                    let exporter = super::fleet_export::FleetCsvExporter::new(csv_dir);
-                    exporter
-                        .export(results)
+                    use super::fleet_export::FleetCsvExporter;
+
+                    FleetCsvExporter::export_summary(results, &csv_dir.join("fleet-summary.csv"))
+                        .map_err(|e| std::io::Error::new(std::io::ErrorKind::Other, e))?;
+                    FleetCsvExporter::export_repositories(results, &csv_dir.join("repositories.csv"))
+                        .map_err(|e| std::io::Error::new(std::io::ErrorKind::Other, e))?;
+                    FleetCsvExporter::export_providers(results, &csv_dir.join("providers.csv"))
+                        .map_err(|e| std::io::Error::new(std::io::ErrorKind::Other, e))?;
+                    FleetCsvExporter::export_categories(results, &csv_dir.join("categories.csv"))
+                        .map_err(|e| std::io::Error::new(std::io::ErrorKind::Other, e))?;
+                    FleetCsvExporter::export_executive_report(results, &csv_dir.join("executive-report.html"))
+                        .map_err(|e| std::io::Error::new(std::io::ErrorKind::Other, e))?;
+                    FleetCsvExporter::export_deterministic_json(results, &csv_dir.join("deterministic.json"))
                         .map_err(|e| std::io::Error::new(std::io::ErrorKind::Other, e))?;
                 }
                 _ => {

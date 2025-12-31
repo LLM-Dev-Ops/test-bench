@@ -290,6 +290,9 @@ impl FleetCsvExporter {
         let worst_repo = results.worst_repository();
         let failing_repos = results.failing_repositories(0.9);
 
+        // Format large numbers with commas for readability
+        let total_tokens_formatted = Self::format_number_with_commas(results.fleet_summary.total_tokens);
+
         format!(
             r#"<!DOCTYPE html>
 <html>
@@ -439,7 +442,7 @@ impl FleetCsvExporter {
             </tr>
             <tr>
                 <td>Total Tokens</td>
-                <td>{total_tokens:,}</td>
+                <td>{total_tokens_formatted}</td>
             </tr>
             <tr>
                 <td>Avg Tokens/Request</td>
@@ -490,7 +493,7 @@ impl FleetCsvExporter {
             p99 = results.fleet_summary.p99_duration_ms,
             min = results.fleet_summary.min_duration_ms,
             max = results.fleet_summary.max_duration_ms,
-            total_tokens = results.fleet_summary.total_tokens,
+            total_tokens_formatted = total_tokens_formatted,
             avg_tokens = results.fleet_summary.avg_tokens_per_request,
             provider_rows = Self::generate_provider_rows(results),
             best_worst_section = Self::generate_best_worst_section(best_repo, worst_repo),
@@ -612,6 +615,22 @@ impl FleetCsvExporter {
             failing.len(),
             rows
         )
+    }
+
+    /// Formats a number with thousand separators (commas).
+    fn format_number_with_commas(n: usize) -> String {
+        let s = n.to_string();
+        let mut result = String::new();
+        let chars: Vec<char> = s.chars().collect();
+
+        for (i, c) in chars.iter().enumerate() {
+            if i > 0 && (chars.len() - i) % 3 == 0 {
+                result.push(',');
+            }
+            result.push(*c);
+        }
+
+        result
     }
 
     /// Exports deterministic JSON output.

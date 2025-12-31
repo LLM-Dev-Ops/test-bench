@@ -423,121 +423,8 @@ impl FleetBenchmarkAPI {
         let config = self.config.clone();
 
         tokio::spawn(async move {
-            Self::execute_fleet_internal(manifest, config, artifact_base_dir).await
+            execute_fleet_internal(manifest, config, artifact_base_dir).await
         })
-    }
-
-    /// Internal execution logic (runs in background task).
-    async fn execute_fleet_internal(
-        manifest: FleetManifest,
-        fleet_config: FleetConfig,
-        artifact_base_dir: PathBuf,
-    ) -> Result<FleetBenchmarkResults, FleetError> {
-        use super::runner::BenchmarkResults;
-
-        // Load configuration
-        let config_loader = if let Some(config_path) = manifest
-            .config
-            .as_ref()
-            .and_then(|c| c.config_path.as_ref())
-            .or(fleet_config.config_path.as_ref())
-        {
-            ConfigLoader::new().with_file(config_path)
-        } else {
-            ConfigLoader::new()
-        };
-
-        let config = config_loader
-            .load()
-            .map_err(|e| FleetError::ConfigError(e.to_string()))?;
-
-        let factory = ProviderFactory::new();
-        let dataset_loader = DatasetLoader::new();
-
-        let mut all_results = Vec::new();
-
-        // Execute benchmarks for each repository-provider combination
-        for repo in &manifest.repositories {
-            for provider_name in &manifest.providers {
-                // Load dataset
-                let dataset = dataset_loader
-                    .load(&repo.dataset_path)
-                    .map_err(|e| FleetError::DatasetError(e.to_string()))?;
-
-                // Get provider configuration
-                let provider_config = config.providers.get(provider_name).ok_or_else(|| {
-                    FleetError::ConfigError(format!(
-                        "Provider '{}' not found in configuration",
-                        provider_name
-                    ))
-                })?;
-
-                // Create provider instance
-                let provider = factory
-                    .create_shared(provider_name, provider_config)
-                    .map_err(|e| FleetError::ConfigError(e.to_string()))?;
-
-                // Configure benchmark
-                let concurrency = manifest
-                    .config
-                    .as_ref()
-                    .and_then(|c| c.concurrency)
-                    .unwrap_or(fleet_config.default_concurrency);
-
-                let request_delay_ms = manifest
-                    .config
-                    .as_ref()
-                    .and_then(|c| c.request_delay_ms)
-                    .or(fleet_config.request_delay_ms);
-
-                let output_dir = artifact_base_dir.join(&repo.id).join(provider_name);
-                std::fs::create_dir_all(&output_dir)?;
-
-                let bench_config = BenchmarkConfig {
-                    concurrency,
-                    save_responses: fleet_config.save_responses,
-                    output_dir,
-                    continue_on_failure: fleet_config.continue_on_failure,
-                    random_seed: None,
-                    request_delay_ms,
-                };
-
-                // Run benchmark
-                let runner = BenchmarkRunner::new(bench_config);
-                let result = runner.run(&dataset, provider).await?;
-
-                all_results.push(result);
-            }
-        }
-
-        // Aggregate fleet results
-        let fleet_results =
-            FleetBenchmarkResults::from_repositories(manifest.fleet_id.clone(), all_results);
-
-        // Save fleet results
-        Self::save_fleet_results(&fleet_results, &artifact_base_dir).await?;
-
-        Ok(fleet_results)
-    }
-
-    /// Saves fleet results to disk.
-    async fn save_fleet_results(
-        results: &FleetBenchmarkResults,
-        base_dir: &Path,
-    ) -> Result<(), FleetError> {
-        // Save JSON
-        let json_path = base_dir.join("fleet-results.json");
-        let json = serde_json::to_string_pretty(results)
-            .map_err(|e| FleetError::IoError(std::io::Error::new(std::io::ErrorKind::InvalidData, e)))?;
-        tokio::fs::write(json_path, json).await?;
-
-        // Save CSV summary (using fleet exporter)
-        use super::fleet_export::FleetCsvExporter;
-        let csv_path = base_dir.join("fleet-summary.csv");
-        FleetCsvExporter::export_summary(results, &csv_path)
-            .map_err(|e| FleetError::IoError(std::io::Error::new(std::io::ErrorKind::Other, e)))?;
-
-        Ok(())
     }
 
     /// Retrieves fleet results for a given run ID.
@@ -597,6 +484,125 @@ impl FleetBenchmarkAPI {
 
         Ok(runs)
     }
+}
+
+/// Internal execution logic (runs in background task).
+async fn execute_fleet_internal(
+    manifest: FleetManifest,
+    fleet_config: FleetConfig,
+    artifact_base_dir: PathBuf,
+) -> Result<FleetBenchmarkResults, FleetError> {
+    use super::runner::BenchmarkResults;
+    use super::config::BenchmarkConfig;
+    use crate::config::ConfigLoader;
+    use crate::providers::ProviderFactory;
+    use llm_test_bench_datasets::loader::DatasetLoader;
+
+    // Load configuration
+    let config_loader = if let Some(config_path) = manifest
+        .config
+        .as_ref()
+        .and_then(|c| c.config_path.as_ref())
+        .or(fleet_config.config_path.as_ref())
+    {
+        ConfigLoader::new().with_file(config_path)
+    } else {
+        ConfigLoader::new()
+    };
+
+    let config = config_loader
+        .load()
+        .map_err(|e| FleetError::ConfigError(e.to_string()))?;
+
+    let factory = ProviderFactory::new();
+    let dataset_loader = DatasetLoader::new();
+
+    let mut all_results = Vec::new();
+
+    // Execute benchmarks for each repository-provider combination
+    for repo in &manifest.repositories {
+        for provider_name in &manifest.providers {
+            // Load dataset
+            let dataset = dataset_loader
+                .load(&repo.dataset_path)
+                .map_err(|e| FleetError::DatasetError(e.to_string()))?;
+
+            // Get provider configuration
+            let provider_config = config.providers.get(provider_name).ok_or_else(|| {
+                FleetError::ConfigError(format!(
+                    "Provider '{}' not found in configuration",
+                    provider_name
+                ))
+            })?;
+
+            // Create provider instance
+            let provider = factory
+                .create_shared(provider_name, provider_config)
+                .map_err(|e| FleetError::ConfigError(e.to_string()))?;
+
+            // Configure benchmark
+            let concurrency = manifest
+                .config
+                .as_ref()
+                .and_then(|c| c.concurrency)
+                .unwrap_or(fleet_config.default_concurrency);
+
+            let request_delay_ms = manifest
+                .config
+                .as_ref()
+                .and_then(|c| c.request_delay_ms)
+                .or(fleet_config.request_delay_ms);
+
+            let output_dir = artifact_base_dir.join(&repo.id).join(provider_name);
+            std::fs::create_dir_all(&output_dir)?;
+
+            let bench_config = BenchmarkConfig {
+                concurrency,
+                save_responses: fleet_config.save_responses,
+                output_dir,
+                continue_on_failure: fleet_config.continue_on_failure,
+                random_seed: None,
+                request_delay_ms,
+            };
+
+            // Run benchmark
+            // Clone dataset to avoid lifetime issues with tokio::spawn
+            let dataset_clone = dataset.clone();
+            let runner = super::runner::BenchmarkRunner::new(bench_config);
+            let result = runner.run(&dataset_clone, provider).await?;
+
+            all_results.push(result);
+        }
+    }
+
+    // Aggregate fleet results
+    let fleet_results =
+        super::fleet::FleetBenchmarkResults::from_repositories(manifest.fleet_id.clone(), all_results);
+
+    // Save fleet results
+    save_fleet_results(&fleet_results, &artifact_base_dir).await?;
+
+    Ok(fleet_results)
+}
+
+/// Saves fleet results to disk.
+async fn save_fleet_results(
+    results: &FleetBenchmarkResults,
+    base_dir: &Path,
+) -> Result<(), FleetError> {
+    // Save JSON
+    let json_path = base_dir.join("fleet-results.json");
+    let json = serde_json::to_string_pretty(results)
+        .map_err(|e| FleetError::IoError(std::io::Error::new(std::io::ErrorKind::InvalidData, e)))?;
+    tokio::fs::write(json_path, json).await?;
+
+    // Save CSV summary (using fleet exporter)
+    use super::fleet_export::FleetCsvExporter;
+    let csv_path = base_dir.join("fleet-summary.csv");
+    FleetCsvExporter::export_summary(results, &csv_path)
+        .map_err(|e| FleetError::IoError(std::io::Error::new(std::io::ErrorKind::Other, e)))?;
+
+    Ok(())
 }
 
 #[cfg(test)]
