@@ -57,3 +57,12 @@ Thumbs.db
 
 # Claude-Flow auto-generated telemetry (non-deterministic, runtime-only)
 .claude-flow/metrics/system-metrics.json
+
+# User-specific configuration (contains API keys)
+config.toml
+
+# Generated benchmark results
+fleet-results/
+
+# Generated diligence artifacts
+agentics-diligence-artifacts/
