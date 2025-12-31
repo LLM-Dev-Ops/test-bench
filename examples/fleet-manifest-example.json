@@ -1,0 +1,81 @@
+{
+  "fleet_id": "agentics-fleet-2025",
+  "version": "1.0",
+  "description": "Full Agentics system benchmark across multiple repositories",
+  "repositories": [
+    {
+      "repo_id": "test-bench",
+      "path": ".",
+      "adapter": "native",
+      "scenarios": ["coding", "reasoning", "multimodal"],
+      "metadata": {
+        "team": "core",
+        "priority": "high"
+      }
+    },
+    {
+      "repo_id": "external-repo-example",
+      "path": "./external-repos/sample-repo",
+      "git_url": "https://github.com/org/repo.git",
+      "adapter": "generic",
+      "scenarios": ["custom-scenario"],
+      "metadata": {
+        "team": "integrations",
+        "priority": "medium"
+      }
+    }
+  ],
+  "providers": [
+    "openai:gpt-4",
+    "anthropic:claude-3-opus-20240229",
+    "anthropic:claude-3-sonnet-20240229"
+  ],
+  "scenario_profiles": {
+    "coding": {
+      "dataset": "coding-tasks",
+      "concurrency": 5,
+      "num_examples": 100,
+      "request_delay_ms": 100,
+      "settings": {
+        "temperature": 0.7,
+        "max_tokens": 2000
+      }
+    },
+    "reasoning": {
+      "dataset": "reasoning-tasks",
+      "concurrency": 3,
+      "num_examples": 50,
+      "settings": {
+        "temperature": 0.0,
+        "max_tokens": 1500
+      }
+    },
+    "multimodal": {
+      "dataset": "multimodal-tasks",
+      "concurrency": 2,
+      "num_examples": 25,
+      "request_delay_ms": 200
+    },
+    "custom-scenario": {
+      "dataset": "custom-dataset",
+      "concurrency": 5,
+      "num_examples": 100
+    }
+  },
+  "output": {
+    "base_dir": "./fleet-results",
+    "formats": ["json", "csv", "html"],
+    "save_responses": true,
+    "generate_reports": true
+  },
+  "global_settings": {
+    "continue_on_failure": true,
+    "random_seed": 42,
+    "test_timeout_seconds": 120,
+    "max_retries": 3,
+    "custom": {
+      "enable_caching": "true",
+      "log_level": "info"
+    }
+  }
+}

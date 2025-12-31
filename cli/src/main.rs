@@ -5,7 +5,7 @@ mod commands;
 mod error;
 mod output;
 
-use commands::{analyze, bench, compare, config, dashboard, eval, optimize, test};
+use commands::{analyze, bench, compare, config, dashboard, eval, fleet, optimize, test};
 
 /// LLM Test Bench - Production-grade CLI for testing and benchmarking LLM applications
 #[derive(Parser)]
@@ -58,6 +58,10 @@ enum Commands {
     #[command(visible_alias = "o")]
     Optimize(optimize::OptimizeArgs),
 
+    /// Execute fleet benchmarks across multiple repositories
+    #[command(visible_alias = "f")]
+    Fleet(fleet::FleetArgs),
+
     /// Configuration management commands
     #[command(subcommand)]
     Config(config::ConfigCommands),
@@ -96,6 +100,7 @@ async fn main() {
         Commands::Dashboard(args) => dashboard::execute(args, cli.verbose).await,
         Commands::Analyze(args) => analyze::execute(args, cli.verbose).await,
         Commands::Optimize(args) => optimize::execute(args, cli.verbose).await,
+        Commands::Fleet(args) => fleet::execute(args, cli.verbose).await,
         Commands::Config(cmd) => config::execute(cmd, cli.verbose).await,
         Commands::Completions { shell } => {
             generate_completions(shell);

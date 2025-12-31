@@ -4,5 +4,6 @@ pub mod compare;
 pub mod config;
 pub mod dashboard;
 pub mod eval;
+pub mod fleet;
 pub mod optimize;
 pub mod test;

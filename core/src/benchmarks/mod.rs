@@ -111,6 +111,12 @@ pub mod reporter;
 pub mod results;
 pub mod export;
 pub mod storage;
+pub mod fleet;
+pub mod fleet_export;
+pub mod fleet_api;
+pub mod fleet_manifest;
+pub mod fleet_adapters;
+pub mod fleet_runner;
 
 pub use config::BenchmarkConfig;
 pub use reporter::BenchmarkReporter;
@@ -119,3 +125,25 @@ pub use export::CsvExporter;
 pub use storage::ResultStorage;
 // Re-export the calculate_percentile utility function
 pub use results::calculate_percentile;
+
+// Fleet-level exports
+pub use fleet::{
+    FleetBenchmarkResults, RepositoryResults, FleetSummary,
+    ProviderFleetStats, CategoryFleetStats, FleetMetadata,
+};
+pub use fleet_export::FleetCsvExporter;
+pub use fleet_api::{
+    FleetBenchmarkAPI, FleetConfig, FleetExecutionHandle, FleetError,
+    FleetManifest as ApiFleetManifest, RepositorySpec, FleetManifestConfig, FleetExecutionMetadata,
+};
+
+// Fleet orchestration exports (new manifest-based system)
+pub use fleet_manifest::{
+    FleetManifest, FleetManifestError, RepositoryConfig,
+    ScenarioProfile, OutputConfig, GlobalSettings,
+};
+pub use fleet_adapters::{
+    RepositoryAdapter, AdapterFactory, NativeAdapter, GenericAdapter,
+    AdapterError,
+};
+pub use fleet_runner::{FleetRunner, FleetRunnerError};

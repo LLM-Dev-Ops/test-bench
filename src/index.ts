@@ -10,6 +10,21 @@
 // Export main SDK class
 export { LLMTestBench } from './core/llm-test-bench.js';
 
+// Export Fleet Benchmark API
+export { FleetBenchmark } from './core/fleet-benchmark.js';
+export type {
+  FleetConfig,
+  FleetManifest,
+  RepositorySpec,
+  FleetManifestConfig,
+  FleetExecutionHandle,
+  FleetExecutionMetadata,
+  FleetBenchmarkResults,
+  FleetSummary,
+  ProviderFleetStats,
+  CategoryFleetStats,
+} from './core/fleet-benchmark.js';
+
 // Export provider clients
 export {
   ProviderClient,
