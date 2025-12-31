@@ -54,3 +54,6 @@ Thumbs.db
 # Misc
 .husky/_
 /target/
+
+# Claude-Flow auto-generated telemetry (non-deterministic, runtime-only)
+.claude-flow/metrics/system-metrics.json
