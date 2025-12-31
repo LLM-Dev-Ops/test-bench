@@ -1,0 +1,6 @@
+# Ignore all generated result directories
+enterprise-proof-v1-*/
+
+# Keep the README and this gitignore
+!README.md
+!.gitignore

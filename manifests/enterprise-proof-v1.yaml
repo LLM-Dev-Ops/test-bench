@@ -1,0 +1,122 @@
+# Enterprise Proof Benchmark - Version 1
+# =====================================
+#
+# PURPOSE:
+# This is the canonical, frozen benchmark configuration for enterprise
+# sales, due diligence, and technical validation. It is intentionally
+# conservative, small, and defensible.
+#
+# DO NOT MODIFY without executive approval.
+# This manifest is versioned and frozen for reproducibility.
+#
+# LAST REVIEWED: 2025-12-31
+# STATUS: FROZEN FOR ENTERPRISE USE
+
+fleet_id: enterprise-proof-v1
+version: "1.0"
+description: |
+  Canonical enterprise benchmark demonstrating LLM evaluation capabilities
+  across coding and reasoning tasks using industry-standard providers.
+
+  This benchmark is designed for:
+  - CTO technical reviews
+  - Enterprise buyer evaluation
+  - Due diligence processes
+  - Broker technical assessments
+
+repositories:
+  # Single repository: llm-test-bench itself
+  # Rationale: Proven, controlled, fully documented evaluation framework
+  - repo_id: llm-test-bench-core
+    path: "."
+    adapter: native
+    scenarios:
+      - enterprise-coding
+      - enterprise-reasoning
+    metadata:
+      tier: production
+      validation_status: approved
+      last_audit: 2025-12-31
+
+providers:
+  # Two industry-leading providers for comparison
+  # Rationale: Market leaders with enterprise support and SLAs
+  - openai:gpt-4
+  - anthropic:claude-3-opus-20240229
+
+scenario_profiles:
+  # Coding Scenario: Demonstrates technical code generation capability
+  enterprise-coding:
+    dataset: coding-tasks
+    concurrency: 3
+    num_examples: 50
+    request_delay_ms: 200
+    settings:
+      temperature: 0.0      # Deterministic for reproducibility
+      max_tokens: 1000      # Conservative token limit
+    metadata:
+      rationale: "Standard programming tasks (FizzBuzz, binary search, etc.)"
+      expected_duration_minutes: 8
+      cost_estimate_usd: 0.50
+
+  # Reasoning Scenario: Demonstrates logical problem-solving
+  enterprise-reasoning:
+    dataset: reasoning-tasks
+    concurrency: 2
+    num_examples: 30
+    request_delay_ms: 300
+    settings:
+      temperature: 0.0      # Deterministic
+      max_tokens: 800
+    metadata:
+      rationale: "Logic puzzles, math problems, pattern recognition"
+      expected_duration_minutes: 6
+      cost_estimate_usd: 0.30
+
+output:
+  base_dir: ./enterprise-evidence/enterprise-proof-v1
+  formats:
+    - json                  # For programmatic analysis
+    - csv                   # For spreadsheet review
+    - html                  # For executive dashboards
+  save_responses: true
+  generate_reports: true
+
+global_settings:
+  continue_on_failure: false    # Fail fast for quality control
+  random_seed: 42               # Deterministic execution
+  test_timeout_seconds: 180     # 3-minute timeout per test
+  max_retries: 2                # Conservative retry policy
+  custom:
+    log_level: info
+    enable_validation: "true"
+
+# METRICS TRACKED:
+# ----------------
+# - Success rate (per provider, per scenario)
+# - Latency (p50, p95, p99)
+# - Token consumption
+# - Cost per test
+# - Quality indicators (expected substring matching)
+#
+# WHAT THIS BENCHMARK CLAIMS:
+# ---------------------------
+# - Consistent LLM evaluation methodology
+# - Reproducible benchmarking across providers
+# - Deterministic metrics aggregation
+# - Multi-dimensional performance comparison
+#
+# WHAT THIS BENCHMARK DOES NOT CLAIM:
+# -----------------------------------
+# - Comprehensive coverage of all LLM capabilities
+# - Production-scale load testing
+# - Real-world application simulation
+# - Cost optimization recommendations
+#
+# EXECUTION:
+# ----------
+# llm-test-bench fleet manifests/enterprise-proof-v1.yaml
+#
+# Expected total runtime: ~15 minutes
+# Expected total cost: <$1.00 USD
+# Expected output: 160 test results (2 providers × 2 scenarios × 40 tests avg)
