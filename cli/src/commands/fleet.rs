@@ -103,7 +103,7 @@ pub async fn execute(args: FleetArgs, verbose: bool) -> Result<()> {
     let handle = api
         .execute_fleet_benchmark(&args.manifest)
         .await
-        .context("Failed to execute fleet benchmark")?;
+        .map_err(|e| anyhow::anyhow!("Failed to execute fleet benchmark: {}", e))?;
 
     // Display execution information
     print_execution_info(&handle, &args.format);

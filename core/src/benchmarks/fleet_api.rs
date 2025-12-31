@@ -42,6 +42,7 @@
 
 use super::config::BenchmarkConfig;
 use super::fleet::FleetBenchmarkResults;
+use super::fleet_manifest::{FleetManifest, RepositoryConfig, ScenarioProfile, OutputConfig, GlobalSettings};
 use super::runner::BenchmarkRunner;
 use super::BenchmarkError;
 use crate::config::ConfigLoader;
@@ -176,54 +177,6 @@ pub enum FleetError {
     DatasetError(String),
 }
 
-/// Fleet manifest structure.
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct FleetManifest {
-    /// Fleet identifier
-    pub fleet_id: String,
-
-    /// Fleet description
-    pub description: Option<String>,
-
-    /// Repositories to benchmark
-    pub repositories: Vec<RepositorySpec>,
-
-    /// Providers to benchmark against
-    pub providers: Vec<String>,
-
-    /// Fleet-level configuration overrides
-    pub config: Option<FleetManifestConfig>,
-}
-
-/// Repository specification in fleet manifest.
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct RepositorySpec {
-    /// Repository identifier
-    pub id: String,
-
-    /// Repository name
-    pub name: String,
-
-    /// Path to dataset file
-    pub dataset_path: PathBuf,
-
-    /// Repository-specific metadata
-    pub metadata: Option<HashMap<String, String>>,
-}
-
-/// Fleet manifest configuration.
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct FleetManifestConfig {
-    /// Concurrency override
-    pub concurrency: Option<usize>,
-
-    /// Request delay override
-    pub request_delay_ms: Option<u64>,
-
-    /// Configuration file override
-    pub config_path: Option<PathBuf>,
-}
-
 /// Programmatic API for executing fleet benchmarks.
 ///
 /// This API is designed to be consumed by simulators that need to trigger
@@ -345,8 +298,15 @@ impl FleetBenchmarkAPI {
             .await
             .map_err(|e| FleetError::ManifestLoadError(e.to_string()))?;
 
-        let manifest: FleetManifest = serde_json::from_str(&content)
-            .map_err(|e| FleetError::ManifestLoadError(format!("Invalid JSON: {}", e)))?;
+        // Support both JSON and YAML formats based on file extension
+        let manifest: FleetManifest = if manifest_path.extension().and_then(|s| s.to_str()) == Some("yaml")
+            || manifest_path.extension().and_then(|s| s.to_str()) == Some("yml") {
+            serde_yaml::from_str(&content)
+                .map_err(|e| FleetError::ManifestLoadError(format!("Invalid YAML: {}", e)))?
+        } else {
+            serde_json::from_str(&content)
+                .map_err(|e| FleetError::ManifestLoadError(format!("Invalid JSON: {}", e)))?
+        };
 
         Ok(manifest)
     }
@@ -373,11 +333,10 @@ impl FleetBenchmarkAPI {
 
         // Validate repository specs
         for repo in &manifest.repositories {
-            if repo.id.is_empty() {
-                return Err(FleetError::InvalidManifest(format!(
-                    "Repository ID cannot be empty for {}",
-                    repo.name
-                )));
+            if repo.repo_id.is_empty() {
+                return Err(FleetError::InvalidManifest(
+                    "Repository ID cannot be empty".to_string(),
+                ));
             }
         }
 
@@ -405,7 +364,7 @@ impl FleetBenchmarkAPI {
         // Per-repository artifacts
         for repo in &manifest.repositories {
             for provider in &manifest.providers {
-                let repo_dir = base_dir.join(&repo.id).join(provider);
+                let repo_dir = base_dir.join(&repo.repo_id).join(provider);
                 artifacts.push(repo_dir.join("results.json"));
                 artifacts.push(repo_dir.join("summary.csv"));
             }
@@ -486,6 +445,42 @@ impl FleetBenchmarkAPI {
     }
 }
 
+/// Resolves a dataset name to a full path by checking common locations.
+///
+/// Tries the following paths in order:
+/// 1. Exact path as specified
+/// 2. datasets/data/{name}.json
+/// 3. datasets/data/{name}.yaml
+/// 4. datasets/examples/{name}.json
+/// 5. datasets/examples/{name}.yaml
+fn resolve_dataset_path(repo_path: &Path, dataset_name: &str) -> Result<PathBuf, FleetError> {
+    let candidates = vec![
+        // Exact path (already has extension or full path)
+        repo_path.join(dataset_name),
+        // Common dataset locations with extensions
+        repo_path.join(format!("datasets/data/{}.json", dataset_name)),
+        repo_path.join(format!("datasets/data/{}.yaml", dataset_name)),
+        repo_path.join(format!("datasets/examples/{}.json", dataset_name)),
+        repo_path.join(format!("datasets/examples/{}.yaml", dataset_name)),
+    ];
+
+    for candidate in &candidates {
+        if candidate.exists() {
+            return Ok(candidate.clone());
+        }
+    }
+
+    // If no candidate found, return error with helpful message
+    Err(FleetError::DatasetError(format!(
+        "Could not find dataset '{}'. Tried locations: {}",
+        dataset_name,
+        candidates.iter()
+            .map(|p| p.display().to_string())
+            .collect::<Vec<_>>()
+            .join(", ")
+    )))
+}
+
 /// Internal execution logic (runs in background task).
 async fn execute_fleet_internal(
     manifest: FleetManifest,
@@ -499,12 +494,7 @@ async fn execute_fleet_internal(
     use llm_test_bench_datasets::loader::DatasetLoader;
 
     // Load configuration
-    let config_loader = if let Some(config_path) = manifest
-        .config
-        .as_ref()
-        .and_then(|c| c.config_path.as_ref())
-        .or(fleet_config.config_path.as_ref())
-    {
+    let config_loader = if let Some(config_path) = fleet_config.config_path.as_ref() {
         ConfigLoader::new().with_file(config_path)
     } else {
         ConfigLoader::new()
@@ -519,59 +509,93 @@ async fn execute_fleet_internal(
 
     let mut all_results = Vec::new();
 
-    // Execute benchmarks for each repository-provider combination
+    // Execute benchmarks for each repository-scenario-provider combination
     for repo in &manifest.repositories {
-        for provider_name in &manifest.providers {
-            // Load dataset
-            let dataset = dataset_loader
-                .load(&repo.dataset_path)
-                .map_err(|e| FleetError::DatasetError(e.to_string()))?;
-
-            // Get provider configuration
-            let provider_config = config.providers.get(provider_name).ok_or_else(|| {
-                FleetError::ConfigError(format!(
-                    "Provider '{}' not found in configuration",
-                    provider_name
+        for scenario in &repo.scenarios {
+            // Get scenario profile
+            let scenario_profile = manifest.scenario_profiles.get(scenario).ok_or_else(|| {
+                FleetError::InvalidManifest(format!(
+                    "Scenario '{}' not found in scenario_profiles",
+                    scenario
                 ))
             })?;
 
-            // Create provider instance
-            let provider = factory
-                .create_shared(provider_name, provider_config)
-                .map_err(|e| FleetError::ConfigError(e.to_string()))?;
+            // Resolve dataset path with common locations and extensions
+            let dataset_path = resolve_dataset_path(&repo.path, &scenario_profile.dataset)?;
 
-            // Configure benchmark
-            let concurrency = manifest
-                .config
-                .as_ref()
-                .and_then(|c| c.concurrency)
-                .unwrap_or(fleet_config.default_concurrency);
+            // Load dataset
+            let dataset = dataset_loader
+                .load(&dataset_path)
+                .map_err(|e| FleetError::DatasetError(format!(
+                    "Failed to load dataset '{}' for scenario '{}': {}",
+                    dataset_path.display(),
+                    scenario,
+                    e
+                )))?;
 
-            let request_delay_ms = manifest
-                .config
-                .as_ref()
-                .and_then(|c| c.request_delay_ms)
-                .or(fleet_config.request_delay_ms);
+            for provider_name in &manifest.providers {
+                // Parse provider name (format: "provider:model" or just "provider")
+                let parts: Vec<&str> = provider_name.split(':').collect();
+                let provider_key = parts[0];
+                let model_name = parts.get(1).copied();
 
-            let output_dir = artifact_base_dir.join(&repo.id).join(provider_name);
-            std::fs::create_dir_all(&output_dir)?;
+                // Get provider configuration
+                let base_config = config.providers.get(provider_key).ok_or_else(|| {
+                    FleetError::ConfigError(format!(
+                        "Provider '{}' not found in configuration (parsed from '{}')",
+                        provider_key,
+                        provider_name
+                    ))
+                })?;
 
-            let bench_config = BenchmarkConfig {
-                concurrency,
-                save_responses: fleet_config.save_responses,
-                output_dir,
-                continue_on_failure: fleet_config.continue_on_failure,
-                random_seed: None,
-                request_delay_ms,
-            };
+                // Clone config and override model if specified in manifest
+                let mut provider_config = base_config.clone();
+                if let Some(model) = model_name {
+                    provider_config.default_model = model.to_string();
+                }
 
-            // Run benchmark
-            // Clone dataset to avoid lifetime issues with tokio::spawn
-            let dataset_clone = dataset.clone();
-            let runner = super::runner::BenchmarkRunner::new(bench_config);
-            let result = runner.run(&dataset_clone, provider).await?;
+                // Create provider instance
+                let provider = factory
+                    .create_shared(provider_key, &provider_config)
+                    .map_err(|e| FleetError::ConfigError(e.to_string()))?;
 
-            all_results.push(result);
+                // Configure benchmark using scenario profile settings
+                let concurrency = scenario_profile
+                    .concurrency;
+
+                let request_delay_ms = scenario_profile
+                    .request_delay_ms
+                    .or(fleet_config.request_delay_ms);
+
+                let output_dir = artifact_base_dir
+                    .join(&repo.repo_id)
+                    .join(scenario)
+                    .join(provider_name);
+                std::fs::create_dir_all(&output_dir)?;
+
+                // Get random_seed from global_settings if available
+                let random_seed = manifest.global_settings.random_seed;
+
+                // Get continue_on_failure from global_settings
+                let continue_on_failure = manifest.global_settings.continue_on_failure;
+
+                let bench_config = BenchmarkConfig {
+                    concurrency,
+                    save_responses: fleet_config.save_responses,
+                    output_dir,
+                    continue_on_failure,
+                    random_seed,
+                    request_delay_ms,
+                };
+
+                // Run benchmark
+                // Clone dataset to avoid lifetime issues with tokio::spawn
+                let dataset_clone = dataset.clone();
+                let runner = super::runner::BenchmarkRunner::new(bench_config);
+                let result = runner.run(&dataset_clone, provider).await?;
+
+                all_results.push(result);
+            }
         }
     }
 
@@ -625,10 +649,18 @@ mod tests {
     fn test_generate_run_id() {
         let manifest = FleetManifest {
             fleet_id: "test-fleet".to_string(),
-            description: None,
+            version: "1.0".to_string(),
+            description: String::new(),
             repositories: vec![],
             providers: vec![],
-            config: None,
+            scenario_profiles: HashMap::new(),
+            output: OutputConfig {
+                base_dir: PathBuf::from("./results"),
+                formats: vec!["json".to_string()],
+                save_responses: true,
+                generate_reports: true,
+            },
+            global_settings: GlobalSettings::default(),
         };
 
         let config = FleetConfig::new(PathBuf::from("./results"));
@@ -646,15 +678,25 @@ mod tests {
         // Valid manifest
         let valid_manifest = FleetManifest {
             fleet_id: "test-fleet".to_string(),
-            description: Some("Test fleet".to_string()),
-            repositories: vec![RepositorySpec {
-                id: "repo1".to_string(),
-                name: "Test Repo".to_string(),
-                dataset_path: PathBuf::from("./dataset.json"),
-                metadata: None,
+            version: "1.0".to_string(),
+            description: "Test fleet".to_string(),
+            repositories: vec![RepositoryConfig {
+                repo_id: "repo1".to_string(),
+                path: PathBuf::from("."),
+                git_url: None,
+                adapter: "native".to_string(),
+                scenarios: vec!["test-scenario".to_string()],
+                metadata: HashMap::new(),
             }],
             providers: vec!["openai".to_string()],
-            config: None,
+            scenario_profiles: HashMap::new(),
+            output: OutputConfig {
+                base_dir: PathBuf::from("./results"),
+                formats: vec!["json".to_string()],
+                save_responses: true,
+                generate_reports: true,
+            },
+            global_settings: GlobalSettings::default(),
         };
 
         assert!(api.validate_manifest(&valid_manifest).is_ok());
@@ -662,10 +704,18 @@ mod tests {
         // Invalid: empty fleet_id
         let invalid_manifest = FleetManifest {
             fleet_id: "".to_string(),
-            description: None,
+            version: "1.0".to_string(),
+            description: String::new(),
             repositories: vec![],
             providers: vec![],
-            config: None,
+            scenario_profiles: HashMap::new(),
+            output: OutputConfig {
+                base_dir: PathBuf::from("./results"),
+                formats: vec!["json".to_string()],
+                save_responses: true,
+                generate_reports: true,
+            },
+            global_settings: GlobalSettings::default(),
         };
 
         assert!(api.validate_manifest(&invalid_manifest).is_err());

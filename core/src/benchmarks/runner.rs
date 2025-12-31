@@ -451,11 +451,12 @@ impl BenchmarkRunner {
         // Create semaphore for concurrency control
         let semaphore = Arc::new(Semaphore::new(self.config.concurrency));
 
+        // Clone test cases to avoid lifetime issues with async iteration
+        let test_cases = dataset.test_cases.clone();
+
         // Process test cases concurrently
-        let results: Vec<TestResult> = stream::iter(&dataset.test_cases)
+        let results: Vec<TestResult> = stream::iter(test_cases)
             .map(|test_case| {
-                // Clone test_case to avoid lifetime issues in async block
-                let test_case = test_case.clone();
                 let provider = Arc::clone(&provider);
                 let semaphore = Arc::clone(&semaphore);
                 let pb = pb.clone();

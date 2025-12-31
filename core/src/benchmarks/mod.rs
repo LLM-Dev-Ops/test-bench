@@ -134,7 +134,7 @@ pub use fleet::{
 pub use fleet_export::FleetCsvExporter;
 pub use fleet_api::{
     FleetBenchmarkAPI, FleetConfig, FleetExecutionHandle, FleetError,
-    FleetManifest as ApiFleetManifest, RepositorySpec, FleetManifestConfig, FleetExecutionMetadata,
+    FleetExecutionMetadata,
 };
 
 // Fleet orchestration exports (new manifest-based system)
