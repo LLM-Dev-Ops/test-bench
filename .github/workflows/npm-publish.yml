@@ -70,7 +70,7 @@ jobs:
         run: strip target/${{ matrix.target }}/release/${{ matrix.artifact_name }}
 
       - name: Upload binary
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v5
         with:
           name: ${{ matrix.target }}
           path: target/${{ matrix.target }}/release/${{ matrix.artifact_name }}
