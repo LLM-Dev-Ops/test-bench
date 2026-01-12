@@ -76,7 +76,7 @@ jobs:
             --output benchmark-dashboard.html
 
       - name: Upload benchmark results
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         if: always()
         with:
           name: benchmark-results-${{ github.run_number }}
@@ -163,7 +163,7 @@ jobs:
             --output cost-optimization-report.json
 
       - name: Upload optimization report
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: cost-optimization-${{ github.run_number }}
           path: cost-optimization-report.json
