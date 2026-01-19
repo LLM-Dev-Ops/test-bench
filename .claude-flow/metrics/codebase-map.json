@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-01-19T01:16:14.162Z",
+  "timestamp": "2026-01-19T01:46:14.284Z",
   "projectRoot": "/workspaces/test-bench",
   "structure": {
     "hasPackageJson": true,
@@ -7,5 +7,5 @@
     "hasClaudeConfig": true,
     "hasClaudeFlow": true
   },
-  "scannedAt": 1768785374162
+  "scannedAt": 1768787174284
 }
