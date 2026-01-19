@@ -1,0 +1,11 @@
+{
+  "timestamp": "2026-01-19T01:16:14.162Z",
+  "projectRoot": "/workspaces/test-bench",
+  "structure": {
+    "hasPackageJson": true,
+    "hasTsConfig": true,
+    "hasClaudeConfig": true,
+    "hasClaudeFlow": true
+  },
+  "scannedAt": 1768785374162
+}

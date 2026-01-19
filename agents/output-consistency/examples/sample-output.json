@@ -1,0 +1,159 @@
+{
+  "success": true,
+  "decision_id": "550e8400-e29b-41d4-a716-446655440100",
+  "data": {
+    "analysis_id": "550e8400-e29b-41d4-a716-446655440200",
+    "results": [
+      {
+        "group_id": "math-simple-1",
+        "provider_name": "openai",
+        "model_id": "gpt-4",
+        "output_count": 3,
+        "consistency_score": 1.0,
+        "is_consistent": true,
+        "similarity_scores": {
+          "primary_score": 1.0,
+          "primary_method": "jaccard_tokens"
+        },
+        "token_analysis": {
+          "avg_token_count": 1,
+          "min_token_count": 1,
+          "max_token_count": 1,
+          "stddev_token_count": 0,
+          "cv_token_count": 0,
+          "common_token_count": 1,
+          "total_unique_tokens": 1
+        },
+        "representative_output_index": 0,
+        "most_divergent_output_index": 0,
+        "max_divergence_score": 0,
+        "prompt_hash": "a1b2c3d4e5f6g7h8",
+        "analyzed_at": "2024-01-15T10:05:00Z"
+      },
+      {
+        "group_id": "creative-story-1",
+        "provider_name": "openai",
+        "model_id": "gpt-4",
+        "output_count": 3,
+        "consistency_score": 0.42,
+        "is_consistent": false,
+        "similarity_scores": {
+          "primary_score": 0.42,
+          "primary_method": "jaccard_tokens"
+        },
+        "token_analysis": {
+          "avg_token_count": 14.33,
+          "min_token_count": 12,
+          "max_token_count": 17,
+          "stddev_token_count": 2.05,
+          "cv_token_count": 0.143,
+          "common_token_count": 2,
+          "total_unique_tokens": 35
+        },
+        "representative_output_index": 0,
+        "most_divergent_output_index": 2,
+        "max_divergence_score": 0.65,
+        "prompt_hash": "b2c3d4e5f6g7h8i9",
+        "analyzed_at": "2024-01-15T10:05:01Z"
+      },
+      {
+        "group_id": "json-format-1",
+        "provider_name": "anthropic",
+        "model_id": "claude-3",
+        "output_count": 3,
+        "consistency_score": 0.857,
+        "is_consistent": true,
+        "similarity_scores": {
+          "primary_score": 0.857,
+          "primary_method": "jaccard_tokens"
+        },
+        "token_analysis": {
+          "avg_token_count": 8.33,
+          "min_token_count": 8,
+          "max_token_count": 9,
+          "stddev_token_count": 0.47,
+          "cv_token_count": 0.056,
+          "common_token_count": 6,
+          "total_unique_tokens": 7
+        },
+        "representative_output_index": 0,
+        "most_divergent_output_index": 2,
+        "max_divergence_score": 0.143,
+        "prompt_hash": "c3d4e5f6g7h8i9j0",
+        "analyzed_at": "2024-01-15T10:05:02Z"
+      }
+    ],
+    "model_stats": [
+      {
+        "provider_name": "openai",
+        "model_id": "gpt-4",
+        "groups_analyzed": 2,
+        "outputs_analyzed": 6,
+        "avg_consistency_score": 0.71,
+        "min_consistency_score": 0.42,
+        "max_consistency_score": 1.0,
+        "stddev_consistency_score": 0.29,
+        "p50_consistency_score": 0.71,
+        "p95_consistency_score": 1.0,
+        "p99_consistency_score": 1.0,
+        "consistent_groups": 1,
+        "consistency_rate": 0.5,
+        "avg_token_variance": 0.072
+      },
+      {
+        "provider_name": "anthropic",
+        "model_id": "claude-3",
+        "groups_analyzed": 1,
+        "outputs_analyzed": 3,
+        "avg_consistency_score": 0.857,
+        "min_consistency_score": 0.857,
+        "max_consistency_score": 0.857,
+        "stddev_consistency_score": 0,
+        "p50_consistency_score": 0.857,
+        "p95_consistency_score": 0.857,
+        "p99_consistency_score": 0.857,
+        "consistent_groups": 1,
+        "consistency_rate": 1.0,
+        "avg_token_variance": 0.056
+      }
+    ],
+    "summary": {
+      "total_groups_analyzed": 3,
+      "total_outputs_analyzed": 9,
+      "total_models_evaluated": 2,
+      "overall_avg_consistency": 0.759,
+      "overall_consistency_rate": 0.667,
+      "most_consistent_model": {
+        "provider_name": "anthropic",
+        "model_id": "claude-3",
+        "avg_score": 0.857
+      },
+      "least_consistent_model": {
+        "provider_name": "openai",
+        "model_id": "gpt-4",
+        "avg_score": 0.71
+      },
+      "consistency_distribution": {
+        "highly_consistent": 1,
+        "consistent": 1,
+        "moderate": 0,
+        "inconsistent": 0,
+        "highly_inconsistent": 1
+      }
+    },
+    "config_used": {
+      "similarity_method": "jaccard_tokens",
+      "ngram_size": 3,
+      "consistency_threshold": 0.85,
+      "normalize_whitespace": true,
+      "case_sensitive": false,
+      "trim_content": true,
+      "include_token_analysis": true,
+      "include_char_variance": false,
+      "compute_pairwise_matrix": false
+    },
+    "started_at": "2024-01-15T10:05:00Z",
+    "completed_at": "2024-01-15T10:05:03Z",
+    "duration_ms": 3000
+  }
+}

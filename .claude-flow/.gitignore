@@ -1,0 +1,11 @@
+# Claude Flow runtime files
+data/
+logs/
+sessions/
+neural/
+*.log
+*.tmp
+
+# Daemon runtime files
+daemon.pid
+daemon-state.json

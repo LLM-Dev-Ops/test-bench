@@ -1,0 +1,109 @@
+{
+  "execution_groups": [
+    {
+      "group_id": "math-simple-1",
+      "prompt": "What is 2 + 2? Answer with just the number.",
+      "provider_name": "openai",
+      "model_id": "gpt-4",
+      "outputs": [
+        {
+          "output_id": "550e8400-e29b-41d4-a716-446655440001",
+          "content": "4",
+          "execution_number": 1,
+          "executed_at": "2024-01-15T10:00:00Z",
+          "latency_ms": 245,
+          "temperature": 0.0
+        },
+        {
+          "output_id": "550e8400-e29b-41d4-a716-446655440002",
+          "content": "4",
+          "execution_number": 2,
+          "executed_at": "2024-01-15T10:00:05Z",
+          "latency_ms": 238,
+          "temperature": 0.0
+        },
+        {
+          "output_id": "550e8400-e29b-41d4-a716-446655440003",
+          "content": "4",
+          "execution_number": 3,
+          "executed_at": "2024-01-15T10:00:10Z",
+          "latency_ms": 251,
+          "temperature": 0.0
+        }
+      ]
+    },
+    {
+      "group_id": "creative-story-1",
+      "prompt": "Write a one-sentence story about a cat.",
+      "provider_name": "openai",
+      "model_id": "gpt-4",
+      "outputs": [
+        {
+          "output_id": "550e8400-e29b-41d4-a716-446655440004",
+          "content": "The curious orange cat leaped onto the windowsill, watching the birds with intense fascination.",
+          "execution_number": 1,
+          "executed_at": "2024-01-15T10:01:00Z",
+          "latency_ms": 892,
+          "temperature": 0.7
+        },
+        {
+          "output_id": "550e8400-e29b-41d4-a716-446655440005",
+          "content": "A sleepy gray cat stretched luxuriously in a patch of warm afternoon sunlight.",
+          "execution_number": 2,
+          "executed_at": "2024-01-15T10:01:10Z",
+          "latency_ms": 876,
+          "temperature": 0.7
+        },
+        {
+          "output_id": "550e8400-e29b-41d4-a716-446655440006",
+          "content": "The mischievous tabby cat knocked a vase off the shelf and ran away without a trace of guilt.",
+          "execution_number": 3,
+          "executed_at": "2024-01-15T10:01:20Z",
+          "latency_ms": 901,
+          "temperature": 0.7
+        }
+      ]
+    },
+    {
+      "group_id": "json-format-1",
+      "prompt": "Return a JSON object with keys 'name' and 'age' for a person named John who is 30.",
+      "provider_name": "anthropic",
+      "model_id": "claude-3",
+      "outputs": [
+        {
+          "output_id": "550e8400-e29b-41d4-a716-446655440007",
+          "content": "{\"name\": \"John\", \"age\": 30}",
+          "execution_number": 1,
+          "executed_at": "2024-01-15T10:02:00Z",
+          "latency_ms": 312,
+          "temperature": 0.0
+        },
+        {
+          "output_id": "550e8400-e29b-41d4-a716-446655440008",
+          "content": "{\"name\": \"John\", \"age\": 30}",
+          "execution_number": 2,
+          "executed_at": "2024-01-15T10:02:05Z",
+          "latency_ms": 298,
+          "temperature": 0.0
+        },
+        {
+          "output_id": "550e8400-e29b-41d4-a716-446655440009",
+          "content": "{ \"name\": \"John\", \"age\": 30 }",
+          "execution_number": 3,
+          "executed_at": "2024-01-15T10:02:10Z",
+          "latency_ms": 305,
+          "temperature": 0.0
+        }
+      ]
+    }
+  ],
+  "config": {
+    "similarity_method": "jaccard_tokens",
+    "consistency_threshold": 0.85,
+    "normalize_whitespace": true,
+    "case_sensitive": false,
+    "include_token_analysis": true,
+    "include_char_variance": false,
+    "compute_pairwise_matrix": false
+  }
+}

@@ -1,0 +1,58 @@
+{
+  "$schema": "../../../contracts/schemas/benchmark-runner.json",
+  "providers": [
+    {
+      "provider_name": "openai",
+      "model_id": "gpt-4o-mini",
+      "api_key_ref": "openai",
+      "timeout_ms": 30000,
+      "max_retries": 3
+    },
+    {
+      "provider_name": "anthropic",
+      "model_id": "claude-3-5-haiku-20241022",
+      "api_key_ref": "anthropic",
+      "timeout_ms": 30000,
+      "max_retries": 3
+    }
+  ],
+  "suite": {
+    "suite_id": "basic-qa-benchmark",
+    "suite_name": "Basic Q&A Benchmark",
+    "description": "Simple question-answering benchmark for comparing model performance",
+    "test_cases": [
+      {
+        "test_id": "qa-simple-1",
+        "prompt": "What is the capital of France?",
+        "expected_output": "Paris",
+        "max_tokens": 50,
+        "temperature": 0
+      },
+      {
+        "test_id": "qa-simple-2",
+        "prompt": "What is 2 + 2?",
+        "expected_output": "4",
+        "max_tokens": 10,
+        "temperature": 0
+      },
+      {
+        "test_id": "qa-reasoning-1",
+        "prompt": "If a train travels at 60 mph for 2 hours, how far does it travel?",
+        "expected_output": "120 miles",
+        "max_tokens": 100,
+        "temperature": 0.1
+      }
+    ],
+    "tags": ["qa", "basic", "reasoning"]
+  },
+  "execution_config": {
+    "concurrency": 2,
+    "warm_up_runs": 1,
+    "iterations_per_test": 3,
+    "max_duration_ms": 300000,
+    "save_responses": true,
+    "fail_fast": false
+  },
+  "caller_id": "test-harness",
+  "correlation_id": "550e8400-e29b-41d4-a716-446655440000"
+}

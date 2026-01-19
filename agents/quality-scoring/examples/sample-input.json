@@ -1,0 +1,110 @@
+{
+  "$schema": "../../contracts/schemas/quality-scoring.ts#QualityScoringInputSchema",
+  "outputs": [
+    {
+      "output_id": "550e8400-e29b-41d4-a716-446655440001",
+      "provider_name": "openai",
+      "model_id": "gpt-4o-mini",
+      "content": "The capital of France is Paris. Paris is located in the north-central part of the country and is known for landmarks like the Eiffel Tower.",
+      "expected_output": "Paris",
+      "test_id": "geography-001",
+      "metadata": {
+        "category": "geography",
+        "difficulty": "easy"
+      }
+    },
+    {
+      "output_id": "550e8400-e29b-41d4-a716-446655440002",
+      "provider_name": "openai",
+      "model_id": "gpt-4o-mini",
+      "content": "The Pythagorean theorem states that a² + b² = c²",
+      "expected_output": "a² + b² = c²",
+      "test_id": "math-001",
+      "metadata": {
+        "category": "mathematics",
+        "difficulty": "medium"
+      }
+    },
+    {
+      "output_id": "550e8400-e29b-41d4-a716-446655440003",
+      "provider_name": "anthropic",
+      "model_id": "claude-3-5-haiku-20241022",
+      "content": "Paris is the capital of France.",
+      "expected_output": "Paris",
+      "test_id": "geography-001"
+    },
+    {
+      "output_id": "550e8400-e29b-41d4-a716-446655440004",
+      "provider_name": "anthropic",
+      "model_id": "claude-3-5-haiku-20241022",
+      "content": "The Pythagorean theorem: In a right triangle, the square of the hypotenuse equals the sum of squares of the other two sides. Formula: a² + b² = c²",
+      "expected_output": "a² + b² = c²",
+      "test_id": "math-001"
+    },
+    {
+      "output_id": "550e8400-e29b-41d4-a716-446655440005",
+      "provider_name": "openai",
+      "model_id": "gpt-4o",
+      "content": "{\"answer\": \"Paris\", \"confidence\": 0.99, \"source\": \"geographic knowledge\"}",
+      "expected_output": "Paris",
+      "test_id": "geography-001"
+    }
+  ],
+  "scoring_profile": {
+    "profile_id": "comprehensive-qa",
+    "name": "Comprehensive QA Scoring",
+    "description": "Multi-dimensional quality scoring for question-answering tasks",
+    "dimensions": [
+      {
+        "dimension_id": "accuracy",
+        "name": "Answer Accuracy",
+        "description": "Whether the response contains the correct answer",
+        "weight": 0.4,
+        "scoring_method": "contains",
+        "pass_threshold": 0.8,
+        "invert": false
+      },
+      {
+        "dimension_id": "conciseness",
+        "name": "Response Conciseness",
+        "description": "Length ratio to expected output (prefer concise)",
+        "weight": 0.2,
+        "scoring_method": "length_ratio",
+        "pass_threshold": 0.3,
+        "invert": false
+      },
+      {
+        "dimension_id": "keywords",
+        "name": "Key Terms Present",
+        "description": "Presence of domain-specific keywords",
+        "weight": 0.25,
+        "scoring_method": "keyword_presence",
+        "keywords": ["capital", "France", "Paris", "theorem", "Pythagorean", "formula"],
+        "pass_threshold": 0.5,
+        "invert": false
+      },
+      {
+        "dimension_id": "format",
+        "name": "Format Compliance",
+        "description": "Whether output is valid structured format",
+        "weight": 0.15,
+        "scoring_method": "format_compliance",
+        "format_type": "json",
+        "pass_threshold": 0.5,
+        "invert": false
+      }
+    ],
+    "normalization": "weighted_sum",
+    "version": "1.0.0"
+  },
+  "evaluation_config": {
+    "include_dimension_scores": true,
+    "include_breakdown": true,
+    "case_sensitive": false,
+    "normalize_whitespace": true,
+    "fail_fast_on_threshold": false,
+    "parallel_evaluation": true
+  },
+  "caller_id": "test-bench-cli",
+  "correlation_id": "550e8400-e29b-41d4-a716-446655440000"
+}

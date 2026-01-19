@@ -1,0 +1,23 @@
+{
+  "categories": [
+    "prompt_injection",
+    "encoding_attacks",
+    "jailbreak_attempt",
+    "system_prompt_extraction"
+  ],
+  "severities": ["low", "medium", "high"],
+  "count_per_category": 5,
+  "total_max_count": 50,
+  "strategy": "template_based",
+  "target_model_types": ["chat", "instruct"],
+  "language": "en",
+  "include_benign_variants": true,
+  "safety_ceiling": "high",
+  "purpose": "security_audit",
+  "filter_config": {
+    "min_length_chars": 10,
+    "max_length_chars": 5000,
+    "deduplicate": true,
+    "similarity_threshold": 0.85
+  }
+}
