@@ -64,7 +64,19 @@ spec:
             - name: PLATFORM_ENV
               value: prod
 
-            # RuVector Service
+            # ============================================
+            # PHASE 1 / LAYER 1 - MANDATORY AGENT IDENTITY
+            # ============================================
+            - name: AGENT_NAME
+              value: llm-test-bench-service
+            - name: AGENT_DOMAIN
+              value: evaluation
+            - name: AGENT_PHASE
+              value: phase1
+            - name: AGENT_LAYER
+              value: layer1
+
+            # RuVector Service (REQUIRED)
             - name: RUVECTOR_SERVICE_URL
               valueFrom:
                 configMapKeyRef:
@@ -78,24 +90,13 @@ spec:
                   name: llm-test-bench-config
                   key: TELEMETRY_ENDPOINT
 
-            # Secrets (mounted from Secret Manager)
-            - name: RUVECTOR_API_KEY
-              valueFrom:
-                secretKeyRef:
-                  name: ruvector-api-key
-                  key: latest
-
-            - name: OPENAI_API_KEY
-              valueFrom:
-                secretKeyRef:
-                  name: openai-api-key
-                  key: latest
-
-            - name: ANTHROPIC_API_KEY
-              valueFrom:
-                secretKeyRef:
-                  name: anthropic-api-key
-                  key: latest
+            # ============================================
+            # SECRETS FROM GOOGLE SECRET MANAGER
+            # Use --set-secrets in gcloud run deploy command
+            # ============================================
+            # RUVECTOR_API_KEY - Set via --set-secrets
+            # OPENAI_API_KEY - Set via --set-secrets
+            # ANTHROPIC_API_KEY - Set via --set-secrets
 
           # Probes
           startupProbe:

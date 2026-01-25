@@ -25,7 +25,7 @@ import {
 export interface RuVectorClientConfig {
   /**
    * Base URL for ruvector-service
-   * @default process.env.RUVECTOR_SERVICE_URL || 'http://localhost:8080'
+   * REQUIRED: Must be set via RUVECTOR_SERVICE_URL env var
    */
   baseUrl?: string;
 
@@ -42,7 +42,8 @@ export interface RuVectorClientConfig {
   maxRetries?: number;
 
   /**
-   * API key for authentication (reference, not actual key)
+   * API key for authentication
+   * REQUIRED: Must be set via RUVECTOR_API_KEY env var (from Google Secret Manager)
    */
   apiKeyRef?: string;
 
@@ -53,11 +54,34 @@ export interface RuVectorClientConfig {
   asyncWrites?: boolean;
 }
 
+/**
+ * Assert Ruvector configuration is present
+ * Called during startup - crashes if missing
+ */
+function assertRuvectorConfig(): void {
+  if (!process.env.RUVECTOR_SERVICE_URL) {
+    console.error(JSON.stringify({
+      event: 'agent_abort',
+      reason: 'RUVECTOR_SERVICE_URL_MISSING',
+      timestamp: new Date().toISOString(),
+    }));
+    throw new Error('RUVECTOR_SERVICE_URL is REQUIRED');
+  }
+  if (!process.env.RUVECTOR_API_KEY) {
+    console.error(JSON.stringify({
+      event: 'agent_abort',
+      reason: 'RUVECTOR_API_KEY_MISSING',
+      timestamp: new Date().toISOString(),
+    }));
+    throw new Error('RUVECTOR_API_KEY is REQUIRED (from Google Secret Manager)');
+  }
+}
+
 const DEFAULT_CONFIG: Required<RuVectorClientConfig> = {
   baseUrl: process.env.RUVECTOR_SERVICE_URL || 'http://localhost:8080',
   timeoutMs: 5000,
   maxRetries: 3,
-  apiKeyRef: process.env.RUVECTOR_API_KEY_REF || '',
+  apiKeyRef: process.env.RUVECTOR_API_KEY || '',
   asyncWrites: true,
 };
 
@@ -199,8 +223,10 @@ export class RuVectorClient {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
+            // Use actual API key for authentication (from Google Secret Manager)
             ...(this.config.apiKeyRef && {
-              'X-API-Key-Ref': this.config.apiKeyRef,
+              'Authorization': `Bearer ${this.config.apiKeyRef}`,
+              'X-API-Key': this.config.apiKeyRef,
             }),
           },
           body: JSON.stringify(data),
@@ -233,8 +259,10 @@ export class RuVectorClient {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
+          // Use actual API key for authentication (from Google Secret Manager)
           ...(this.config.apiKeyRef && {
-            'X-API-Key-Ref': this.config.apiKeyRef,
+            'Authorization': `Bearer ${this.config.apiKeyRef}`,
+            'X-API-Key': this.config.apiKeyRef,
           }),
         },
         signal: AbortSignal.timeout(this.config.timeoutMs),
@@ -262,11 +290,39 @@ export class RuVectorClient {
 
 let defaultClient: RuVectorClient | null = null;
 
+/**
+ * Get the RuVector client singleton.
+ * On first call, asserts that required configuration is present.
+ */
 export function getRuVectorClient(config?: RuVectorClientConfig): RuVectorClient {
   if (!defaultClient) {
+    // Assert Ruvector is configured (crashes if missing)
+    assertRuvectorConfig();
     defaultClient = new RuVectorClient(config);
   }
   return defaultClient;
+}
+
+/**
+ * Initialize RuVector client with mandatory health check.
+ * MUST be called during startup - crashes if health check fails.
+ */
+export async function initializeRuVectorClient(config?: RuVectorClientConfig): Promise<RuVectorClient> {
+  assertRuvectorConfig();
+  const client = getRuVectorClient(config);
+
+  const healthy = await client.healthCheck();
+  if (!healthy) {
+    console.error(JSON.stringify({
+      event: 'agent_abort',
+      reason: 'ruvector_health_check_failed',
+      service_url: process.env.RUVECTOR_SERVICE_URL,
+      timestamp: new Date().toISOString(),
+    }));
+    throw new Error('Ruvector health check failed - service unavailable');
+  }
+
+  return client;
 }
 
 // =============================================================================

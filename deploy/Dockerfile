@@ -12,9 +12,12 @@ FROM node:20-alpine AS builder
 
 WORKDIR /app
 
+# Install build tools for native modules
+RUN apk add --no-cache python3 make g++ git
+
 # Install dependencies first (better caching)
-COPY package*.json ./
-RUN npm ci
+COPY package.json package-lock.json ./
+RUN npm install --production=false --ignore-scripts || npm install --production=false
 
 # Copy source files
 COPY tsconfig.json ./

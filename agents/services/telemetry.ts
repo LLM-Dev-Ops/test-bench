@@ -31,6 +31,12 @@ export interface TelemetryContext {
   trace_id?: string;
   span_id?: string;
   parent_span_id?: string;
+
+  // Agent Identity (PHASE 1 / LAYER 1 REQUIREMENT)
+  source_agent?: string;
+  domain?: string;
+  phase?: string;
+  layer?: string;
 }
 
 export interface TelemetryMetrics {
@@ -67,6 +73,8 @@ export class TelemetryEmitter {
 
   /**
    * Emit a telemetry event
+   *
+   * MINIMAL LOGGING: Only logs agent_started, decision_event_emitted, agent_abort
    */
   emit(
     eventType: TelemetryEventType,
@@ -76,6 +84,15 @@ export class TelemetryEmitter {
       context?: Record<string, unknown>;
     } = {}
   ): void {
+    // Include Agent Identity in labels (PHASE 1 / LAYER 1 REQUIREMENT)
+    const identityLabels: TelemetryLabels = {
+      source_agent: this.context.source_agent ?? this.context.agent_id,
+      domain: this.context.domain ?? process.env.AGENT_DOMAIN ?? 'unknown',
+      phase: this.context.phase ?? process.env.AGENT_PHASE ?? 'phase1',
+      layer: this.context.layer ?? process.env.AGENT_LAYER ?? 'layer1',
+      ...options.labels,
+    };
+
     const event: TelemetryEvent = {
       event_type: eventType,
       agent_id: this.context.agent_id,
@@ -88,14 +105,14 @@ export class TelemetryEmitter {
       },
       timestamp: new Date().toISOString(),
       metrics: this.cleanMetrics(options.metrics),
-      labels: this.cleanLabels(options.labels),
+      labels: this.cleanLabels(identityLabels),
       context: options.context,
     };
 
     // Validate before storing
     const validation = TelemetryEventSchema.safeParse(event);
     if (!validation.success) {
-      console.error('[Telemetry] Invalid event:', validation.error);
+      // Minimal logging - only log critical events
       return;
     }
 
@@ -230,14 +247,28 @@ export class TelemetryEmitter {
 // FACTORY FUNCTION
 // =============================================================================
 
+/**
+ * Create a TelemetryEmitter with mandatory Agent Identity (PHASE 1 / LAYER 1)
+ */
 export function createTelemetryEmitter(
   agentId: string,
   agentVersion: string,
-  executionId: string
+  executionId: string,
+  identity?: {
+    source_agent?: string;
+    domain?: string;
+    phase?: string;
+    layer?: string;
+  }
 ): TelemetryEmitter {
   return new TelemetryEmitter({
     agent_id: agentId,
     agent_version: agentVersion,
     execution_id: executionId,
+    // Agent Identity from explicit param or environment
+    source_agent: identity?.source_agent ?? process.env.AGENT_NAME ?? agentId,
+    domain: identity?.domain ?? process.env.AGENT_DOMAIN ?? 'evaluation',
+    phase: identity?.phase ?? process.env.AGENT_PHASE ?? 'phase1',
+    layer: identity?.layer ?? process.env.AGENT_LAYER ?? 'layer1',
   });
 }

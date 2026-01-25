@@ -1,0 +1,20 @@
+# Explicitly ignore these for Cloud Build
+node_modules/
+.git/
+dist/
+coverage/
+test-results/
+*.log
+.env*
+.vscode/
+.idea/
+.DS_Store
+tmp/
+temp/
+*.tmp
+*.tsbuildinfo
+
+# Rust build directories (large)
+target/
+
+# Do NOT ignore package-lock.json - it's needed for npm ci

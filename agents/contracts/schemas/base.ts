@@ -32,17 +32,46 @@ export const ExecutionRefSchema = z.object({
 // =============================================================================
 
 /**
+ * Agent Identity Schema - REQUIRED for all DecisionEvents
+ * Phase 1 / Layer 1 standardization
+ */
+export const AgentIdentitySchema = z.object({
+  source_agent: z.string().min(1, 'source_agent is required'),
+  domain: z.string().min(1, 'domain is required'),
+  phase: z.enum(['phase1', 'phase2', 'phase3']),
+  layer: z.enum(['layer1', 'layer2', 'layer3']),
+});
+
+export type AgentIdentity = z.infer<typeof AgentIdentitySchema>;
+
+/**
  * DecisionEvent - Every agent MUST emit exactly ONE of these per invocation.
  * This is the canonical record persisted to ruvector-service.
+ *
+ * IMPORTANT: DecisionEvents MUST emit SIGNALS, NOT conclusions.
+ * - Include: event_type, confidence (0-1), evidence_refs
+ * - Do NOT include: summaries, recommendations, synthesis
  */
 export const DecisionEventSchema = z.object({
-  // Identity
+  // Identity (REQUIRED - No anonymous agents)
   agent_id: z.string(),
   agent_version: z.string(),
+
+  // Agent Identity Standardization (PHASE 1 / LAYER 1 REQUIREMENT)
+  source_agent: z.string().min(1, 'source_agent is required'),
+  domain: z.string().min(1, 'domain is required'),
+  phase: z.enum(['phase1', 'phase2', 'phase3']),
+  layer: z.enum(['layer1', 'layer2', 'layer3']),
 
   // Decision metadata
   decision_type: z.string(),
   decision_id: z.string().uuid(),
+
+  // Event type for signal classification
+  event_type: z.string().optional(),
+
+  // Evidence references (for signal traceability)
+  evidence_refs: z.array(z.string()).optional(),
 
   // Inputs (hashed for privacy/size)
   inputs_hash: z.string().length(64, 'SHA-256 hash required'),

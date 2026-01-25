@@ -29,7 +29,7 @@ bench-results/
 
 # Node modules (if any)
 node_modules/
-package-lock.json
+# Keep package-lock.json for npm ci
 
 # Environment
 .env
