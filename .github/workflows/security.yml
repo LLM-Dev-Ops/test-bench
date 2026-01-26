@@ -136,7 +136,7 @@ jobs:
           license-checker --failOn "GPL;AGPL;LGPL"
 
       - name: Upload license report
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: license-report
           path: licenses.json
@@ -183,7 +183,7 @@ jobs:
           npx @cyclonedx/cyclonedx-npm --output-file sbom.json
 
       - name: Upload SBOM
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: sbom
           path: sbom.json
