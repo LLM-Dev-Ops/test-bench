@@ -10,6 +10,7 @@ use axum::{
     Router,
     Extension,
     routing::get,
+    middleware as axum_middleware,
 };
 use std::{net::SocketAddr, sync::Arc};
 use tokio::net::TcpListener;
@@ -28,6 +29,7 @@ use crate::api::{
     graphql::{GraphQLApi, Query, Mutation},
     websocket::{ws_router, WsState},
 };
+use crate::execution::middleware::execution_context_layer;
 
 /// API server configuration
 #[derive(Debug, Clone)]
@@ -225,12 +227,17 @@ impl ApiServer {
         }
 
         // Add middleware layers then set state
-        app = app.layer(
-            ServiceBuilder::new()
-                .layer(TraceLayer::new_for_http())
-                .layer(CompressionLayer::new())
-                .layer(self.config.cors.to_layer())
-        );
+        // Execution context layer enforces that all non-health requests
+        // provide X-Execution-Id and X-Parent-Span-Id headers.
+        // This ensures the repo never executes silently.
+        app = app
+            .layer(axum_middleware::from_fn(execution_context_layer))
+            .layer(
+                ServiceBuilder::new()
+                    .layer(TraceLayer::new_for_http())
+                    .layer(CompressionLayer::new())
+                    .layer(self.config.cors.to_layer())
+            );
 
         app.with_state(self.state.clone())
     }

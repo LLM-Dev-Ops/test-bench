@@ -40,6 +40,27 @@ export { Evaluator, createEvaluator } from './evaluators/index.js';
 // Export all types
 export * from './types/index.js';
 
+// Export execution span module (Agentics Foundational Execution Unit)
+export {
+  InstrumentedTestBench,
+  SpanManager,
+  executeWithSpans,
+  validateExecutionContext,
+  ExecutionContextError,
+  ExecutionInvariantError,
+  generateSpanId,
+  nowISO,
+  REPO_NAME,
+} from './execution/index.js';
+export type {
+  SpanType,
+  SpanStatus,
+  ExecutionContext,
+  ExecutionSpan,
+  ExecutionArtifact,
+  ExecutionResult,
+} from './execution/index.js';
+
 // Export utilities
 export { executeCLI, findCLIPath } from './utils/cli-executor.js';
 export {

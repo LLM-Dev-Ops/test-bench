@@ -52,6 +52,7 @@ pub mod monitoring;
 pub mod plugins;
 pub mod api;
 pub mod distributed;
+pub mod execution;
 #[cfg(feature = "database")]
 pub mod database;
 
@@ -74,6 +75,10 @@ pub mod prelude {
     pub use crate::config::Config;
     pub use crate::providers::Provider;
     pub use crate::evaluators::Evaluator;
+    pub use crate::execution::{
+        ExecutionContext, ExecutionSpan, SpanManager, ExecutionResult as ExecResult,
+        validate_execution_context,
+    };
     pub use crate::multimodal::{
         MultiModalRequest, MultiModalResponse, ImageInput, AudioInput,
     };

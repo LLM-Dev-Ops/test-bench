@@ -91,6 +91,12 @@ pub mod spans {
     pub const CONFIG_LOAD: &str = "llm.config.load";
     /// Span for response streaming
     pub const RESPONSE_STREAM: &str = "llm.response.stream";
+
+    // Agentics Execution Unit spans
+    /// Repo-level execution span (Foundational Execution Unit)
+    pub const EXECUTION_REPO: &str = "agentics.execution.repo";
+    /// Agent-level execution span (Foundational Execution Unit)
+    pub const EXECUTION_AGENT: &str = "agentics.execution.agent";
 }
 
 /// Attribute keys for test-bench spans
@@ -113,6 +119,18 @@ pub mod attributes {
     pub const METRIC_NAME: &str = "llm.metric.name";
     /// Evaluation score
     pub const METRIC_SCORE: &str = "llm.metric.score";
+
+    // Agentics Execution Unit attributes
+    /// Execution graph ID from the Core
+    pub const EXECUTION_ID: &str = "agentics.execution_id";
+    /// Parent span ID from the Core
+    pub const PARENT_SPAN_ID: &str = "agentics.parent_span_id";
+    /// Repository name
+    pub const REPO_NAME: &str = "agentics.repo_name";
+    /// Agent name within the repo
+    pub const AGENT_NAME: &str = "agentics.agent_name";
+    /// Span type (repo or agent)
+    pub const SPAN_TYPE: &str = "agentics.span_type";
 }
 
 #[cfg(test)]
