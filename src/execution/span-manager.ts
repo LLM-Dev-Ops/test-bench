@@ -20,6 +20,7 @@ import type {
   SpanStatus,
 } from './types.js';
 import { generateSpanId, nowISO, REPO_NAME } from './types.js';
+import type { ExemptionRecord } from './policy.js';
 
 /**
  * Validates that an ExecutionContext is structurally valid.
@@ -71,6 +72,7 @@ export class SpanManager {
   private readonly repoSpan: ExecutionSpan;
   private readonly agentSpans: Map<string, ExecutionSpan> = new Map();
   private readonly artifacts: ExecutionArtifact[] = [];
+  private readonly exemptions: ExemptionRecord[] = [];
   private readonly activeAgents: Set<string> = new Set();
   private finalized = false;
 
@@ -176,6 +178,14 @@ export class SpanManager {
   }
 
   /**
+   * Record a policy exemption for this execution.
+   * Exemptions appear in the final ExecutionResult.exemptions array.
+   */
+  addExemption(record: ExemptionRecord): void {
+    this.exemptions.push(record);
+  }
+
+  /**
    * Finalize the execution and produce the result.
    *
    * Enforces:
@@ -249,6 +259,7 @@ export class SpanManager {
       data: valid ? data : undefined,
       valid,
       validation_errors: validationErrors.length > 0 ? validationErrors : undefined,
+      exemptions: this.exemptions.length > 0 ? [...this.exemptions] : undefined,
     };
   }
 
@@ -275,6 +286,7 @@ export class SpanManager {
       artifacts: [...this.artifacts],
       valid: false,
       validation_errors: reasons,
+      exemptions: this.exemptions.length > 0 ? [...this.exemptions] : undefined,
     };
   }
 }

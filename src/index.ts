@@ -61,6 +61,21 @@ export type {
   ExecutionResult,
 } from './execution/index.js';
 
+// Export policy gate (execution dependency enforcement)
+export {
+  PolicyGate,
+  PolicyGateError,
+  DEFAULT_EXECUTION_POLICY,
+} from './execution/index.js';
+export type {
+  SimulationIntent,
+  GateDisposition,
+  ExecutionPolicy,
+  ExemptionRecord,
+  ExemptionRequest,
+  PolicyCheckResult,
+} from './execution/index.js';
+
 // Export utilities
 export { executeCLI, findCLIPath } from './utils/cli-executor.js';
 export {

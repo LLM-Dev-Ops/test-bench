@@ -24,8 +24,10 @@ import type {
   ModelInfo,
 } from '../types/index.js';
 import { LLMTestBench } from '../core/llm-test-bench.js';
-import type { ExecutionContext, ExecutionResult, ExecutionArtifact } from './types.js';
-import { SpanManager, ExecutionContextError } from './span-manager.js';
+import type { ExecutionContext, ExecutionResult } from './types.js';
+import type { ExecutionPolicy } from './policy.js';
+import { SpanManager } from './span-manager.js';
+import { PolicyGate } from './policy-gate.js';
 
 /**
  * Instrumented LLM Test Bench that emits execution spans.
@@ -51,16 +53,18 @@ import { SpanManager, ExecutionContextError } from './span-manager.js';
  */
 export class InstrumentedTestBench {
   private readonly inner: LLMTestBench;
+  private readonly gate: PolicyGate;
 
-  constructor(config: SDKConfig = {}) {
+  constructor(config: SDKConfig = {}, policy?: ExecutionPolicy) {
     this.inner = new LLMTestBench(config);
+    this.gate = new PolicyGate(policy);
   }
 
   /**
    * Get version with execution span tracking.
    */
   async version(ctx: ExecutionContext): Promise<ExecutionResult<string>> {
-    const mgr = SpanManager.create(ctx);
+    const { mgr } = this.gate.enforce('benchmark', ctx);
     const agent = mgr.startAgent('version-resolver');
 
     try {
@@ -81,7 +85,7 @@ export class InstrumentedTestBench {
     ctx: ExecutionContext,
     provider?: ProviderName
   ): Promise<ExecutionResult<ModelInfo[]>> {
-    const mgr = SpanManager.create(ctx);
+    const { mgr } = this.gate.enforce('benchmark', ctx);
     const agent = mgr.startAgent('model-lister');
 
     try {
@@ -108,7 +112,7 @@ export class InstrumentedTestBench {
       config?: BenchmarkConfig;
     }
   ): Promise<ExecutionResult<BenchmarkResults>> {
-    const mgr = SpanManager.create(ctx);
+    const { mgr } = this.gate.enforce('benchmark', ctx);
 
     // Agent 1: Input validation
     const validator = mgr.startAgent('input-validator');
@@ -160,7 +164,7 @@ export class InstrumentedTestBench {
       config?: BenchmarkConfig;
     }
   ): Promise<ExecutionResult<ComparisonResult>> {
-    const mgr = SpanManager.create(ctx);
+    const { mgr } = this.gate.enforce('compare', ctx);
     const agent = mgr.startAgent('model-comparator');
 
     try {
@@ -193,7 +197,7 @@ export class InstrumentedTestBench {
     text: string,
     config: EvaluationConfig
   ): Promise<ExecutionResult<CombinedEvaluationResults>> {
-    const mgr = SpanManager.create(ctx);
+    const { mgr } = this.gate.enforce('evaluate', ctx);
     const agent = mgr.startAgent('evaluator');
 
     try {
@@ -225,7 +229,7 @@ export class InstrumentedTestBench {
     ctx: ExecutionContext,
     request: CompletionRequest
   ): Promise<ExecutionResult<CompletionResponse>> {
-    const mgr = SpanManager.create(ctx);
+    const { mgr } = this.gate.enforce('complete', ctx);
     const agent = mgr.startAgent('completion-agent');
 
     try {
@@ -263,7 +267,7 @@ export class InstrumentedTestBench {
   ): Promise<
     ExecutionResult<{ provider: ProviderName; model: string; reason: string }>
   > {
-    const mgr = SpanManager.create(ctx);
+    const { mgr } = this.gate.enforce('optimize', ctx);
     const agent = mgr.startAgent('optimizer');
 
     try {

@@ -9,6 +9,7 @@ use std::collections::HashMap;
 use uuid::Uuid;
 
 use super::context::ExecutionContext;
+use super::policy::ExemptionRecord;
 use super::REPO_NAME;
 
 /// Span type discriminator.
@@ -109,6 +110,10 @@ pub struct ExecutionResult<T: Serialize> {
     /// Validation errors (if invalid).
     #[serde(skip_serializing_if = "Option::is_none")]
     pub validation_errors: Option<Vec<String>>,
+
+    /// Policy exemptions granted during this execution (if any).
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub exemptions: Option<Vec<ExemptionRecord>>,
 }
 
 /// Manages execution spans for a single repo-level invocation.
@@ -116,6 +121,7 @@ pub struct SpanManager {
     repo_span: ExecutionSpan,
     agent_spans: HashMap<String, ExecutionSpan>,
     artifacts: Vec<ExecutionArtifact>,
+    exemptions: Vec<ExemptionRecord>,
     active_agents: std::collections::HashSet<String>,
     finalized: bool,
 }
@@ -139,6 +145,7 @@ impl SpanManager {
             repo_span,
             agent_spans: HashMap::new(),
             artifacts: Vec::new(),
+            exemptions: Vec::new(),
             active_agents: std::collections::HashSet::new(),
             finalized: false,
         }
@@ -194,6 +201,11 @@ impl SpanManager {
             artifact.agent_span_id
         );
         self.artifacts.push(artifact);
+    }
+
+    /// Record a policy exemption for this execution.
+    pub fn add_exemption(&mut self, record: ExemptionRecord) {
+        self.exemptions.push(record);
     }
 
     /// Finalize the execution and produce the result.
@@ -261,6 +273,11 @@ impl SpanManager {
             } else {
                 Some(validation_errors)
             },
+            exemptions: if self.exemptions.is_empty() {
+                None
+            } else {
+                Some(self.exemptions)
+            },
         }
     }
 
@@ -289,6 +306,11 @@ impl SpanManager {
             data: None,
             valid: false,
             validation_errors: Some(reasons),
+            exemptions: if self.exemptions.is_empty() {
+                None
+            } else {
+                Some(self.exemptions)
+            },
         }
     }
 }

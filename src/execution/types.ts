@@ -12,6 +12,7 @@
  */
 
 import { randomUUID } from 'crypto';
+import type { ExemptionRecord } from './policy.js';
 
 /** Span type discriminator */
 export type SpanType = 'repo' | 'agent';
@@ -105,6 +106,9 @@ export interface ExecutionResult<T = unknown> {
 
   /** Validation errors (if invalid) */
   validation_errors?: string[];
+
+  /** Policy exemptions granted during this execution (if any) */
+  exemptions?: ExemptionRecord[];
 }
 
 /** Generate a new span ID */

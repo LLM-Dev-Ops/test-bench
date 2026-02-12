@@ -29,3 +29,24 @@ export {
 
 // Instrumented entry points
 export { InstrumentedTestBench, executeWithSpans } from './instrumented.js';
+
+// Policy gate
+export { PolicyGate, PolicyGateError } from './policy-gate.js';
+export type { PolicyCheckResult } from './policy-gate.js';
+export {
+  SimulationIntentSchema,
+  GateDispositionSchema,
+  PolicyRuleSchema,
+  ExecutionPolicySchema,
+  ExemptionRecordSchema,
+  ExemptionRequestSchema,
+} from './policy.js';
+export type {
+  SimulationIntent,
+  GateDisposition,
+  PolicyRule,
+  ExecutionPolicy,
+  ExemptionRecord,
+  ExemptionRequest,
+} from './policy.js';
+export { DEFAULT_EXECUTION_POLICY } from './default-policy.js';

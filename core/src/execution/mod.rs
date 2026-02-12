@@ -17,13 +17,19 @@
 pub mod context;
 pub mod span;
 pub mod middleware;
+pub mod policy;
 
 pub use context::{ExecutionContext, validate_execution_context, ExecutionContextError};
 pub use span::{
     ExecutionSpan, SpanType, SpanStatus, ExecutionArtifact,
     ExecutionResult, SpanManager,
 };
-pub use middleware::ExecutionLayer;
+pub use middleware::{ExecutionLayer, get_exemption_record};
+pub use policy::{
+    SimulationIntent, GateDisposition, PolicyRule,
+    ExecutionPolicy, ExemptionRecord, ExemptionRequest,
+    default_policy,
+};
 
 /// The canonical name for this repository.
 pub const REPO_NAME: &str = "llm-test-bench";
