@@ -149,6 +149,18 @@ function handleAgentList(res: ServerResponse): void {
   }));
 }
 
+function handleTelemetry(body: unknown, res: ServerResponse): void {
+  const event = body as Record<string, unknown>;
+  const executionId = typeof event.execution_id === 'string' ? event.execution_id : 'unknown';
+
+  console.log(
+    `[Telemetry] source=${event.source} type=${event.event_type} execution_id=${executionId} ts=${event.timestamp}`
+  );
+
+  res.writeHead(202, { 'Content-Type': 'application/json' });
+  res.end(JSON.stringify({ status: 'accepted', execution_id: executionId }));
+}
+
 function handleNotFound(res: ServerResponse, path: string): void {
   res.writeHead(404, { 'Content-Type': 'application/json' });
   res.end(JSON.stringify({
@@ -158,6 +170,7 @@ function handleNotFound(res: ServerResponse, path: string): void {
       '/health',
       '/ready',
       '/api/v1/agents',
+      '/api/v1/telemetry',
       ...Object.keys(AGENT_ENDPOINTS),
     ],
   }));
@@ -205,6 +218,13 @@ const server = createServer(async (req: IncomingMessage, res: ServerResponse) =>
     // Agent list endpoint
     if (path === '/api/v1/agents' && method === 'GET') {
       handleAgentList(res);
+      return;
+    }
+
+    // Telemetry ingestion endpoint
+    if (path === '/api/v1/telemetry' && method === 'POST') {
+      const body = await parseRequestBody(req);
+      handleTelemetry(body, res);
       return;
     }
 
@@ -269,6 +289,7 @@ server.listen(PORT, () => {
   console.log('  GET  /health');
   console.log('  GET  /ready');
   console.log('  GET  /api/v1/agents');
+  console.log('  POST /api/v1/telemetry');
   Object.keys(AGENT_ENDPOINTS).forEach((endpoint) => {
     console.log(`  POST ${endpoint}`);
   });

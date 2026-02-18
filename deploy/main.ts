@@ -384,6 +384,21 @@ const server = createServer(async (req: IncomingMessage, res: ServerResponse) =>
       return;
     }
 
+    // Telemetry ingestion endpoint (internal, no auth)
+    if (path === '/api/v1/telemetry' && method === 'POST') {
+      const body = await parseRequestBody(req);
+      const event = body as Record<string, unknown>;
+      const executionId = typeof event.execution_id === 'string' ? event.execution_id : 'unknown';
+
+      console.log(
+        `[Telemetry] source=${event.source} type=${event.event_type} execution_id=${executionId} ts=${event.timestamp}`
+      );
+
+      res.writeHead(202);
+      res.end(JSON.stringify({ status: 'accepted', execution_id: executionId }));
+      return;
+    }
+
     // Agent endpoints
     const agentMatch = path.match(/^\/api\/v1\/agents\/([a-z-]+)$/);
     if (agentMatch) {
@@ -418,6 +433,7 @@ const server = createServer(async (req: IncomingMessage, res: ServerResponse) =>
         '/health',
         '/ready',
         '/api/v1/agents',
+        '/api/v1/telemetry',
         ...Object.keys(AGENT_METADATA).map(k => `/api/v1/agents/${k}`),
       ],
     }));
