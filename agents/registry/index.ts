@@ -13,3 +13,4 @@ export * from './output-consistency';
 export * from './golden-dataset-validator';
 export * from './adversarial-prompt';
 export * from './synthetic-data-generator';
+export * from './red-team';

@@ -17,4 +17,8 @@ temp/
 # Rust build directories (large)
 target/
 
+# Test files
+*.test.ts
+*.spec.ts
+
 # Do NOT ignore package-lock.json - it's needed for npm ci

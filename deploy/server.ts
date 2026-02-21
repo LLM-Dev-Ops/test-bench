@@ -28,6 +28,7 @@ import { handler as outputConsistencyHandler } from '../agents/output-consistenc
 import { handler as promptSensitivityHandler } from '../agents/prompt-sensitivity/handler';
 import { handler as stressTestHandler } from '../agents/stress-test/handler';
 import { handler as modelComparatorHandler } from '../agents/model-comparator/handler';
+import { handler as redTeamHandler } from '../agents/red-team/handler';
 
 // =============================================================================
 // SERVICE CONFIGURATION
@@ -71,6 +72,7 @@ const AGENT_ENDPOINTS: Record<string, AgentHandler> = {
   '/api/v1/agents/prompt-sensitivity': promptSensitivityHandler,
   '/api/v1/agents/stress-test': stressTestHandler,
   '/api/v1/agents/model-comparator': modelComparatorHandler,
+  '/api/v1/agents/red-team': redTeamHandler,
 };
 
 // =============================================================================

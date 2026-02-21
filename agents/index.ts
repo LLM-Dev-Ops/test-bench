@@ -45,3 +45,21 @@ export * from './golden-dataset-validator';
 
 // Synthetic Data Generator Agent
 export * from './synthetic-data-generator';
+
+// Adversarial Prompt Agent
+export * from './adversarial-prompt';
+
+// Output Consistency Agent
+export * from './output-consistency';
+
+// Prompt Sensitivity Agent
+export * from './prompt-sensitivity';
+
+// Stress Test Agent
+export * from './stress-test';
+
+// Model Comparator Agent
+export * from './model-comparator';
+
+// Red Team Agent
+export * from './red-team';

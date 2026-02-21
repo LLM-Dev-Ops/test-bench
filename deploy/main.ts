@@ -147,6 +147,11 @@ const AGENT_METADATA = {
     agent_version: '1.0.0',
     description: 'Compare model outputs',
   },
+  'red-team': {
+    agent_id: 'red-team',
+    agent_version: '1.0.0',
+    description: 'Execute red team evaluations against target LLMs',
+  },
 };
 
 // =============================================================================
