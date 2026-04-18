@@ -206,3 +206,58 @@ export async function hashInputs(inputs: unknown): Promise<string> {
   const hashArray = Array.from(new Uint8Array(hashBuffer));
   return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
 }
+
+// =============================================================================
+// AGENT IDENTITY HELPERS
+// =============================================================================
+
+type Phase = 'phase1' | 'phase2' | 'phase3';
+type Layer = 'layer1' | 'layer2' | 'layer3';
+
+function coercePhase(v: string | undefined): Phase {
+  return v === 'phase2' || v === 'phase3' ? v : 'phase1';
+}
+
+function coerceLayer(v: string | undefined): Layer {
+  return v === 'layer2' || v === 'layer3' ? v : 'layer1';
+}
+
+/**
+ * Resolve the AgentIdentity fields (source_agent, domain, phase, layer)
+ * required on every DecisionEvent. Pulls from AGENT_* env vars set at
+ * deploy time, falling back to safe defaults.
+ */
+export function getAgentIdentity(agentId: string): AgentIdentity {
+  return {
+    source_agent: process.env.AGENT_NAME || agentId,
+    domain: process.env.AGENT_DOMAIN || 'llm-test-bench',
+    phase: coercePhase(process.env.AGENT_PHASE),
+    layer: coerceLayer(process.env.AGENT_LAYER),
+  };
+}
+
+/**
+ * Clamp a numeric value into [0, 1], coercing NaN/undefined to `fallback`.
+ * Used for confidence and confidence_factors where n<2 sample math can
+ * produce NaN (0/0 from stddev/mean ratios).
+ */
+export function sanitizeConfidence(value: number | undefined | null, fallback = 0): number {
+  if (value === null || value === undefined || !Number.isFinite(value)) {
+    return fallback;
+  }
+  if (value < 0) return 0;
+  if (value > 1) return 1;
+  return value;
+}
+
+/**
+ * Coerce possibly-NaN statistics for optional numeric output fields.
+ * Returns null when value is non-finite (so JSON serialization produces
+ * `null` rather than `NaN`, which is not valid JSON).
+ */
+export function finiteOrNull(value: number | undefined | null): number | null {
+  if (value === null || value === undefined || !Number.isFinite(value)) {
+    return null;
+  }
+  return value;
+}

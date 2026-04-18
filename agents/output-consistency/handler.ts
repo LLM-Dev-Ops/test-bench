@@ -30,6 +30,8 @@ import {
   AgentError,
   validateInput,
   hashInputs,
+  getAgentIdentity,
+  sanitizeConfidence,
   // Constants
   OUTPUT_CONSISTENCY_AGENT,
   VALID_CONSISTENCY_CONSTRAINTS,
@@ -870,6 +872,7 @@ async function createDecisionEvent(
   return {
     agent_id: OUTPUT_CONSISTENCY_AGENT.agent_id,
     agent_version: OUTPUT_CONSISTENCY_AGENT.agent_version,
+    ...getAgentIdentity(OUTPUT_CONSISTENCY_AGENT.agent_id),
     decision_type: OUTPUT_CONSISTENCY_AGENT.decision_type,
     decision_id: randomUUID(),
     inputs_hash: inputsHash,
@@ -879,8 +882,12 @@ async function createDecisionEvent(
       similarity_method: output.config_used.similarity_method,
     },
     outputs: output,
-    confidence,
-    confidence_factors: factors,
+    confidence: sanitizeConfidence(confidence),
+    confidence_factors: factors.map(f => ({
+      ...f,
+      value: sanitizeConfidence(f.value),
+      weight: sanitizeConfidence(f.weight),
+    })),
     constraints_applied: context.constraintsApplied,
     execution_ref: {
       execution_id: context.executionId,

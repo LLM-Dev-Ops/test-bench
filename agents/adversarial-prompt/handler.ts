@@ -36,6 +36,8 @@ import {
   DecisionEvent,
   AgentError,
   hashInputs,
+  getAgentIdentity,
+  sanitizeConfidence,
 } from '../contracts';
 
 import {
@@ -627,6 +629,7 @@ async function createDecisionEvent(
   return {
     agent_id: ADVERSARIAL_PROMPT_AGENT.agent_id,
     agent_version: ADVERSARIAL_PROMPT_AGENT.agent_version,
+    ...getAgentIdentity(ADVERSARIAL_PROMPT_AGENT.agent_id),
     decision_type: ADVERSARIAL_PROMPT_AGENT.decision_type,
     decision_id: randomUUID(),
     inputs_hash: inputsHash,
@@ -641,7 +644,7 @@ async function createDecisionEvent(
       prompts_generated: output.prompts.length,
       quality_metrics: output.quality_metrics,
     },
-    confidence,
+    confidence: sanitizeConfidence(confidence),
     constraints_applied: context.constraintsApplied,
     execution_ref: { execution_id: context.executionId },
     timestamp: new Date().toISOString(),

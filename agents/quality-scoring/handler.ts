@@ -30,6 +30,8 @@ import {
   AgentError,
   validateInput,
   hashInputs,
+  getAgentIdentity,
+  sanitizeConfidence,
   // Constants
   QUALITY_SCORING_AGENT,
   VALID_SCORING_CONSTRAINTS,
@@ -746,6 +748,7 @@ async function createDecisionEvent(
   return {
     agent_id: QUALITY_SCORING_AGENT.agent_id,
     agent_version: QUALITY_SCORING_AGENT.agent_version,
+    ...getAgentIdentity(QUALITY_SCORING_AGENT.agent_id),
     decision_type: QUALITY_SCORING_AGENT.decision_type,
     decision_id: randomUUID(),
     inputs_hash: inputsHash,
@@ -755,8 +758,12 @@ async function createDecisionEvent(
       dimension_count: input.scoring_profile.dimensions.length,
     },
     outputs: output,
-    confidence,
-    confidence_factors: factors,
+    confidence: sanitizeConfidence(confidence),
+    confidence_factors: factors.map(f => ({
+      ...f,
+      value: sanitizeConfidence(f.value),
+      weight: sanitizeConfidence(f.weight),
+    })),
     constraints_applied: context.constraintsApplied,
     execution_ref: {
       execution_id: context.executionId,

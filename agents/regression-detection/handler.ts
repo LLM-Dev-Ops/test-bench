@@ -28,6 +28,8 @@ import {
   AgentError,
   validateInput,
   hashInputs,
+  getAgentIdentity,
+  sanitizeConfidence,
   // Constants
   REGRESSION_DETECTION_AGENT,
   VALID_REGRESSION_CONSTRAINTS,
@@ -776,6 +778,7 @@ async function createDecisionEvent(
   return {
     agent_id: REGRESSION_DETECTION_AGENT.agent_id,
     agent_version: REGRESSION_DETECTION_AGENT.agent_version,
+    ...getAgentIdentity(REGRESSION_DETECTION_AGENT.agent_id),
     decision_type: REGRESSION_DETECTION_AGENT.decision_type,
     decision_id: randomUUID(),
     inputs_hash: inputsHash,
@@ -785,8 +788,12 @@ async function createDecisionEvent(
       models_analyzed: output.summary.total_models_analyzed,
     },
     outputs: output as unknown as Record<string, unknown>,
-    confidence,
-    confidence_factors: confidenceResult.factors,
+    confidence: sanitizeConfidence(confidence),
+    confidence_factors: confidenceResult.factors.map(f => ({
+      ...f,
+      value: sanitizeConfidence(f.value),
+      weight: sanitizeConfidence(f.weight),
+    })),
     constraints_applied: context.constraintsApplied,
     execution_ref: {
       execution_id: context.executionId,

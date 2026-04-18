@@ -105,9 +105,11 @@ export class RuVectorClient {
     // Validate event against schema
     const validation = DecisionEventSchema.safeParse(event);
     if (!validation.success) {
-      throw new Error(
-        `Invalid DecisionEvent: ${validation.error.issues.map(i => i.message).join(', ')}`
-      );
+      const issues = validation.error.issues.map(i => {
+        const path = i.path.length > 0 ? i.path.join('.') : '(root)';
+        return `${path}: ${i.message}`;
+      });
+      throw new Error(`Invalid DecisionEvent: ${issues.join('; ')}`);
     }
 
     const writePromise = this.doWrite('/api/v1/decisions', event);
@@ -129,9 +131,11 @@ export class RuVectorClient {
   async persistTelemetryEvent(event: TelemetryEvent): Promise<void> {
     const validation = TelemetryEventSchema.safeParse(event);
     if (!validation.success) {
-      throw new Error(
-        `Invalid TelemetryEvent: ${validation.error.issues.map(i => i.message).join(', ')}`
-      );
+      const issues = validation.error.issues.map(i => {
+        const path = i.path.length > 0 ? i.path.join('.') : '(root)';
+        return `${path}: ${i.message}`;
+      });
+      throw new Error(`Invalid TelemetryEvent: ${issues.join('; ')}`);
     }
 
     const writePromise = this.doWrite('/api/v1/telemetry', event);
@@ -154,7 +158,13 @@ export class RuVectorClient {
 
     const validation = DecisionEventSchema.safeParse(response);
     if (!validation.success) {
-      console.error('[RuVectorClient] Invalid DecisionEvent from storage:', validation.error);
+      console.error('[RuVectorClient] Invalid DecisionEvent from storage:', {
+        issues: validation.error.issues.map(i => ({
+          path: i.path.join('.'),
+          message: i.message,
+          code: i.code,
+        })),
+      });
       return null;
     }
 

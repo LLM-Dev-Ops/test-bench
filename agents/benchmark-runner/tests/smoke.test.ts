@@ -165,6 +165,10 @@ describe('Verification Checklist', () => {
       const mockDecisionEvent = {
         agent_id: 'benchmark-runner',
         agent_version: '1.0.0',
+        source_agent: 'benchmark-runner',
+        domain: 'llm-test-bench',
+        phase: 'phase1',
+        layer: 'layer1',
         decision_type: 'benchmark_execution',
         decision_id: '550e8400-e29b-41d4-a716-446655440000',
         inputs_hash: 'a'.repeat(64),
@@ -186,6 +190,10 @@ describe('Verification Checklist', () => {
       const invalidConfidence = {
         agent_id: 'benchmark-runner',
         agent_version: '1.0.0',
+        source_agent: 'benchmark-runner',
+        domain: 'llm-test-bench',
+        phase: 'phase1',
+        layer: 'layer1',
         decision_type: 'benchmark_execution',
         decision_id: '550e8400-e29b-41d4-a716-446655440000',
         inputs_hash: 'a'.repeat(64),

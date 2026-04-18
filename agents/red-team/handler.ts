@@ -32,6 +32,8 @@ import {
   AgentError,
   validateInput,
   hashInputs,
+  getAgentIdentity,
+  sanitizeConfidence,
 } from '../contracts';
 
 import {
@@ -640,6 +642,7 @@ async function createDecisionEvent(
   return {
     agent_id: RED_TEAM_AGENT.agent_id,
     agent_version: RED_TEAM_AGENT.agent_version,
+    ...getAgentIdentity(RED_TEAM_AGENT.agent_id),
     decision_type: RED_TEAM_AGENT.decision_type,
     decision_id: randomUUID(),
     inputs_hash: inputsHash,
@@ -649,11 +652,11 @@ async function createDecisionEvent(
       tests_per_category: input.tests_per_category,
     },
     outputs: output as unknown as Record<string, unknown>,
-    confidence,
+    confidence: sanitizeConfidence(confidence),
     confidence_factors: [
-      { factor: 'sample_size', weight: 0.3, value: Math.min(1, output.total_attacks / 50) },
-      { factor: 'category_coverage', weight: 0.3, value: Math.min(1, output.category_summaries.length / 5) },
-      { factor: 'result_consistency', weight: 0.2, value: output.overall_resistance_rate },
+      { factor: 'sample_size', weight: 0.3, value: sanitizeConfidence(Math.min(1, output.total_attacks / 50)) },
+      { factor: 'category_coverage', weight: 0.3, value: sanitizeConfidence(Math.min(1, output.category_summaries.length / 5)) },
+      { factor: 'result_consistency', weight: 0.2, value: sanitizeConfidence(output.overall_resistance_rate) },
     ],
     constraints_applied: context.constraintsApplied,
     execution_ref: {

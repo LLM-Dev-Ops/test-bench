@@ -6,7 +6,8 @@
  * URL: https://us-central1-agentics-dev.cloudfunctions.net/test-bench-agents
  * Entry point: api
  *
- * Exposes 14 agents at /v1/test-bench/:agent routes.
+ * Exposes 13 agents at /v1/test-bench/:agent routes.
+ * (`compare` / model-comparator is not yet implemented and returns 404.)
  * Deployed via:
  *   gcloud functions deploy test-bench-agents \
  *     --runtime nodejs20 --trigger-http --allow-unauthenticated \
@@ -17,9 +18,10 @@
 import express, { Request, Response, NextFunction } from 'express';
 import { randomUUID } from 'crypto';
 
-// Import all 14 agent handlers
+// Import all 13 implemented agent handlers
+// (model-comparator is intentionally not imported — the `compare` route is
+// unregistered so it returns an honest 404 until fully implemented.)
 import { handler as benchmarkRunnerHandler } from '../agents/benchmark-runner/handler';
-import { handler as modelComparatorHandler } from '../agents/model-comparator/handler';
 import { handler as regressionDetectionHandler } from '../agents/regression-detection/handler';
 import { handler as qualityScoringHandler } from '../agents/quality-scoring/handler';
 import { handler as hallucinationDetectorHandler } from '../agents/hallucination-detector/handler';
@@ -61,11 +63,6 @@ const AGENT_ROUTES: Record<string, { handler: AgentHandler; name: string; layers
     handler: benchmarkRunnerHandler,
     name: 'Benchmark Runner',
     layers: ['input_validation', 'provider_resolution', 'benchmark_execution', 'statistics_aggregation', 'scoring'],
-  },
-  'compare': {
-    handler: modelComparatorHandler,
-    name: 'Model Comparator',
-    layers: ['input_validation', 'model_selection', 'parallel_execution', 'comparison_analysis', 'ranking'],
   },
   'regression': {
     handler: regressionDetectionHandler,
@@ -161,7 +158,7 @@ app.get('/health', (_req: Request, res: Response) => {
   res.json({
     healthy: true,
     service: 'test-bench-agents',
-    agents: 14,
+    agents: Object.keys(AGENT_ROUTES).length,
   });
 });
 

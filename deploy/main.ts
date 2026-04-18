@@ -142,11 +142,8 @@ const AGENT_METADATA = {
     agent_version: '1.0.0',
     description: 'Run stress tests',
   },
-  'model-comparator': {
-    agent_id: 'model-comparator',
-    agent_version: '1.0.0',
-    description: 'Compare model outputs',
-  },
+  // 'model-comparator' intentionally omitted — agent is not yet implemented,
+  // so requests fall through to the 404 handler instead of returning 501.
   'red-team': {
     agent_id: 'red-team',
     agent_version: '1.0.0',

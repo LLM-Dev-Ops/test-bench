@@ -25,6 +25,8 @@ import {
   AgentError,
   validateInput,
   hashInputs,
+  getAgentIdentity,
+  sanitizeConfidence,
   // Constants
   PROMPT_SENSITIVITY_AGENT,
   PROMPT_SENSITIVITY_VALID_CONSTRAINTS,
@@ -784,9 +786,14 @@ async function createDecisionEvent(
 ): Promise<DecisionEvent> {
   const inputsHash = await hashInputs(input);
 
+  const successRate = output.total_runs > 0
+    ? output.successful_runs / output.total_runs
+    : 0;
+
   return {
     agent_id: PROMPT_SENSITIVITY_AGENT.agent_id,
     agent_version: PROMPT_SENSITIVITY_AGENT.agent_version,
+    ...getAgentIdentity(PROMPT_SENSITIVITY_AGENT.agent_id),
     decision_type: PROMPT_SENSITIVITY_AGENT.decision_type,
     decision_id: randomUUID(),
     inputs_hash: inputsHash,
@@ -797,12 +804,12 @@ async function createDecisionEvent(
       perturbation_count: output.total_perturbations,
     },
     outputs: output,
-    confidence,
+    confidence: sanitizeConfidence(confidence),
     confidence_factors: [
-      { factor: 'execution_success_rate', weight: 0.2, value: output.successful_runs / output.total_runs },
-      { factor: 'sample_size', weight: 0.3, value: Math.min(1, output.total_runs / 100) },
+      { factor: 'execution_success_rate', weight: 0.2, value: sanitizeConfidence(successRate) },
+      { factor: 'sample_size', weight: 0.3, value: sanitizeConfidence(Math.min(1, output.total_runs / 100)) },
       { factor: 'statistical_significance', weight: 0.25, value: output.overall_sensitivity.statistical_significance ? 1 : 0.5 },
-      { factor: 'variance_consistency', weight: 0.25, value: 1 - output.overall_sensitivity.variance_score },
+      { factor: 'variance_consistency', weight: 0.25, value: sanitizeConfidence(1 - output.overall_sensitivity.variance_score) },
     ],
     constraints_applied: context.constraintsApplied,
     execution_ref: {

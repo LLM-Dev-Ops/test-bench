@@ -27,7 +27,8 @@ import { handler as adversarialPromptHandler } from '../agents/adversarial-promp
 import { handler as outputConsistencyHandler } from '../agents/output-consistency/handler';
 import { handler as promptSensitivityHandler } from '../agents/prompt-sensitivity/handler';
 import { handler as stressTestHandler } from '../agents/stress-test/handler';
-import { handler as modelComparatorHandler } from '../agents/model-comparator/handler';
+// model-comparator is intentionally not imported — route unregistered (404)
+// until the agent is fully implemented.
 import { handler as redTeamHandler } from '../agents/red-team/handler';
 
 // =============================================================================
@@ -71,7 +72,6 @@ const AGENT_ENDPOINTS: Record<string, AgentHandler> = {
   '/api/v1/agents/output-consistency': outputConsistencyHandler,
   '/api/v1/agents/prompt-sensitivity': promptSensitivityHandler,
   '/api/v1/agents/stress-test': stressTestHandler,
-  '/api/v1/agents/model-comparator': modelComparatorHandler,
   '/api/v1/agents/red-team': redTeamHandler,
 };
 

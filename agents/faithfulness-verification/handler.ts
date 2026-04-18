@@ -29,6 +29,8 @@ import {
   AgentError,
   validateInput,
   hashInputs,
+  getAgentIdentity,
+  sanitizeConfidence,
   // Constants
   FAITHFULNESS_VERIFICATION_AGENT,
   FAITHFULNESS_VALID_CONSTRAINTS,
@@ -993,6 +995,7 @@ async function createDecisionEvent(
   return {
     agent_id: FAITHFULNESS_VERIFICATION_AGENT.agent_id,
     agent_version: FAITHFULNESS_VERIFICATION_AGENT.agent_version,
+    ...getAgentIdentity(FAITHFULNESS_VERIFICATION_AGENT.agent_id),
     decision_type: FAITHFULNESS_VERIFICATION_AGENT.decision_type,
     decision_id: randomUUID(),
     inputs_hash: inputsHash,
@@ -1002,8 +1005,12 @@ async function createDecisionEvent(
       output_length: input.output.content.length,
     },
     outputs: output,
-    confidence,
-    confidence_factors: confidenceFactors,
+    confidence: sanitizeConfidence(confidence),
+    confidence_factors: confidenceFactors.map(f => ({
+      ...f,
+      value: sanitizeConfidence(f.value),
+      weight: sanitizeConfidence(f.weight),
+    })),
     constraints_applied: context.constraintsApplied,
     execution_ref: {
       execution_id: context.executionId,

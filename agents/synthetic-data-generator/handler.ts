@@ -26,6 +26,8 @@ import {
   AgentError,
   validateInput,
   hashInputs,
+  getAgentIdentity,
+  sanitizeConfidence,
   // Constants
   SYNTHETIC_DATA_GENERATOR_AGENT,
   SYNTHETIC_DATA_VALID_CONSTRAINTS,
@@ -1306,9 +1308,14 @@ async function createDecisionEvent(
 ): Promise<DecisionEvent> {
   const inputsHash = await hashInputs(input);
 
+  const coverage = output.generation_stats.requested_count > 0
+    ? output.generation_stats.generated_count / output.generation_stats.requested_count
+    : 0;
+
   return {
     agent_id: SYNTHETIC_DATA_GENERATOR_AGENT.agent_id,
     agent_version: SYNTHETIC_DATA_GENERATOR_AGENT.agent_version,
+    ...getAgentIdentity(SYNTHETIC_DATA_GENERATOR_AGENT.agent_id),
     decision_type: SYNTHETIC_DATA_GENERATOR_AGENT.decision_type,
     decision_id: randomUUID(),
     inputs_hash: inputsHash,
@@ -1318,22 +1325,22 @@ async function createDecisionEvent(
       requested_count: input.count,
     },
     outputs: output,
-    confidence,
+    confidence: sanitizeConfidence(confidence),
     confidence_factors: [
       {
         factor: 'coverage_score',
         weight: 0.25,
-        value: output.generation_stats.generated_count / output.generation_stats.requested_count,
+        value: sanitizeConfidence(coverage),
       },
       {
         factor: 'constraint_satisfaction',
         weight: 0.30,
-        value: output.quality_metrics.constraint_satisfaction_rate,
+        value: sanitizeConfidence(output.quality_metrics.constraint_satisfaction_rate),
       },
       {
         factor: 'uniqueness_score',
         weight: 0.25,
-        value: output.quality_metrics.unique_items_rate,
+        value: sanitizeConfidence(output.quality_metrics.unique_items_rate),
       },
     ],
     constraints_applied: context.constraintsApplied,

@@ -25,6 +25,8 @@ import {
   AgentError,
   validateInput,
   hashInputs,
+  getAgentIdentity,
+  sanitizeConfidence,
   // Constants
   BENCHMARK_RUNNER_AGENT,
   VALID_CONSTRAINTS,
@@ -572,9 +574,14 @@ async function createDecisionEvent(
 ): Promise<DecisionEvent> {
   const inputsHash = await hashInputs(input);
 
+  const successRate = output.total_executions > 0
+    ? output.successful_executions / output.total_executions
+    : 0;
+
   return {
     agent_id: BENCHMARK_RUNNER_AGENT.agent_id,
     agent_version: BENCHMARK_RUNNER_AGENT.agent_version,
+    ...getAgentIdentity(BENCHMARK_RUNNER_AGENT.agent_id),
     decision_type: BENCHMARK_RUNNER_AGENT.decision_type,
     decision_id: randomUUID(),
     inputs_hash: inputsHash,
@@ -584,10 +591,10 @@ async function createDecisionEvent(
       test_count: input.suite.test_cases.length,
     },
     outputs: output,
-    confidence,
+    confidence: sanitizeConfidence(confidence),
     confidence_factors: [
-      { factor: 'execution_success_rate', weight: 0.4, value: output.successful_executions / output.total_executions },
-      { factor: 'sample_size', weight: 0.2, value: Math.min(1, output.total_executions / 100) },
+      { factor: 'execution_success_rate', weight: 0.4, value: sanitizeConfidence(successRate) },
+      { factor: 'sample_size', weight: 0.2, value: sanitizeConfidence(Math.min(1, output.total_executions / 100)) },
     ],
     constraints_applied: context.constraintsApplied,
     execution_ref: {

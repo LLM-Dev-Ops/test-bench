@@ -362,13 +362,22 @@ export const CONFIDENCE_FACTORS = {
  * Calculate confidence score based on execution results
  */
 export function calculateConfidence(stats: AggregatedStats): number {
+  // Latency consistency: guard against 0/0 (no successful executions) and
+  // NaN (stddev/mean both undefined for empty samples). When mean is 0 we
+  // have no meaningful latency signal, so contribute 0 to the factor.
+  const latencyConsistency =
+    stats.latency_mean_ms > 0 && Number.isFinite(stats.latency_stddev_ms)
+      ? Math.max(0, 1 - stats.latency_stddev_ms / stats.latency_mean_ms)
+      : 0;
+
+  const successRate = Number.isFinite(stats.success_rate) ? stats.success_rate : 0;
+
   const factors = [
     // Success rate (0-1)
-    stats.success_rate * CONFIDENCE_FACTORS.execution_success_rate.weight,
+    successRate * CONFIDENCE_FACTORS.execution_success_rate.weight,
 
     // Latency consistency (inverse of normalized stddev, capped)
-    Math.max(0, 1 - (stats.latency_stddev_ms / stats.latency_mean_ms)) *
-      CONFIDENCE_FACTORS.latency_consistency.weight,
+    latencyConsistency * CONFIDENCE_FACTORS.latency_consistency.weight,
 
     // Provider reliability (placeholder - would come from historical data)
     0.8 * CONFIDENCE_FACTORS.provider_reliability.weight,
@@ -378,7 +387,8 @@ export function calculateConfidence(stats: AggregatedStats): number {
       CONFIDENCE_FACTORS.sample_size.weight,
   ];
 
-  return Math.min(1, Math.max(0, factors.reduce((a, b) => a + b, 0)));
+  const sum = factors.reduce((a, b) => a + b, 0);
+  return Number.isFinite(sum) ? Math.min(1, Math.max(0, sum)) : 0;
 }
 
 // =============================================================================

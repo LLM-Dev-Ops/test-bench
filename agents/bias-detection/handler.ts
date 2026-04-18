@@ -25,6 +25,8 @@ import {
   AgentError,
   validateInput,
   hashInputs,
+  getAgentIdentity,
+  sanitizeConfidence,
 } from '../contracts/schemas/base';
 
 import {
@@ -987,6 +989,7 @@ async function createDecisionEvent(
   return {
     agent_id: BIAS_DETECTION_AGENT.agent_id,
     agent_version: BIAS_DETECTION_AGENT.agent_version,
+    ...getAgentIdentity(BIAS_DETECTION_AGENT.agent_id),
     decision_type: BIAS_DETECTION_AGENT.decision_type,
     decision_id: randomUUID(),
     inputs_hash: inputsHash,
@@ -995,12 +998,12 @@ async function createDecisionEvent(
       demographic_context: input.demographic_context?.domain || 'general',
     },
     outputs: output,
-    confidence,
+    confidence: sanitizeConfidence(confidence),
     confidence_factors: [
-      { factor: 'sample_coverage', weight: 0.2, value: Math.min(1, output.results.length / 100) },
-      { factor: 'detection_consistency', weight: 0.25, value: output.stats.avg_confidence },
+      { factor: 'sample_coverage', weight: 0.2, value: sanitizeConfidence(Math.min(1, output.results.length / 100)) },
+      { factor: 'detection_consistency', weight: 0.25, value: sanitizeConfidence(output.stats.avg_confidence) },
       { factor: 'method_coverage', weight: 0.25, value: 0.5 },
-      { factor: 'evidence_strength', weight: 0.3, value: output.stats.avg_confidence },
+      { factor: 'evidence_strength', weight: 0.3, value: sanitizeConfidence(output.stats.avg_confidence) },
     ],
     constraints_applied: context.constraintsApplied,
     execution_ref: {

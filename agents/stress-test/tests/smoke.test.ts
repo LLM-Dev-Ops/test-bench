@@ -242,6 +242,10 @@ describe('Verification Checklist', () => {
       const mockDecisionEvent = {
         agent_id: 'stress-test',
         agent_version: '1.0.0',
+        source_agent: 'stress-test',
+        domain: 'llm-test-bench',
+        phase: 'phase1',
+        layer: 'layer1',
         decision_type: 'stress_test_execution',
         decision_id: '550e8400-e29b-41d4-a716-446655440000',
         inputs_hash: 'a'.repeat(64),
@@ -263,6 +267,10 @@ describe('Verification Checklist', () => {
       const invalidConfidence = {
         agent_id: 'stress-test',
         agent_version: '1.0.0',
+        source_agent: 'stress-test',
+        domain: 'llm-test-bench',
+        phase: 'phase1',
+        layer: 'layer1',
         decision_type: 'stress_test_execution',
         decision_id: '550e8400-e29b-41d4-a716-446655440000',
         inputs_hash: 'a'.repeat(64),

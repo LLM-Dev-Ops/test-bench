@@ -27,6 +27,8 @@ import {
   AgentError,
   validateInput,
   hashInputs,
+  getAgentIdentity,
+  sanitizeConfidence,
 } from '../contracts';
 
 import {
@@ -1147,6 +1149,7 @@ async function createDecisionEvent(
   return {
     agent_id: GOLDEN_DATASET_VALIDATOR_AGENT.agent_id,
     agent_version: GOLDEN_DATASET_VALIDATOR_AGENT.agent_version,
+    ...getAgentIdentity(GOLDEN_DATASET_VALIDATOR_AGENT.agent_id),
     decision_type: GOLDEN_DATASET_VALIDATOR_AGENT.decision_type,
     decision_id: randomUUID(),
     inputs_hash: inputsHash,
@@ -1156,11 +1159,11 @@ async function createDecisionEvent(
       dataset_name: input.dataset?.name,
     },
     outputs: output,
-    confidence,
+    confidence: sanitizeConfidence(confidence),
     confidence_factors: [
-      { factor: 'sample_size', weight: 0.20, value: Math.min(1, Math.log10(output.results.length + 1) / 2) },
+      { factor: 'sample_size', weight: 0.20, value: sanitizeConfidence(Math.min(1, Math.log10(output.results.length + 1) / 2)) },
       { factor: 'semantic_coverage', weight: 0.20, value: output.stats.avg_semantic_similarity > 0 ? 0.9 : 0.5 },
-      { factor: 'result_clarity', weight: 0.20, value: output.stats.avg_confidence },
+      { factor: 'result_clarity', weight: 0.20, value: sanitizeConfidence(output.stats.avg_confidence) },
     ],
     constraints_applied: context.constraintsApplied,
     execution_ref: {

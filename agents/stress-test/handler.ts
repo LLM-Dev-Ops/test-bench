@@ -28,6 +28,8 @@ import {
   AgentError,
   validateInput,
   hashInputs,
+  getAgentIdentity,
+  sanitizeConfidence,
   // Constants
   STRESS_TEST_AGENT,
   STRESS_TEST_VALID_CONSTRAINTS,
@@ -1348,6 +1350,7 @@ async function createDecisionEvent(
   return {
     agent_id: STRESS_TEST_AGENT.agent_id,
     agent_version: STRESS_TEST_AGENT.agent_version,
+    ...getAgentIdentity(STRESS_TEST_AGENT.agent_id),
     decision_type: STRESS_TEST_AGENT.decision_type,
     decision_id: randomUUID(),
     inputs_hash: inputsHash,
@@ -1357,11 +1360,11 @@ async function createDecisionEvent(
       test_types: Array.from(new Set(input.scenarios.map(s => s.test_type))),
     },
     outputs: output,
-    confidence,
+    confidence: sanitizeConfidence(confidence),
     confidence_factors: [
-      { factor: 'sample_size', weight: 0.25, value: Math.min(1, output.total_requests / 1000) },
-      { factor: 'scenario_coverage', weight: 0.20, value: Math.min(1, output.scenario_results.length / 5) },
-      { factor: 'result_consistency', weight: 0.25, value: output.overall_success_rate },
+      { factor: 'sample_size', weight: 0.25, value: sanitizeConfidence(Math.min(1, output.total_requests / 1000)) },
+      { factor: 'scenario_coverage', weight: 0.20, value: sanitizeConfidence(Math.min(1, output.scenario_results.length / 5)) },
+      { factor: 'result_consistency', weight: 0.25, value: sanitizeConfidence(output.overall_success_rate) },
     ],
     constraints_applied: context.constraintsApplied,
     execution_ref: {
