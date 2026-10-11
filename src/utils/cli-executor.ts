@@ -5,6 +5,8 @@
  */
 
 import { spawn } from 'child_process';
+import { accessSync, constants } from 'fs';
+import { delimiter, join } from 'path';
 
 import { CLIResult } from '../types/index.js';
 
@@ -37,7 +39,7 @@ export interface ExecuteOptions {
  */
 export async function executeCLI<T = unknown>(
   cliPath: string,
-  options: ExecuteOptions
+  options: ExecuteOptions,
 ): Promise<CLIResult<T>> {
   const startTime = Date.now();
 
@@ -144,27 +146,38 @@ export async function executeCLI<T = unknown>(
  *
  * @returns Path to the CLI binary or undefined if not found
  */
-export function findCLIPath(): string | undefined {
-  // First check if installed globally via cargo
+export function findCLIPath(cwd = process.cwd()): string | undefined {
+  const binaryName = process.platform === 'win32' ? 'llm-test-bench.exe' : 'llm-test-bench';
   const cargoHome = process.env['CARGO_HOME'];
   const home = process.env['HOME'];
 
   const cargoPath = cargoHome
-    ? `${cargoHome}/bin/llm-test-bench`
+    ? join(cargoHome, 'bin', binaryName)
     : home
-    ? `${home}/.cargo/bin/llm-test-bench`
-    : undefined;
+      ? join(home, '.cargo', 'bin', binaryName)
+      : undefined;
 
-  // Also check common npm installation paths
-  const npmGlobalPath = '/usr/local/bin/llm-test-bench';
-  const npmLocalPath = `${process.cwd()}/node_modules/.bin/llm-test-bench`;
+  const npmGlobalPath = join('/usr/local/bin', binaryName);
+  const npmLocalPath = join(cwd, 'node_modules', '.bin', binaryName);
+  const pathCandidates = (process.env['PATH'] ?? '')
+    .split(delimiter)
+    .filter(Boolean)
+    .map((directory) => join(directory, binaryName));
 
-  // Try in order of preference
-  const paths = [cargoPath, npmGlobalPath, npmLocalPath].filter(
-    (p): p is string => p !== undefined
+  const paths = [cargoPath, npmLocalPath, npmGlobalPath, ...pathCandidates].filter(
+    (p): p is string => p !== undefined,
   );
 
-  // For now, return the first path (in production, we'd check if it exists)
-  // This would require fs.existsSync which we can add if needed
-  return paths[0];
+  const accessMode = process.platform === 'win32' ? constants.F_OK : constants.X_OK;
+
+  for (const candidate of new Set(paths)) {
+    try {
+      accessSync(candidate, accessMode);
+      return candidate;
+    } catch {
+      // Keep searching: configured locations may legitimately be absent.
+    }
+  }
+
+  return undefined;
 }
