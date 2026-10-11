@@ -40,15 +40,11 @@ describe('ExecutionContext validation', () => {
   });
 
   it('rejects empty execution_id', () => {
-    expect(
-      validateExecutionContext({ execution_id: '', parent_span_id: 'x' })
-    ).toBe(false);
+    expect(validateExecutionContext({ execution_id: '', parent_span_id: 'x' })).toBe(false);
   });
 
   it('rejects empty parent_span_id', () => {
-    expect(
-      validateExecutionContext({ execution_id: 'x', parent_span_id: '' })
-    ).toBe(false);
+    expect(validateExecutionContext({ execution_id: 'x', parent_span_id: '' })).toBe(false);
   });
 
   it('rejects missing fields', () => {
@@ -58,9 +54,7 @@ describe('ExecutionContext validation', () => {
   });
 
   it('rejects non-string fields', () => {
-    expect(
-      validateExecutionContext({ execution_id: 123, parent_span_id: 'x' })
-    ).toBe(false);
+    expect(validateExecutionContext({ execution_id: 123, parent_span_id: 'x' })).toBe(false);
   });
 });
 
@@ -72,9 +66,9 @@ describe('SpanManager creation', () => {
   });
 
   it('throws ExecutionContextError with missing parent_span_id', () => {
-    expect(() =>
-      SpanManager.create({ execution_id: 'x', parent_span_id: '' })
-    ).toThrow(ExecutionContextError);
+    expect(() => SpanManager.create({ execution_id: 'x', parent_span_id: '' })).toThrow(
+      ExecutionContextError,
+    );
   });
 
   it('throws ExecutionContextError with null context', () => {
@@ -119,9 +113,7 @@ describe('Agent span lifecycle', () => {
     mgr.endAgent(agent.span_id, 'completed');
 
     const result = mgr.finalize('ok');
-    const found = result.agent_spans.find(
-      (s) => s.span_id === agent.span_id
-    );
+    const found = result.agent_spans.find((s) => s.span_id === agent.span_id);
     expect(found?.status).toBe('completed');
     expect(found?.end_time).toBeTruthy();
   });
@@ -132,9 +124,7 @@ describe('Agent span lifecycle', () => {
     mgr.endAgent(agent.span_id, 'failed', ['something broke']);
 
     const result = mgr.finalize(undefined, 'failed');
-    const found = result.agent_spans.find(
-      (s) => s.span_id === agent.span_id
-    );
+    const found = result.agent_spans.find((s) => s.span_id === agent.span_id);
     expect(found?.status).toBe('failed');
     expect(found?.failure_reasons).toContain('something broke');
   });
@@ -142,18 +132,14 @@ describe('Agent span lifecycle', () => {
   it('throws on unknown span_id', () => {
     const mgr = SpanManager.create(validCtx);
     mgr.startAgent('agent');
-    expect(() => mgr.endAgent('nonexistent', 'completed')).toThrow(
-      ExecutionInvariantError
-    );
+    expect(() => mgr.endAgent('nonexistent', 'completed')).toThrow(ExecutionInvariantError);
   });
 
   it('throws on double-end', () => {
     const mgr = SpanManager.create(validCtx);
     const agent = mgr.startAgent('agent');
     mgr.endAgent(agent.span_id, 'completed');
-    expect(() => mgr.endAgent(agent.span_id, 'completed')).toThrow(
-      ExecutionInvariantError
-    );
+    expect(() => mgr.endAgent(agent.span_id, 'completed')).toThrow(ExecutionInvariantError);
   });
 });
 
@@ -186,7 +172,7 @@ describe('Artifact attachment', () => {
         reference: 'bad.json',
         artifact_type: 'results',
         agent_span_id: 'nonexistent',
-      })
+      }),
     ).toThrow(ExecutionInvariantError);
   });
 

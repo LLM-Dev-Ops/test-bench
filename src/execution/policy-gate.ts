@@ -7,7 +7,7 @@
  * first-class artifacts in the execution graph.
  */
 
-import type { ExecutionContext, ExecutionArtifact } from './types.js';
+import { DEFAULT_EXECUTION_POLICY } from './default-policy.js';
 import type {
   SimulationIntent,
   GateDisposition,
@@ -16,7 +16,7 @@ import type {
   ExemptionRecord,
 } from './policy.js';
 import { SpanManager } from './span-manager.js';
-import { DEFAULT_EXECUTION_POLICY } from './default-policy.js';
+import type { ExecutionContext, ExecutionArtifact } from './types.js';
 import { nowISO } from './types.js';
 
 /**
@@ -26,11 +26,7 @@ export class PolicyGateError extends Error {
   public readonly intent: SimulationIntent;
   public readonly disposition: GateDisposition;
 
-  constructor(
-    message: string,
-    intent: SimulationIntent,
-    disposition: GateDisposition,
-  ) {
+  constructor(message: string, intent: SimulationIntent, disposition: GateDisposition) {
     super(message);
     this.name = 'PolicyGateError';
     this.intent = intent;
@@ -131,10 +127,7 @@ export class PolicyGate {
    * LLMTestBench. Since ctx is always provided on this path,
    * this validates and creates the SpanManager.
    */
-  enforce(
-    intent: SimulationIntent,
-    ctx: ExecutionContext,
-  ): { mgr: SpanManager } {
+  enforce(intent: SimulationIntent, ctx: ExecutionContext): { mgr: SpanManager } {
     const result = this.check(intent, ctx);
     if (!result.allowed) {
       throw new PolicyGateError(
@@ -149,11 +142,7 @@ export class PolicyGate {
   /**
    * Record an exemption as a first-class artifact on a SpanManager.
    */
-  recordExemption(
-    mgr: SpanManager,
-    agentSpanId: string,
-    exemption: ExemptionRecord,
-  ): void {
+  recordExemption(mgr: SpanManager, agentSpanId: string, exemption: ExemptionRecord): void {
     const artifact: ExecutionArtifact = {
       reference: `policy-exemption-${exemption.intent}-${Date.now()}.json`,
       artifact_type: 'policy_exemption',

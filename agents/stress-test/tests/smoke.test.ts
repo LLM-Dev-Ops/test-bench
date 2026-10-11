@@ -4,7 +4,7 @@
  * Verification checklist and smoke tests for platform wiring.
  */
 
-import { describe, it, expect, beforeAll, afterAll } from 'vitest';
+import { describe, it, expect, beforeAll, afterAll, vi } from 'vitest';
 import { handler, STRESS_TEST_AGENT } from '../handler';
 import {
   StressTestInputSchema,
@@ -15,10 +15,23 @@ import {
   FAILURE_MODE_METADATA,
   STRESS_TEST_NON_RESPONSIBILITIES,
 } from '../../contracts';
-import {
-  getRegistrationMetadata,
-  validateRegistration,
-} from '../../registry/stress-test';
+import { getRegistrationMetadata, validateRegistration } from '../../registry/stress-test';
+
+vi.mock('../../services', () => ({
+  getRuVectorClient: () => ({
+    persistDecisionEvent: vi.fn().mockResolvedValue(undefined),
+    flush: vi.fn().mockResolvedValue(undefined),
+  }),
+  createTelemetryEmitter: () => ({
+    emitInvoked: vi.fn(),
+    emitCompleted: vi.fn(),
+    emitDecision: vi.fn(),
+    emitError: vi.fn(),
+    emitValidationFailed: vi.fn(),
+    emitConstraintApplied: vi.fn(),
+    flush: vi.fn().mockResolvedValue(undefined),
+  }),
+}));
 
 // =============================================================================
 // TEST FIXTURES
@@ -137,7 +150,7 @@ describe('Verification Checklist', () => {
       const metadata = getRegistrationMetadata();
       expect(metadata.test_types.length).toBe(10);
 
-      const testTypes = metadata.test_types.map(t => t.type);
+      const testTypes = metadata.test_types.map((t) => t.type);
       expect(testTypes).toContain('load_ramp');
       expect(testTypes).toContain('spike');
       expect(testTypes).toContain('soak');
@@ -179,12 +192,60 @@ describe('Verification Checklist', () => {
 
     it('should validate all test type configs', () => {
       const configs = [
-        { test_type: 'load_ramp', load_ramp_config: { initial_concurrency: 1, max_concurrency: 10, step_size: 2, step_duration_ms: 1000, requests_per_step: 5 } },
-        { test_type: 'spike', spike_config: { baseline_concurrency: 0, spike_concurrency: 50, spike_duration_ms: 5000, recovery_observation_ms: 10000 } },
-        { test_type: 'soak', soak_config: { concurrency: 10, duration_ms: 60000, request_interval_ms: 1000, metrics_sample_interval_ms: 5000 } },
-        { test_type: 'extreme_input', extreme_input_config: { input_sizes: [1000, 5000], character_types: ['ascii'], include_edge_cases: true } },
-        { test_type: 'adversarial', adversarial_config: { test_categories: ['encoding_tricks'], severity_level: 'medium', samples_per_category: 3 } },
-        { test_type: 'rate_limit_probe', rate_limit_probe_config: { initial_rps: 1, max_rps: 50, increment: 5, duration_per_level_ms: 3000, detect_throttling: true } },
+        {
+          test_type: 'load_ramp',
+          load_ramp_config: {
+            initial_concurrency: 1,
+            max_concurrency: 10,
+            step_size: 2,
+            step_duration_ms: 1000,
+            requests_per_step: 5,
+          },
+        },
+        {
+          test_type: 'spike',
+          spike_config: {
+            baseline_concurrency: 0,
+            spike_concurrency: 50,
+            spike_duration_ms: 5000,
+            recovery_observation_ms: 10000,
+          },
+        },
+        {
+          test_type: 'soak',
+          soak_config: {
+            concurrency: 10,
+            duration_ms: 60000,
+            request_interval_ms: 1000,
+            metrics_sample_interval_ms: 5000,
+          },
+        },
+        {
+          test_type: 'extreme_input',
+          extreme_input_config: {
+            input_sizes: [1000, 5000],
+            character_types: ['ascii'],
+            include_edge_cases: true,
+          },
+        },
+        {
+          test_type: 'adversarial',
+          adversarial_config: {
+            test_categories: ['encoding_tricks'],
+            severity_level: 'medium',
+            samples_per_category: 3,
+          },
+        },
+        {
+          test_type: 'rate_limit_probe',
+          rate_limit_probe_config: {
+            initial_rps: 1,
+            max_rps: 50,
+            increment: 5,
+            duration_per_level_ms: 3000,
+            detect_throttling: true,
+          },
+        },
       ];
 
       for (const config of configs) {
@@ -322,8 +383,12 @@ describe('Verification Checklist', () => {
 
       for (const mode of modes) {
         expect(FAILURE_MODE_METADATA[mode as keyof typeof FAILURE_MODE_METADATA]).toBeDefined();
-        expect(FAILURE_MODE_METADATA[mode as keyof typeof FAILURE_MODE_METADATA].description).toBeDefined();
-        expect(typeof FAILURE_MODE_METADATA[mode as keyof typeof FAILURE_MODE_METADATA].recoverable).toBe('boolean');
+        expect(
+          FAILURE_MODE_METADATA[mode as keyof typeof FAILURE_MODE_METADATA].description,
+        ).toBeDefined();
+        expect(
+          typeof FAILURE_MODE_METADATA[mode as keyof typeof FAILURE_MODE_METADATA].recoverable,
+        ).toBe('boolean');
       }
     });
   });
@@ -460,13 +525,15 @@ describe('Integration Smoke Tests', () => {
     // Requires OPENAI_API_KEY
     const input = {
       ...VALID_INPUT,
-      providers: [{
-        provider_name: 'openai' as const,
-        model_id: 'gpt-4o-mini',
-        api_key_ref: 'openai',
-        timeout_ms: 60000,
-        max_retries: 1,
-      }],
+      providers: [
+        {
+          provider_name: 'openai' as const,
+          model_id: 'gpt-4o-mini',
+          api_key_ref: 'openai',
+          timeout_ms: 60000,
+          max_retries: 1,
+        },
+      ],
       execution_config: {
         ...VALID_INPUT.execution_config,
         max_total_requests: 10, // Limit for smoke test

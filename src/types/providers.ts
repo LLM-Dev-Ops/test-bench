@@ -180,7 +180,13 @@ export interface ModelInfo {
  */
 export interface ProviderError {
   /** Error type */
-  type: 'rate_limit' | 'authentication' | 'network' | 'invalid_request' | 'provider_error' | 'timeout';
+  type:
+    | 'rate_limit'
+    | 'authentication'
+    | 'network'
+    | 'invalid_request'
+    | 'provider_error'
+    | 'timeout';
 
   /** Error message */
   message: string;

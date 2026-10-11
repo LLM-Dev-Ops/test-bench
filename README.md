@@ -2,7 +2,8 @@
 
 # 🧪 LLM Test Bench
 
-**A comprehensive, production-ready framework for benchmarking, testing, and evaluating Large Language Models**
+**A comprehensive, production-ready framework for benchmarking, testing, and evaluating Large
+Language Models**
 
 [![CI](https://img.shields.io/github/actions/workflow/status/globalbusinessadvisors/llm-test-bench/llm-benchmark.yml?branch=main&label=CI&logo=github)](https://github.com/globalbusinessadvisors/llm-test-bench/actions)
 [![Crates.io](https://img.shields.io/crates/v/llm-test-bench?logo=rust)](https://crates.io/crates/llm-test-bench)
@@ -11,7 +12,8 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Rust Version](https://img.shields.io/badge/rust-1.75%2B-blue.svg)](https://www.rust-lang.org)
 
-[Features](#-features) • [Quick Start](#-quick-start) • [Documentation](#-documentation) • [Architecture](#-architecture) • [Contributing](#-contributing)
+[Features](#-features) • [Quick Start](#-quick-start) • [Documentation](#-documentation) •
+[Architecture](#-architecture) • [Contributing](#-contributing)
 
 </div>
 
@@ -19,13 +21,18 @@
 
 ## 📖 Overview
 
-LLM Test Bench is a powerful, enterprise-grade framework built in Rust for comprehensive testing, benchmarking, and evaluation of Large Language Models. It provides a unified interface to test multiple LLM providers, evaluate responses with sophisticated metrics, and visualize results through an intuitive dashboard.
+LLM Test Bench is a powerful, enterprise-grade framework built in Rust for comprehensive testing,
+benchmarking, and evaluation of Large Language Models. It provides a unified interface to test
+multiple LLM providers, evaluate responses with sophisticated metrics, and visualize results through
+an intuitive dashboard.
 
 ### Why LLM Test Bench?
 
-- **🚀 Multi-Provider Support**: Test 14+ LLM providers with 65 models through a single, unified interface
+- **🚀 Multi-Provider Support**: Test 14+ LLM providers with 65 models through a single, unified
+  interface
 - **🆕 Latest Models**: Full support for GPT-5, Claude Opus 4, Gemini 2.5, and all 2025 releases
-- **📊 Comprehensive Metrics**: Evaluate models with perplexity, coherence, relevance, faithfulness, and custom evaluators
+- **📊 Comprehensive Metrics**: Evaluate models with perplexity, coherence, relevance, faithfulness,
+  and custom evaluators
 - **⚡ High Performance**: Built in Rust for speed, safety, and scalability
 - **🎨 Rich Visualization**: Interactive dashboards with real-time metrics and beautiful charts
 - **🔌 Extensible**: Plugin system, custom evaluators, and distributed computing support
@@ -40,6 +47,7 @@ LLM Test Bench is a powerful, enterprise-grade framework built in Rust for compr
 #### 🤖 Multi-Provider LLM Support
 
 **OpenAI (27 models)**
+
 ```
 gpt-5
 gpt-4.5, gpt-4.5-2025-02-27
@@ -54,6 +62,7 @@ gpt-3.5-turbo, gpt-3.5-turbo-0125, gpt-3.5-turbo-1106
 ```
 
 **Anthropic (15 models)**
+
 ```
 claude-opus-4, claude-opus-4-20250501
 claude-sonnet-4.5, claude-sonnet-4.5-20250901
@@ -66,6 +75,7 @@ claude-3-haiku-20240307
 ```
 
 **Google Gemini (16 models)**
+
 ```
 gemini-2.5-pro
 gemini-2.5-computer-use, gemini-2.5-computer-use-20251007
@@ -77,6 +87,7 @@ gemini-pro, gemini-pro-vision
 ```
 
 **Mistral AI (7 models)**
+
 ```
 mistral-code, mistral-code-20250604
 magistral-large, magistral-medium, magistral-small
@@ -84,6 +95,7 @@ voxtral-small, voxtral-small-20250701
 ```
 
 **Additional Providers**
+
 - **Azure OpenAI**: All OpenAI models via Azure endpoints
 - **AWS Bedrock**: Claude, Llama, Titan, and more
 - **Cohere**: Command, Command R/R+
@@ -91,6 +103,7 @@ voxtral-small, voxtral-small-20250701
 - **Specialized**: Groq, Perplexity AI
 
 #### 📈 Advanced Evaluation Metrics
+
 - **Perplexity Analysis**: Statistical language model evaluation
 - **Coherence Scoring**: Semantic consistency and logical flow
 - **Relevance Evaluation**: Context-aware response quality
@@ -100,6 +113,7 @@ voxtral-small, voxtral-small-20250701
 - **Custom Evaluators**: Build your own evaluation metrics
 
 #### 🎯 Benchmarking & Testing
+
 - **Systematic Testing**: Automated test suites with rich assertions
 - **Comparative Analysis**: Side-by-side model comparison
 - **Performance Profiling**: Latency, throughput, and cost tracking
@@ -107,6 +121,7 @@ voxtral-small, voxtral-small-20250701
 - **Optimization Tools**: Automatic parameter tuning and model recommendation
 
 #### 📊 Visualization & Reporting
+
 - **Interactive Dashboard**: Real-time metrics with Chart.js
 - **Rich Charts**: Performance graphs, cost analysis, trend visualization
 - **Multiple Formats**: HTML reports, JSON exports, custom templates
@@ -114,6 +129,7 @@ voxtral-small, voxtral-small-20250701
 - **Historical Trends**: Long-term performance tracking
 
 #### 🌐 API & Integration
+
 - **REST API**: Complete HTTP API with authentication
 - **GraphQL**: Flexible query interface for complex data needs
 - **WebSocket**: Real-time streaming and live updates
@@ -121,6 +137,7 @@ voxtral-small, voxtral-small-20250701
 - **Distributed Computing**: Scale benchmarks across multiple nodes
 
 #### 🔌 Extensibility
+
 - **Plugin System**: WASM-based sandboxed plugins
 - **Custom Evaluators**: Implement domain-specific metrics
 - **Multimodal Support**: Image, audio, and video evaluation
@@ -146,6 +163,7 @@ llm-test-bench --version
 #### Option 2: Install via npm
 
 **CLI Package:**
+
 ```bash
 # Install CLI globally
 npm install -g @llm-dev-ops/test-bench-cli
@@ -158,6 +176,7 @@ ltb --version
 ```
 
 **SDK Package (for programmatic use):**
+
 ```bash
 # Install SDK in your project
 npm install @llm-dev-ops/test-bench-sdk
@@ -187,7 +206,8 @@ cargo install --path cli
 ### Prerequisites
 
 - **For Cargo**: Rust 1.75.0 or later ([Install Rust](https://rustup.rs/))
-- **For npm**: Node.js 14.0.0+ and Rust ([Install Node](https://nodejs.org/), [Install Rust](https://rustup.rs/))
+- **For npm**: Node.js 14.0.0+ and Rust ([Install Node](https://nodejs.org/),
+  [Install Rust](https://rustup.rs/))
 - **API Keys**: At least one LLM provider API key
 
 ### Configuration
@@ -268,16 +288,19 @@ open http://localhost:9090  # Prometheus
 ## 📚 Documentation
 
 ### Getting Started
+
 - [Quick Start Guide](docs/QUICKSTART_PHASE4.md) - Get up and running in 5 minutes
 - [CLI Reference](docs/CLI_REFERENCE.md) - Complete command-line documentation
 - [Configuration Guide](docs/CONFIGURATION.md) - Advanced configuration options
 
 ### Architecture & Design
+
 - [Architecture Overview](docs/ARCHITECTURE_REPORT.md) - System design and components
 - [Workspace Structure](docs/WORKSPACE_STRUCTURE.md) - Project organization
 - [Technical Architecture](plans/PHASE5_TECHNICAL_ARCHITECTURE.md) - Deep dive into design
 
 ### Features
+
 - [Provider Support](docs/PROVIDERS.md) - All supported LLM providers
 - [API Documentation](docs/API.md) - REST & GraphQL API reference
 - [Monitoring](docs/MONITORING.md) - Observability and metrics
@@ -286,10 +309,12 @@ open http://localhost:9090  # Prometheus
 - [Plugins](docs/PLUGINS.md) - Extensibility and custom plugins
 
 ### Deployment
+
 - [Docker Deployment](docs/DOCKER_DEPLOYMENT.md) - Containerized deployment guide
 - [Database Setup](docs/DATABASE.md) - PostgreSQL configuration
 
 ### Development
+
 - [Phase Implementation Reports](docs/) - Detailed implementation history
 - [Contributing Guide](CONTRIBUTING.md) - How to contribute
 - [Development Setup](docs/DEVELOPMENT.md) - Set up your dev environment
@@ -384,21 +409,28 @@ llm-test-bench/
 ## 🎯 Use Cases
 
 ### 1. Model Selection
-Compare multiple LLM providers to choose the best model for your use case based on quality, cost, and latency.
+
+Compare multiple LLM providers to choose the best model for your use case based on quality, cost,
+and latency.
 
 ### 2. Quality Assurance
+
 Systematic testing of LLM applications with rich assertions and automated evaluation metrics.
 
 ### 3. Performance Benchmarking
+
 Measure and track latency, throughput, and cost across different models and configurations.
 
 ### 4. Regression Testing
+
 Ensure model updates don't degrade quality with historical comparison and automated alerts.
 
 ### 5. Cost Optimization
+
 Identify the most cost-effective model that meets your quality requirements.
 
 ### 6. Research & Experimentation
+
 Rapid prototyping and comparison of different prompts, models, and parameters.
 
 ---
@@ -456,7 +488,8 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## 📞 Support
 
 - **Issues**: [GitHub Issues](https://github.com/globalbusinessadvisors/llm-test-bench/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/globalbusinessadvisors/llm-test-bench/discussions)
+- **Discussions**:
+  [GitHub Discussions](https://github.com/globalbusinessadvisors/llm-test-bench/discussions)
 - **Documentation**: [docs/](docs/)
 
 ---
@@ -464,6 +497,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## 🗺️ Roadmap
 
 ### Completed ✅
+
 - ✅ Multi-provider LLM support (14+ providers)
 - ✅ Advanced evaluation metrics
 - ✅ Visualization dashboard
@@ -475,12 +509,14 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - ✅ PostgreSQL backend
 
 ### In Progress 🚧
+
 - 🚧 Enhanced multimodal support
 - 🚧 Advanced cost optimization
 - 🚧 Plugin marketplace
 - 🚧 Cloud deployment templates
 
 ### Planned 📋
+
 - 📋 Real-time collaboration features
 - 📋 Advanced A/B testing framework
 - 📋 Integration with MLOps platforms
@@ -492,7 +528,9 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 **⭐ Star us on GitHub — it motivates us a lot!**
 
-[Report Bug](https://github.com/globalbusinessadvisors/llm-test-bench/issues) • [Request Feature](https://github.com/globalbusinessadvisors/llm-test-bench/issues) • [Documentation](docs/)
+[Report Bug](https://github.com/globalbusinessadvisors/llm-test-bench/issues) •
+[Request Feature](https://github.com/globalbusinessadvisors/llm-test-bench/issues) •
+[Documentation](docs/)
 
 Made with ❤️ by the LLM Test Bench Team
 

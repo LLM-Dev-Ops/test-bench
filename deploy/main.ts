@@ -10,7 +10,7 @@
  */
 
 import { createServer, IncomingMessage, ServerResponse } from 'http';
-import { randomUUID } from 'crypto';
+import { randomUUID, webcrypto } from 'crypto';
 
 // =============================================================================
 // REQUIRED ENVIRONMENT VARIABLES (PHASE 1 / LAYER 1)
@@ -30,29 +30,35 @@ const REQUIRED_ENV_VARS = [
 // =============================================================================
 
 function logAgentStarted(config: Record<string, string>): void {
-  console.log(JSON.stringify({
-    event: 'agent_started',
-    ...config,
-    timestamp: new Date().toISOString(),
-  }));
+  console.log(
+    JSON.stringify({
+      event: 'agent_started',
+      ...config,
+      timestamp: new Date().toISOString(),
+    }),
+  );
 }
 
 function logAgentAbort(reason: string, details?: Record<string, unknown>): void {
-  console.error(JSON.stringify({
-    event: 'agent_abort',
-    reason,
-    details,
-    timestamp: new Date().toISOString(),
-  }));
+  console.error(
+    JSON.stringify({
+      event: 'agent_abort',
+      reason,
+      details,
+      timestamp: new Date().toISOString(),
+    }),
+  );
 }
 
 function logDecisionEventEmitted(agentId: string, decisionId: string): void {
-  console.log(JSON.stringify({
-    event: 'decision_event_emitted',
-    agent_id: agentId,
-    decision_id: decisionId,
-    timestamp: new Date().toISOString(),
-  }));
+  console.log(
+    JSON.stringify({
+      event: 'decision_event_emitted',
+      agent_id: agentId,
+      decision_id: decisionId,
+      timestamp: new Date().toISOString(),
+    }),
+  );
 }
 
 // =============================================================================
@@ -178,7 +184,7 @@ async function parseRequestBody(req: IncomingMessage): Promise<unknown> {
 
 async function handleAgentRequest(
   agentName: string,
-  body: unknown
+  body: unknown,
 ): Promise<{ statusCode: number; body: unknown }> {
   const executionId = randomUUID();
   const decisionId = randomUUID();
@@ -295,9 +301,9 @@ async function handleAgentRequest(
 async function hashInput(input: unknown): Promise<string> {
   const encoder = new TextEncoder();
   const data = encoder.encode(JSON.stringify(input ?? {}));
-  const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+  const hashBuffer = await webcrypto.subtle.digest('SHA-256', data);
   const hashArray = Array.from(new Uint8Array(hashBuffer));
-  return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+  return hashArray.map((b) => b.toString(16).padStart(2, '0')).join('');
 }
 
 // =============================================================================
@@ -326,19 +332,21 @@ const server = createServer(async (req: IncomingMessage, res: ServerResponse) =>
       const statusCode = ruvectorHealthy ? 200 : 503;
 
       res.writeHead(statusCode);
-      res.end(JSON.stringify({
-        status,
-        service: SERVICE_NAME,
-        version: SERVICE_VERSION,
-        environment: PLATFORM_ENV,
-        // Agent Identity (PHASE 1 / LAYER 1)
-        agent_name: AGENT_NAME,
-        domain: AGENT_DOMAIN,
-        phase: AGENT_PHASE,
-        layer: AGENT_LAYER,
-        ruvector_healthy: ruvectorHealthy,
-        timestamp: new Date().toISOString(),
-      }));
+      res.end(
+        JSON.stringify({
+          status,
+          service: SERVICE_NAME,
+          version: SERVICE_VERSION,
+          environment: PLATFORM_ENV,
+          // Agent Identity (PHASE 1 / LAYER 1)
+          agent_name: AGENT_NAME,
+          domain: AGENT_DOMAIN,
+          phase: AGENT_PHASE,
+          layer: AGENT_LAYER,
+          ruvector_healthy: ruvectorHealthy,
+          timestamp: new Date().toISOString(),
+        }),
+      );
       return;
     }
 
@@ -349,20 +357,22 @@ const server = createServer(async (req: IncomingMessage, res: ServerResponse) =>
       const statusCode = ready ? 200 : 503;
 
       res.writeHead(statusCode);
-      res.end(JSON.stringify({
-        ready,
-        checks: {
-          ruvector_service: ruvectorHealthy,
-          environment_configured: true,
-          // Agent Identity validation
-          agent_identity: {
-            source_agent: AGENT_NAME,
-            domain: AGENT_DOMAIN,
-            phase: AGENT_PHASE,
-            layer: AGENT_LAYER,
+      res.end(
+        JSON.stringify({
+          ready,
+          checks: {
+            ruvector_service: ruvectorHealthy,
+            environment_configured: true,
+            // Agent Identity validation
+            agent_identity: {
+              source_agent: AGENT_NAME,
+              domain: AGENT_DOMAIN,
+              phase: AGENT_PHASE,
+              layer: AGENT_LAYER,
+            },
           },
-        },
-      }));
+        }),
+      );
       return;
     }
 
@@ -377,12 +387,14 @@ const server = createServer(async (req: IncomingMessage, res: ServerResponse) =>
       }));
 
       res.writeHead(200);
-      res.end(JSON.stringify({
-        service: SERVICE_NAME,
-        version: SERVICE_VERSION,
-        agents,
-        total: agents.length,
-      }));
+      res.end(
+        JSON.stringify({
+          service: SERVICE_NAME,
+          version: SERVICE_VERSION,
+          agents,
+          total: agents.length,
+        }),
+      );
       return;
     }
 
@@ -393,7 +405,7 @@ const server = createServer(async (req: IncomingMessage, res: ServerResponse) =>
       const executionId = typeof event.execution_id === 'string' ? event.execution_id : 'unknown';
 
       console.log(
-        `[Telemetry] source=${event.source} type=${event.event_type} execution_id=${executionId} ts=${event.timestamp}`
+        `[Telemetry] source=${event.source} type=${event.event_type} execution_id=${executionId} ts=${event.timestamp}`,
       );
 
       res.writeHead(202);
@@ -408,10 +420,12 @@ const server = createServer(async (req: IncomingMessage, res: ServerResponse) =>
 
       if (method !== 'POST') {
         res.writeHead(405);
-        res.end(JSON.stringify({
-          error: 'Method Not Allowed',
-          message: 'Agent endpoints only accept POST requests',
-        }));
+        res.end(
+          JSON.stringify({
+            error: 'Method Not Allowed',
+            message: 'Agent endpoints only accept POST requests',
+          }),
+        );
         return;
       }
 
@@ -428,26 +442,29 @@ const server = createServer(async (req: IncomingMessage, res: ServerResponse) =>
 
     // Not found
     res.writeHead(404);
-    res.end(JSON.stringify({
-      error: 'Not Found',
-      message: `Endpoint ${path} not found`,
-      available_endpoints: [
-        '/health',
-        '/ready',
-        '/api/v1/agents',
-        '/api/v1/telemetry',
-        ...Object.keys(AGENT_METADATA).map(k => `/api/v1/agents/${k}`),
-      ],
-    }));
-
+    res.end(
+      JSON.stringify({
+        error: 'Not Found',
+        message: `Endpoint ${path} not found`,
+        available_endpoints: [
+          '/health',
+          '/ready',
+          '/api/v1/agents',
+          '/api/v1/telemetry',
+          ...Object.keys(AGENT_METADATA).map((k) => `/api/v1/agents/${k}`),
+        ],
+      }),
+    );
   } catch (err) {
     console.error('[Server] Error:', err);
     res.writeHead(500);
-    res.end(JSON.stringify({
-      error: 'Internal Server Error',
-      message: err instanceof Error ? err.message : String(err),
-      timestamp: new Date().toISOString(),
-    }));
+    res.end(
+      JSON.stringify({
+        error: 'Internal Server Error',
+        message: err instanceof Error ? err.message : String(err),
+        timestamp: new Date().toISOString(),
+      }),
+    );
   }
 });
 
@@ -489,7 +506,7 @@ async function performStartupChecks(): Promise<void> {
     const response = await fetch(`${RUVECTOR_SERVICE_URL}/health`, {
       method: 'GET',
       headers: {
-        'Authorization': `Bearer ${RUVECTOR_API_KEY}`,
+        Authorization: `Bearer ${RUVECTOR_API_KEY}`,
         'X-API-Key': RUVECTOR_API_KEY!,
       },
       signal: AbortSignal.timeout(5000),
@@ -516,26 +533,28 @@ async function performStartupChecks(): Promise<void> {
 // =============================================================================
 
 // Perform mandatory startup checks BEFORE listening
-performStartupChecks().then(() => {
-  server.listen(PORT, () => {
-    // Log successful startup (minimal observability)
-    logAgentStarted({
-      service: SERVICE_NAME,
-      version: SERVICE_VERSION,
-      environment: PLATFORM_ENV,
-      agent_name: AGENT_NAME,
-      domain: AGENT_DOMAIN,
-      phase: AGENT_PHASE,
-      layer: AGENT_LAYER,
-      port: String(PORT),
-      agent_count: String(Object.keys(AGENT_METADATA).length),
-      ruvector_healthy: String(ruvectorHealthy),
+performStartupChecks()
+  .then(() => {
+    server.listen(PORT, () => {
+      // Log successful startup (minimal observability)
+      logAgentStarted({
+        service: SERVICE_NAME,
+        version: SERVICE_VERSION,
+        environment: PLATFORM_ENV,
+        agent_name: AGENT_NAME,
+        domain: AGENT_DOMAIN,
+        phase: AGENT_PHASE,
+        layer: AGENT_LAYER,
+        port: String(PORT),
+        agent_count: String(Object.keys(AGENT_METADATA).length),
+        ruvector_healthy: String(ruvectorHealthy),
+      });
     });
+  })
+  .catch((err) => {
+    logAgentAbort('startup_failed', { error: String(err) });
+    process.exit(1);
   });
-}).catch((err) => {
-  logAgentAbort('startup_failed', { error: String(err) });
-  process.exit(1);
-});
 
 // Graceful shutdown
 process.on('SIGTERM', () => {

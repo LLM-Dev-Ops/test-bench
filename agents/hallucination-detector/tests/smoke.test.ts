@@ -4,13 +4,29 @@
  * Verification checklist and smoke tests for the hallucination-detector agent.
  */
 
-import { describe, it, expect, beforeAll } from 'vitest';
+import { describe, it, expect, beforeAll, vi } from 'vitest';
 import {
   handler,
   HALLUCINATION_DETECTOR_AGENT,
   HallucinationDetectorInputSchema,
   HallucinationDetectorOutputSchema,
 } from '../index';
+
+vi.mock('../../services', () => ({
+  getRuVectorClient: () => ({
+    persistDecisionEvent: vi.fn().mockResolvedValue(undefined),
+    flush: vi.fn().mockResolvedValue(undefined),
+  }),
+  createTelemetryEmitter: () => ({
+    emitInvoked: vi.fn(),
+    emitCompleted: vi.fn(),
+    emitDecision: vi.fn(),
+    emitError: vi.fn(),
+    emitValidationFailed: vi.fn(),
+    emitConstraintApplied: vi.fn(),
+    flush: vi.fn().mockResolvedValue(undefined),
+  }),
+}));
 
 // =============================================================================
 // VERIFICATION CHECKLIST
@@ -137,14 +153,15 @@ describe('Hallucination Detector Agent', () => {
       const response = await handler({
         body: {
           claim: 'Napoleon won the Battle of Waterloo',
-          reference_context: 'Napoleon was defeated at the Battle of Waterloo in 1815 by the Duke of Wellington.',
+          reference_context:
+            'Napoleon was defeated at the Battle of Waterloo in 1815 by the Duke of Wellington.',
         },
         headers: {},
         method: 'POST',
         path: '/api/v1/agents/hallucination-detector',
       });
 
-      expect(response.statusCode).toBe(200);
+      expect(response.statusCode, response.body).toBe(200);
       const body = JSON.parse(response.body);
       expect(body.success).toBe(true);
       expect(body.decision_id).toBeDefined();
@@ -158,7 +175,8 @@ describe('Hallucination Detector Agent', () => {
       const response = await handler({
         body: {
           claim: 'The Earth orbits the Sun',
-          reference_context: 'The Earth orbits the Sun once every 365.25 days. This is known as a solar year.',
+          reference_context:
+            'The Earth orbits the Sun once every 365.25 days. This is known as a solar year.',
         },
         headers: {},
         method: 'POST',
@@ -239,7 +257,8 @@ describe('Hallucination Detector Agent', () => {
             { claim_id: 'c2', text: 'Python was invented in 1850' },
             { claim_id: 'c3', text: 'Python uses indentation for code blocks' },
           ],
-          reference_context: 'Python is a high-level programming language created by Guido van Rossum in 1991. It uses indentation to define code blocks.',
+          reference_context:
+            'Python is a high-level programming language created by Guido van Rossum in 1991. It uses indentation to define code blocks.',
         },
         headers: {},
         method: 'POST',

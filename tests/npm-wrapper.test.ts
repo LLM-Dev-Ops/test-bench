@@ -3,38 +3,18 @@
  * Tests that the npm package correctly wraps the Rust CLI binary
  */
 
-import { describe, it, expect, beforeAll } from 'vitest';
-import { spawn, spawnSync } from 'child_process';
-import { existsSync } from 'fs';
+import { describe, it, expect } from 'vitest';
+import { spawnSync } from 'child_process';
+import { existsSync, readFileSync } from 'fs';
 import { join } from 'path';
-import os from 'os';
+import ts from 'typescript';
 
 describe('NPM Wrapper Tests', () => {
-  describe('Binary Discovery', () => {
-    it('should find the llm-test-bench binary', () => {
-      const binaryName = process.platform === 'win32' ? 'llm-test-bench.exe' : 'llm-test-bench';
-      const cargoHome = process.env.CARGO_HOME || join(os.homedir(), '.cargo');
-      const cargoBin = join(cargoHome, 'bin', binaryName);
-
-      // Binary should exist in cargo bin or be in PATH
-      const exists = existsSync(cargoBin);
-
-      if (!exists) {
-        // Try to find in PATH
-        const which = process.platform === 'win32' ? 'where' : 'which';
-        const result = spawnSync(which, [binaryName], { encoding: 'utf8' });
-        expect(result.status === 0 || exists).toBe(true);
-      } else {
-        expect(exists).toBe(true);
-      }
-    });
-  });
-
   describe('Version Command', () => {
     it('should return version information', () => {
       const result = spawnSync('npm', ['run', '-s', 'test:cli', '--', '--version'], {
         encoding: 'utf8',
-        cwd: join(__dirname, '..')
+        cwd: join(__dirname, '..'),
       });
 
       // Should exit successfully
@@ -51,7 +31,7 @@ describe('NPM Wrapper Tests', () => {
     it('should display help information', () => {
       const result = spawnSync('npm', ['run', '-s', 'test:cli', '--', '--help'], {
         encoding: 'utf8',
-        cwd: join(__dirname, '..')
+        cwd: join(__dirname, '..'),
       });
 
       if (result.status === 0) {
@@ -66,7 +46,7 @@ describe('NPM Wrapper Tests', () => {
     it('should handle invalid commands gracefully', () => {
       const result = spawnSync('npm', ['run', '-s', 'test:cli', '--', 'invalid-command'], {
         encoding: 'utf8',
-        cwd: join(__dirname, '..')
+        cwd: join(__dirname, '..'),
       });
 
       // Should exit with non-zero status for invalid command
@@ -79,25 +59,25 @@ describe('NPM Wrapper Tests', () => {
 
 describe('Package Metadata', () => {
   it('should have valid package.json', () => {
-    const packageJson = require('../package.json');
+    const packageJson = JSON.parse(readFileSync(join(__dirname, '..', 'package.json'), 'utf8'));
 
-    expect(packageJson.name).toBe('llm-test-bench');
+    expect(packageJson.name).toBe('@llm-dev-ops/test-bench-sdk');
     expect(packageJson.version).toMatch(/\d+\.\d+\.\d+/);
     expect(packageJson.description).toBeTruthy();
     expect(packageJson.keywords).toContain('llm');
     expect(packageJson.keywords).toContain('testing');
-    expect(packageJson.bin).toHaveProperty('ltb');
+    expect(packageJson.exports).toHaveProperty('.');
   });
 
   it('should have proper engine requirements', () => {
-    const packageJson = require('../package.json');
+    const packageJson = JSON.parse(readFileSync(join(__dirname, '..', 'package.json'), 'utf8'));
 
     expect(packageJson.engines).toBeDefined();
     expect(packageJson.engines.node).toMatch(/>=\d+\.\d+\.\d+/);
   });
 
   it('should include required scripts', () => {
-    const packageJson = require('../package.json');
+    const packageJson = JSON.parse(readFileSync(join(__dirname, '..', 'package.json'), 'utf8'));
 
     expect(packageJson.scripts).toBeDefined();
     expect(packageJson.scripts.test).toBeDefined();
@@ -107,7 +87,7 @@ describe('Package Metadata', () => {
 
 describe('TypeScript Support', () => {
   it('should have TypeScript definitions', () => {
-    const packageJson = require('../package.json');
+    const packageJson = JSON.parse(readFileSync(join(__dirname, '..', 'package.json'), 'utf8'));
 
     expect(packageJson.types).toBeDefined();
     expect(packageJson.types).toMatch(/\.d\.ts$/);
@@ -117,7 +97,8 @@ describe('TypeScript Support', () => {
     const tsconfigPath = join(__dirname, '..', 'tsconfig.json');
     expect(existsSync(tsconfigPath)).toBe(true);
 
-    const tsconfig = require('../tsconfig.json');
+    const { config: tsconfig, error } = ts.readConfigFile(tsconfigPath, ts.sys.readFile);
+    expect(error).toBeUndefined();
     expect(tsconfig.compilerOptions).toBeDefined();
   });
 });

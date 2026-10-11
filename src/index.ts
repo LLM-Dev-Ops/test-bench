@@ -62,11 +62,7 @@ export type {
 } from './execution/index.js';
 
 // Export policy gate (execution dependency enforcement)
-export {
-  PolicyGate,
-  PolicyGateError,
-  DEFAULT_EXECUTION_POLICY,
-} from './execution/index.js';
+export { PolicyGate, PolicyGateError, DEFAULT_EXECUTION_POLICY } from './execution/index.js';
 export type {
   SimulationIntent,
   GateDisposition,

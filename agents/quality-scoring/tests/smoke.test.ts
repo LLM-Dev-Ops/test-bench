@@ -4,7 +4,7 @@
  * Basic integration tests to verify the agent works correctly.
  */
 
-import { describe, it, expect, beforeAll } from 'vitest';
+import { describe, it, expect, beforeAll, vi } from 'vitest';
 import { handler, QUALITY_SCORING_AGENT } from '../handler';
 import { executeCLI } from '../cli';
 import {
@@ -12,6 +12,22 @@ import {
   QualityScoringOutputSchema,
   PRESET_PROFILES,
 } from '../../contracts';
+
+vi.mock('../../services', () => ({
+  getRuVectorClient: () => ({
+    persistDecisionEvent: vi.fn().mockResolvedValue(undefined),
+    flush: vi.fn().mockResolvedValue(undefined),
+  }),
+  createTelemetryEmitter: () => ({
+    emitInvoked: vi.fn(),
+    emitCompleted: vi.fn(),
+    emitDecision: vi.fn(),
+    emitError: vi.fn(),
+    emitValidationFailed: vi.fn(),
+    emitConstraintApplied: vi.fn(),
+    flush: vi.fn().mockResolvedValue(undefined),
+  }),
+}));
 
 // =============================================================================
 // TEST DATA
@@ -432,11 +448,7 @@ describe('Quality Scoring CLI', () => {
   });
 
   it('should return 0 for dry-run with valid input', async () => {
-    const code = await executeCLI([
-      '--dry-run',
-      '--input-json',
-      JSON.stringify(validInput),
-    ]);
+    const code = await executeCLI(['--dry-run', '--input-json', JSON.stringify(validInput)]);
     expect(code).toBe(0);
   });
 });

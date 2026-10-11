@@ -50,11 +50,7 @@ export type SimulationIntent = z.infer<typeof SimulationIntentSchema>;
  * - 'recommended': Should run instrumented, but bypass does not fail.
  * - 'optional': No policy enforcement.
  */
-export const GateDispositionSchema = z.enum([
-  'mandatory',
-  'recommended',
-  'optional',
-]);
+export const GateDispositionSchema = z.enum(['mandatory', 'recommended', 'optional']);
 
 export type GateDisposition = z.infer<typeof GateDispositionSchema>;
 
@@ -90,7 +86,7 @@ export const ExecutionPolicySchema = z.object({
       const intents = rules.map((r: { intent: string }) => r.intent);
       return new Set(intents).size === intents.length;
     },
-    { message: 'Duplicate intent in policy rules' }
+    { message: 'Duplicate intent in policy rules' },
   ),
   default_disposition: GateDispositionSchema,
 });

@@ -140,7 +140,7 @@ describe('Adversarial Prompt Agent', () => {
         path: '/adversarial-prompt',
       });
 
-      expect(response.statusCode).toBe(200);
+      expect(response.statusCode, response.body).toBe(200);
 
       const result = JSON.parse(response.body);
       expect(result.success).toBe(true);

@@ -3,6 +3,7 @@
  * These schemas define the canonical structures that ALL agents must use.
  */
 
+import { webcrypto } from 'crypto';
 import { z } from 'zod';
 
 // =============================================================================
@@ -82,11 +83,15 @@ export const DecisionEventSchema = z.object({
 
   // Confidence and constraints
   confidence: z.number().min(0).max(1),
-  confidence_factors: z.array(z.object({
-    factor: z.string(),
-    weight: z.number().min(0).max(1),
-    value: z.number().min(0).max(1),
-  })).optional(),
+  confidence_factors: z
+    .array(
+      z.object({
+        factor: z.string(),
+        weight: z.number().min(0).max(1),
+        value: z.number().min(0).max(1),
+      }),
+    )
+    .optional(),
 
   constraints_applied: z.array(z.string()),
 
@@ -98,11 +103,13 @@ export const DecisionEventSchema = z.object({
   duration_ms: z.number().nonnegative(),
 
   // Error state (if any)
-  error: z.object({
-    code: z.string(),
-    message: z.string(),
-    recoverable: z.boolean(),
-  }).optional(),
+  error: z
+    .object({
+      code: z.string(),
+      message: z.string(),
+      recoverable: z.boolean(),
+    })
+    .optional(),
 });
 
 export type DecisionEvent = z.infer<typeof DecisionEventSchema>;
@@ -171,7 +178,7 @@ export type AgentError = z.infer<typeof AgentErrorSchema>;
  */
 export function validateInput<T>(
   schema: z.ZodSchema<T>,
-  input: unknown
+  input: unknown,
 ): { success: true; data: T } | { success: false; error: AgentError } {
   const result = schema.safeParse(input);
 
@@ -185,7 +192,7 @@ export function validateInput<T>(
       code: 'VALIDATION_ERROR',
       message: 'Input validation failed',
       details: {
-        issues: result.error.issues.map(i => ({
+        issues: result.error.issues.map((i) => ({
           path: i.path.join('.'),
           message: i.message,
         })),
@@ -202,9 +209,9 @@ export function validateInput<T>(
 export async function hashInputs(inputs: unknown): Promise<string> {
   const encoder = new TextEncoder();
   const data = encoder.encode(JSON.stringify(inputs));
-  const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+  const hashBuffer = await webcrypto.subtle.digest('SHA-256', data);
   const hashArray = Array.from(new Uint8Array(hashBuffer));
-  return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+  return hashArray.map((b) => b.toString(16).padStart(2, '0')).join('');
 }
 
 // =============================================================================
