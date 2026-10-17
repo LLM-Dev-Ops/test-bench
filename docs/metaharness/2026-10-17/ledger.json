@@ -1,0 +1,1131 @@
+{
+  "date": "2026-10-17",
+  "status": ["EXECUTED", "COMPONENT_VALIDATED", "REPOSITORY_BLOCKED"],
+  "worked": ["LLM-Dev-Ops/test-bench"],
+  "readOnlyPRInspection": [
+    "LLM-Dev-Ops/observatory#11",
+    "LLM-Dev-Ops/sentinel#22",
+    "LLM-Dev-Ops/inference-gateway#1"
+  ],
+  "inventory": {
+    "installation": 168979216,
+    "pages": [
+      {
+        "offset": 0,
+        "count": 58
+      },
+      {
+        "offset": 100,
+        "count": 0
+      }
+    ],
+    "repositories": 58,
+    "nonarchived": 58,
+    "openPRPages": [100, 17]
+  },
+  "coverage": [
+    {
+      "repo": "LLM-Dev-Ops/test-bench",
+      "main": "4d58c46426fe085d25fef3fcb35fa5e2cce83b30",
+      "protected": false,
+      "ci": {
+        "id": 38139330512,
+        "sha": "1c4f445288f360120ebae6fb00c6fbf312c16931",
+        "status": "completed",
+        "conclusion": "failure",
+        "url": "https://github.com/LLM-Dev-Ops/test-bench/actions/runs/38139330512"
+      },
+      "disposition": "WORKED",
+      "reason": "Resumed PR24 in isolated worktree"
+    },
+    {
+      "repo": "LLM-Dev-Ops/observatory",
+      "main": "020f9031a2f1272d55deef0d6c715650b6647150",
+      "protected": false,
+      "ci": {
+        "id": 38326924256,
+        "sha": "6806b2266882c081ec05dc0ab8350b32c34caf3d",
+        "status": "completed",
+        "conclusion": "failure",
+        "url": "https://github.com/LLM-Dev-Ops/observatory/actions/runs/38326924256"
+      },
+      "disposition": "DEFERRED",
+      "reason": "Metadata and latest CI inspected; bounded rotation; no writes this cycle"
+    },
+    {
+      "repo": "LLM-Dev-Ops/shield",
+      "main": "1c46282495b94bb1fcae2d9e63cf34f495226699",
+      "protected": false,
+      "ci": {
+        "id": 38398421866,
+        "sha": "60bcd3c463228ee8c8ccadc4c7c560502d73e273",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/LLM-Dev-Ops/shield/actions/runs/38398421866"
+      },
+      "disposition": "DEFERRED",
+      "reason": "Metadata and latest CI inspected; bounded rotation; no writes this cycle"
+    },
+    {
+      "repo": "LLM-Dev-Ops/memory-graph",
+      "main": "d9b9dc5eb7ac313eedc2831dce6af46641bfaaa7",
+      "protected": false,
+      "ci": {
+        "id": 38985101510,
+        "sha": "a1268650619d3ee7b58d833fa9a7ea727206d66f",
+        "status": "completed",
+        "conclusion": "failure",
+        "url": "https://github.com/LLM-Dev-Ops/memory-graph/actions/runs/38985101510"
+      },
+      "disposition": "DEFERRED",
+      "reason": "Metadata and latest CI inspected; bounded rotation; no writes this cycle"
+    },
+    {
+      "repo": "LLM-Dev-Ops/sentinel",
+      "main": "504b0ea466620ffacfd7ea19993d5a62b71babdd",
+      "protected": false,
+      "ci": {
+        "id": 38445143556,
+        "sha": "16249d00b5ebaca889ac6ea372c8acc1b867579f",
+        "status": "completed",
+        "conclusion": "failure",
+        "url": "https://github.com/LLM-Dev-Ops/sentinel/actions/runs/38445143556"
+      },
+      "disposition": "DEFERRED",
+      "reason": "Metadata and latest CI inspected; bounded rotation; no writes this cycle"
+    },
+    {
+      "repo": "LLM-Dev-Ops/latency-lens",
+      "main": "8370e90fa788959a0b80e3f9c4140422f3eccd69",
+      "protected": false,
+      "ci": {
+        "id": 22300475883,
+        "sha": "ea8a15eb987f18e59f8d448f0bf48c2ef0891e7e",
+        "status": "completed",
+        "conclusion": "failure",
+        "url": "https://github.com/LLM-Dev-Ops/latency-lens/actions/runs/22300475883"
+      },
+      "disposition": "DEFERRED",
+      "reason": "Metadata and latest CI inspected; bounded rotation; no writes this cycle"
+    },
+    {
+      "repo": "LLM-Dev-Ops/edge-agent",
+      "main": "483c8a353855d8d54a1b1dee181f12376b5f592a",
+      "protected": false,
+      "ci": {
+        "id": 38562684113,
+        "sha": "11da64cb7e409beac9b3c3647767715d6f0b7101",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/LLM-Dev-Ops/edge-agent/actions/runs/38562684113"
+      },
+      "disposition": "DEFERRED",
+      "reason": "Metadata and latest CI inspected; bounded rotation; no writes this cycle"
+    },
+    {
+      "repo": "LLM-Dev-Ops/forge",
+      "main": "4b5e43618b8fd1b8f63bddd24ff524510d9514bc",
+      "protected": false,
+      "ci": {
+        "id": 38994534648,
+        "sha": "4b5e43618b8fd1b8f63bddd24ff524510d9514bc",
+        "status": "completed",
+        "conclusion": "failure",
+        "url": "https://github.com/LLM-Dev-Ops/forge/actions/runs/38994534648"
+      },
+      "disposition": "DEFERRED",
+      "reason": "Metadata and latest CI inspected; bounded rotation; no writes this cycle"
+    },
+    {
+      "repo": "LLM-Dev-Ops/auto-optimizer",
+      "main": "114865b4c3beb78b9fbeacbfc19ef93ab4501f97",
+      "protected": false,
+      "ci": {
+        "id": 39032697977,
+        "sha": "e544ac4cb47f1cc9db15c76002c66f00f04f9b53",
+        "status": "completed",
+        "conclusion": "failure",
+        "url": "https://github.com/LLM-Dev-Ops/auto-optimizer/actions/runs/39032697977"
+      },
+      "disposition": "DEFERRED",
+      "reason": "Metadata and latest CI inspected; bounded rotation; no writes this cycle"
+    },
+    {
+      "repo": "LLM-Dev-Ops/incident-manager",
+      "main": "bcb8c8d027997c3363a9fd0ebd0ddc9c086227c6",
+      "protected": false,
+      "ci": {
+        "id": 38052159946,
+        "sha": "834452bad11f38fd70cf73bb9991f83d9d19c299",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/LLM-Dev-Ops/incident-manager/actions/runs/38052159946"
+      },
+      "disposition": "DEFERRED",
+      "reason": "Metadata and latest CI inspected; bounded rotation; no writes this cycle"
+    },
+    {
+      "repo": "LLM-Dev-Ops/orchestrator",
+      "main": "24b373c41cbac1d946fda31b7c86a5ff26037375",
+      "protected": false,
+      "ci": {
+        "id": 30310547202,
+        "sha": "24b373c41cbac1d946fda31b7c86a5ff26037375",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/LLM-Dev-Ops/orchestrator/actions/runs/30310547202"
+      },
+      "disposition": "DEFERRED",
+      "reason": "Metadata and latest CI inspected; bounded rotation; no writes this cycle"
+    },
+    {
+      "repo": "LLM-Dev-Ops/governance-dashboard",
+      "main": "53047917da900f397a5045cfc7ddf5e32e735872",
+      "protected": false,
+      "ci": {
+        "id": 30302815912,
+        "sha": "53047917da900f397a5045cfc7ddf5e32e735872",
+        "status": "completed",
+        "conclusion": "failure",
+        "url": "https://github.com/LLM-Dev-Ops/governance-dashboard/actions/runs/30302815912"
+      },
+      "disposition": "DEFERRED",
+      "reason": "Metadata and latest CI inspected; bounded rotation; no writes this cycle"
+    },
+    {
+      "repo": "LLM-Dev-Ops/policy-engine",
+      "main": "c44b699eadc6b8dbbd26fa35d7cf82d61275979b",
+      "protected": false,
+      "ci": null,
+      "disposition": "DEFERRED",
+      "reason": "Metadata and latest CI inspected; bounded rotation; no writes this cycle"
+    },
+    {
+      "repo": "LLM-Dev-Ops/marketplace",
+      "main": "70071f0eda8e8bf76574488f74779ed7f1229b47",
+      "protected": false,
+      "ci": {
+        "id": 30302618197,
+        "sha": "70071f0eda8e8bf76574488f74779ed7f1229b47",
+        "status": "completed",
+        "conclusion": "failure",
+        "url": "https://github.com/LLM-Dev-Ops/marketplace/actions/runs/30302618197"
+      },
+      "disposition": "DEFERRED",
+      "reason": "Metadata and latest CI inspected; bounded rotation; no writes this cycle"
+    },
+    {
+      "repo": "LLM-Dev-Ops/cost-ops",
+      "main": "aef76ae9c264b888abc60aace3dd6948f2422906",
+      "protected": false,
+      "ci": {
+        "id": 39031155178,
+        "sha": "aef76ae9c264b888abc60aace3dd6948f2422906",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/LLM-Dev-Ops/cost-ops/actions/runs/39031155178"
+      },
+      "disposition": "DEFERRED",
+      "reason": "Metadata and latest CI inspected; bounded rotation; no writes this cycle"
+    },
+    {
+      "repo": "LLM-Dev-Ops/registry",
+      "main": "322d9c90806a433b0363dffaac92c84ea50af886",
+      "protected": false,
+      "ci": null,
+      "disposition": "DEFERRED",
+      "reason": "Metadata and latest CI inspected; bounded rotation; no writes this cycle"
+    },
+    {
+      "repo": "LLM-Dev-Ops/analytics-hub",
+      "main": "88f4ffa94afd4a14ec94c9b4b3dc723badc7fac1",
+      "protected": false,
+      "ci": {
+        "id": 38188081580,
+        "sha": "0021e2d7504db3046128bc2e6144983194f802fa",
+        "status": "completed",
+        "conclusion": "failure",
+        "url": "https://github.com/LLM-Dev-Ops/analytics-hub/actions/runs/38188081580"
+      },
+      "disposition": "DEFERRED",
+      "reason": "Metadata and latest CI inspected; bounded rotation; no writes this cycle"
+    },
+    {
+      "repo": "LLM-Dev-Ops/schema-registry",
+      "main": "d0d89f267c32a2d31b622ad112836435c2534f39",
+      "protected": false,
+      "ci": {
+        "id": 30302600641,
+        "sha": "d0d89f267c32a2d31b622ad112836435c2534f39",
+        "status": "completed",
+        "conclusion": "failure",
+        "url": "https://github.com/LLM-Dev-Ops/schema-registry/actions/runs/30302600641"
+      },
+      "disposition": "DEFERRED",
+      "reason": "Metadata and latest CI inspected; bounded rotation; no writes this cycle"
+    },
+    {
+      "repo": "LLM-Dev-Ops/connector-hub",
+      "main": "b25fcb3bd9a06ae9e7d73c7acd677607123d081d",
+      "protected": false,
+      "ci": {
+        "id": 30302596307,
+        "sha": "b25fcb3bd9a06ae9e7d73c7acd677607123d081d",
+        "status": "completed",
+        "conclusion": "failure",
+        "url": "https://github.com/LLM-Dev-Ops/connector-hub/actions/runs/30302596307"
+      },
+      "disposition": "DEFERRED",
+      "reason": "Metadata and latest CI inspected; bounded rotation; no writes this cycle"
+    },
+    {
+      "repo": "LLM-Dev-Ops/simulator",
+      "main": "96091398ad2cb1189774d2581fb26c2bebe1abd9",
+      "protected": false,
+      "ci": {
+        "id": 37978961653,
+        "sha": "8c8d01c419cd0df3006601a83c8846f3ebff40d8",
+        "status": "completed",
+        "conclusion": "failure",
+        "url": "https://github.com/LLM-Dev-Ops/simulator/actions/runs/37978961653"
+      },
+      "disposition": "DEFERRED",
+      "reason": "Metadata and latest CI inspected; bounded rotation; no writes this cycle"
+    },
+    {
+      "repo": "LLM-Dev-Ops/benchmark-exchange",
+      "main": "09236748843306e9cc5f33cd91b0c9182c7b18e1",
+      "protected": false,
+      "ci": {
+        "id": 30302631143,
+        "sha": "09236748843306e9cc5f33cd91b0c9182c7b18e1",
+        "status": "completed",
+        "conclusion": "failure",
+        "url": "https://github.com/LLM-Dev-Ops/benchmark-exchange/actions/runs/30302631143"
+      },
+      "disposition": "DEFERRED",
+      "reason": "Metadata and latest CI inspected; bounded rotation; no writes this cycle"
+    },
+    {
+      "repo": "LLM-Dev-Ops/config-manager",
+      "main": "02b463c3cbf088183f14b2ec951389f797863ac7",
+      "protected": false,
+      "ci": {
+        "id": 39034597763,
+        "sha": "2d4649c8defecc32442252672950b1729a2c46a7",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/LLM-Dev-Ops/config-manager/actions/runs/39034597763"
+      },
+      "disposition": "DEFERRED",
+      "reason": "Metadata and latest CI inspected; bounded rotation; no writes this cycle"
+    },
+    {
+      "repo": "LLM-Dev-Ops/copilot-agent",
+      "main": "756402a87e39419efa90a2accfe34b46083af945",
+      "protected": false,
+      "ci": {
+        "id": 30302673145,
+        "sha": "756402a87e39419efa90a2accfe34b46083af945",
+        "status": "completed",
+        "conclusion": "failure",
+        "url": "https://github.com/LLM-Dev-Ops/copilot-agent/actions/runs/30302673145"
+      },
+      "disposition": "DEFERRED",
+      "reason": "Metadata and latest CI inspected; bounded rotation; no writes this cycle"
+    },
+    {
+      "repo": "LLM-Dev-Ops/inference-gateway",
+      "main": "a07a604dc14a3eeb2b9a07e85e9c41212156de9a",
+      "protected": false,
+      "ci": {
+        "id": 38008985239,
+        "sha": "35a949a4671cda298cb81a38a1a8787dbbabb514",
+        "status": "completed",
+        "conclusion": "failure",
+        "url": "https://github.com/LLM-Dev-Ops/inference-gateway/actions/runs/38008985239"
+      },
+      "disposition": "DEFERRED",
+      "reason": "Metadata and latest CI inspected; bounded rotation; no writes this cycle"
+    },
+    {
+      "repo": "LLM-Dev-Ops/data-vault",
+      "main": "01c0240871f03f0cbc0f497bff47360940bcb637",
+      "protected": false,
+      "ci": {
+        "id": 30302592934,
+        "sha": "01c0240871f03f0cbc0f497bff47360940bcb637",
+        "status": "completed",
+        "conclusion": "failure",
+        "url": "https://github.com/LLM-Dev-Ops/data-vault/actions/runs/30302592934"
+      },
+      "disposition": "DEFERRED",
+      "reason": "Metadata and latest CI inspected; bounded rotation; no writes this cycle"
+    },
+    {
+      "repo": "LLM-Dev-Ops/infra",
+      "main": "a8bc89c190f63b139812f30a54e21a25b8f70e81",
+      "protected": false,
+      "ci": null,
+      "disposition": "DEFERRED",
+      "reason": "Metadata and latest CI inspected; bounded rotation; no writes this cycle"
+    },
+    {
+      "repo": "LLM-Dev-Ops/research-lab",
+      "main": "83c4850c04d6243c1f700ec4a6a0e406a7d7198a",
+      "protected": false,
+      "ci": {
+        "id": 38920009861,
+        "sha": "83c4850c04d6243c1f700ec4a6a0e406a7d7198a",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/LLM-Dev-Ops/research-lab/actions/runs/38920009861"
+      },
+      "disposition": "DEFERRED",
+      "reason": "Metadata and latest CI inspected; bounded rotation; no writes this cycle"
+    },
+    {
+      "repo": "LLM-Dev-Ops/integrations",
+      "main": "6c9b05037db6445a460e2446c2df7e01acb7b11f",
+      "protected": false,
+      "ci": {
+        "id": 20294303478,
+        "sha": "6c9b05037db6445a460e2446c2df7e01acb7b11f",
+        "status": "completed",
+        "conclusion": "failure",
+        "url": "https://github.com/LLM-Dev-Ops/integrations/actions/runs/20294303478"
+      },
+      "disposition": "DEFERRED",
+      "reason": "Metadata and latest CI inspected; bounded rotation; no writes this cycle"
+    },
+    {
+      "repo": "LLM-Dev-Ops/intelligence-core",
+      "main": "69aa70372e45279c22942fcee248884e753d8d93",
+      "protected": false,
+      "ci": null,
+      "disposition": "DEFERRED",
+      "reason": "Metadata and latest CI inspected; bounded rotation; no writes this cycle"
+    },
+    {
+      "repo": "LLM-Dev-Ops/ruvector-service",
+      "main": "9f030fd5939c2eb85cd9bd0b9618de84165bddda",
+      "protected": false,
+      "ci": {
+        "id": 38164317697,
+        "sha": "9f030fd5939c2eb85cd9bd0b9618de84165bddda",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/LLM-Dev-Ops/ruvector-service/actions/runs/38164317697"
+      },
+      "disposition": "DEFERRED",
+      "reason": "Metadata and latest CI inspected; bounded rotation; no writes this cycle"
+    },
+    {
+      "repo": "LLM-Dev-Ops/governance-core",
+      "main": "a537d4a6cfe5081667415192cfb30b91c37a9e56",
+      "protected": false,
+      "ci": null,
+      "disposition": "DEFERRED",
+      "reason": "Metadata and latest CI inspected; bounded rotation; no writes this cycle"
+    },
+    {
+      "repo": "LLM-Dev-Ops/ecosystem-core",
+      "main": "af3c7e8999c7b8d8891995994a0bd0958c445099",
+      "protected": false,
+      "ci": null,
+      "disposition": "DEFERRED",
+      "reason": "Metadata and latest CI inspected; bounded rotation; no writes this cycle"
+    },
+    {
+      "repo": "LLM-Dev-Ops/research-core",
+      "main": "5c86396ac8cf14a17517134ac811c6ea9fc347b7",
+      "protected": false,
+      "ci": {
+        "id": 38659306826,
+        "sha": "5c86396ac8cf14a17517134ac811c6ea9fc347b7",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/LLM-Dev-Ops/research-core/actions/runs/38659306826"
+      },
+      "disposition": "DEFERRED",
+      "reason": "Metadata and latest CI inspected; bounded rotation; no writes this cycle"
+    },
+    {
+      "repo": "LLM-Dev-Ops/data-core",
+      "main": "d8a4d82b3918f2cf8aaf5fe003b5c351f184a9a9",
+      "protected": false,
+      "ci": {
+        "id": 38734205492,
+        "sha": "d8a4d82b3918f2cf8aaf5fe003b5c351f184a9a9",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/LLM-Dev-Ops/data-core/actions/runs/38734205492"
+      },
+      "disposition": "DEFERRED",
+      "reason": "Metadata and latest CI inspected; bounded rotation; no writes this cycle"
+    },
+    {
+      "repo": "LLM-Dev-Ops/security-core",
+      "main": "e37520508c0eab91faf8977b80661dc68ac3826f",
+      "protected": false,
+      "ci": null,
+      "disposition": "DEFERRED",
+      "reason": "Metadata and latest CI inspected; bounded rotation; no writes this cycle"
+    },
+    {
+      "repo": "LLM-Dev-Ops/interface-core",
+      "main": "d4185560cf74b52fd44e515238cebeec88241371",
+      "protected": false,
+      "ci": null,
+      "disposition": "DEFERRED",
+      "reason": "Metadata and latest CI inspected; bounded rotation; no writes this cycle"
+    },
+    {
+      "repo": "LLM-Dev-Ops/agentics-diligence-artifacts",
+      "main": "131b0aaa8d316655d7d860bc9ffa38fea4767447",
+      "protected": false,
+      "ci": null,
+      "disposition": "DEFERRED",
+      "reason": "Metadata and latest CI inspected; bounded rotation; no writes this cycle"
+    },
+    {
+      "repo": "LLM-Dev-Ops/agentics-deployment-intent",
+      "main": "95111d9f55c7aba9c392b2eab08540b3a67e1d51",
+      "protected": false,
+      "ci": null,
+      "disposition": "DEFERRED",
+      "reason": "Metadata and latest CI inspected; bounded rotation; no writes this cycle"
+    },
+    {
+      "repo": "LLM-Dev-Ops/agentics-platform",
+      "main": "9b3fa8d3faeda67230e953355eee1ab87112fcaf",
+      "protected": false,
+      "ci": {
+        "id": 30359780578,
+        "sha": "9b3fa8d3faeda67230e953355eee1ab87112fcaf",
+        "status": "completed",
+        "conclusion": "failure",
+        "url": "https://github.com/LLM-Dev-Ops/agentics-platform/actions/runs/30359780578"
+      },
+      "disposition": "DEFERRED",
+      "reason": "Metadata and latest CI inspected; bounded rotation; no writes this cycle"
+    },
+    {
+      "repo": "LLM-Dev-Ops/agentics-simulation-runner",
+      "main": "ead6a0f0b2f0af389c1cae6dc7b001ecfe7a90f8",
+      "protected": false,
+      "ci": null,
+      "disposition": "DEFERRED",
+      "reason": "Metadata and latest CI inspected; bounded rotation; no writes this cycle"
+    },
+    {
+      "repo": "LLM-Dev-Ops/automation-core",
+      "main": "7833fc66f12a4233e73db81dc060e1482a4ea771",
+      "protected": false,
+      "ci": null,
+      "disposition": "DEFERRED",
+      "reason": "Metadata and latest CI inspected; bounded rotation; no writes this cycle"
+    },
+    {
+      "repo": "LLM-Dev-Ops/agentics-simulation-planner",
+      "main": "144a6c41b8532cfc0ae8bffe7e2f1676cb5068fe",
+      "protected": false,
+      "ci": null,
+      "disposition": "DEFERRED",
+      "reason": "Metadata and latest CI inspected; bounded rotation; no writes this cycle"
+    },
+    {
+      "repo": "LLM-Dev-Ops/agentics-deployment-exporters",
+      "main": "ea60a265f6fb9a89e0b2012ed7d0441cb6637168",
+      "protected": false,
+      "ci": null,
+      "disposition": "DEFERRED",
+      "reason": "Metadata and latest CI inspected; bounded rotation; no writes this cycle"
+    },
+    {
+      "repo": "LLM-Dev-Ops/agentics-org-manifests",
+      "main": "a52b61eea0e6b60883e436c982abc55bb9030edd",
+      "protected": false,
+      "ci": null,
+      "disposition": "DEFERRED",
+      "reason": "Metadata and latest CI inspected; bounded rotation; no writes this cycle"
+    },
+    {
+      "repo": "LLM-Dev-Ops/agentics-cli",
+      "main": "a6fa67a40fe3d08d51ff2c66d0f96e43a89ff9a6",
+      "protected": false,
+      "ci": {
+        "id": 28767269473,
+        "sha": "a6fa67a40fe3d08d51ff2c66d0f96e43a89ff9a6",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/LLM-Dev-Ops/agentics-cli/actions/runs/28767269473"
+      },
+      "disposition": "DEFERRED",
+      "reason": "Metadata and latest CI inspected; bounded rotation; no writes this cycle"
+    },
+    {
+      "repo": "LLM-Dev-Ops/enterprise-roi-engine",
+      "main": "1f4d33cc057740f9f96e75e6c11b0dfd44cd35e7",
+      "protected": false,
+      "ci": null,
+      "disposition": "DEFERRED",
+      "reason": "Metadata and latest CI inspected; bounded rotation; no writes this cycle"
+    },
+    {
+      "repo": "LLM-Dev-Ops/agentics-contracts",
+      "main": "716a33348721f78a7a14bd98e6717e3b40470730",
+      "protected": false,
+      "ci": null,
+      "disposition": "DEFERRED",
+      "reason": "Metadata and latest CI inspected; bounded rotation; no writes this cycle"
+    },
+    {
+      "repo": "LLM-Dev-Ops/erp-surface",
+      "main": "188099d51ff1f1d4af944401d5fef18666317643",
+      "protected": false,
+      "ci": {
+        "id": 22001663894,
+        "sha": "188099d51ff1f1d4af944401d5fef18666317643",
+        "status": "completed",
+        "conclusion": "failure",
+        "url": "https://github.com/LLM-Dev-Ops/erp-surface/actions/runs/22001663894"
+      },
+      "disposition": "DEFERRED",
+      "reason": "Metadata and latest CI inspected; bounded rotation; no writes this cycle"
+    },
+    {
+      "repo": "LLM-Dev-Ops/agentics-results-index",
+      "main": "876cd8cf38eb9e5687c92b73e8d3b8ac7e34e57c",
+      "protected": false,
+      "ci": null,
+      "disposition": "DEFERRED",
+      "reason": "Metadata and latest CI inspected; bounded rotation; no writes this cycle"
+    },
+    {
+      "repo": "LLM-Dev-Ops/agentics-orchestration-engine",
+      "main": "a365c1a6f954041aefef67678fc3fe1b0b4eba7d",
+      "protected": false,
+      "ci": null,
+      "disposition": "DEFERRED",
+      "reason": "Metadata and latest CI inspected; bounded rotation; no writes this cycle"
+    },
+    {
+      "repo": "LLM-Dev-Ops/agentics-usage-ledger",
+      "main": "dbd63a6ae35a45f889170fc2ca3e611907506c45",
+      "protected": false,
+      "ci": null,
+      "disposition": "DEFERRED",
+      "reason": "Metadata and latest CI inspected; bounded rotation; no writes this cycle"
+    },
+    {
+      "repo": "LLM-Dev-Ops/platform-agents",
+      "main": "94fbbc82db9cc10f66093df428560ef01aa2b322",
+      "protected": false,
+      "ci": null,
+      "disposition": "DEFERRED",
+      "reason": "Metadata and latest CI inspected; bounded rotation; no writes this cycle"
+    },
+    {
+      "repo": "LLM-Dev-Ops/agentics-enforcement",
+      "main": "45277702166465be82fe2fa255aaa0dec0893994",
+      "protected": false,
+      "ci": null,
+      "disposition": "DEFERRED",
+      "reason": "Metadata and latest CI inspected; bounded rotation; no writes this cycle"
+    },
+    {
+      "repo": "LLM-Dev-Ops/agentics-execution-engine",
+      "main": "accaf090c78cb0dfe439c771b2ecba868cdfbeac",
+      "protected": false,
+      "ci": null,
+      "disposition": "DEFERRED",
+      "reason": "Metadata and latest CI inspected; bounded rotation; no writes this cycle"
+    },
+    {
+      "repo": "LLM-Dev-Ops/RuVector",
+      "main": "9e12078ae2af74d0613ae604266cf22fb1113b10",
+      "protected": false,
+      "ci": null,
+      "disposition": "DEFERRED",
+      "reason": "Metadata and latest CI inspected; bounded rotation; no writes this cycle"
+    },
+    {
+      "repo": "LLM-Dev-Ops/agentics-cli-test",
+      "main": "fb73fe95db97bd35cfe378291004f09f2929675d",
+      "protected": false,
+      "ci": null,
+      "disposition": "DEFERRED",
+      "reason": "Metadata and latest CI inspected; bounded rotation; no writes this cycle"
+    },
+    {
+      "repo": "LLM-Dev-Ops/agentics-evolution",
+      "main": "855c0b2e9a53ade5ab2f06d4185b7c3c8fff0369",
+      "protected": false,
+      "ci": {
+        "id": 31585157853,
+        "sha": "e1d5f3236b4c938e1febb9cdd8ab0c2d4b1655d0",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/LLM-Dev-Ops/agentics-evolution/actions/runs/31585157853"
+      },
+      "disposition": "DEFERRED",
+      "reason": "Metadata and latest CI inspected; bounded rotation; no writes this cycle"
+    },
+    {
+      "repo": "LLM-Dev-Ops/agentics-dream-machine",
+      "main": "2fba2550182d81b36423447221823e98e227482a",
+      "protected": false,
+      "ci": {
+        "id": 39021093764,
+        "sha": "26c1bbdb3f8792a04acdb8c310a1d36eb0635621",
+        "status": "completed",
+        "conclusion": "failure",
+        "url": "https://github.com/LLM-Dev-Ops/agentics-dream-machine/actions/runs/39021093764"
+      },
+      "disposition": "DEFERRED",
+      "reason": "Metadata and latest CI inspected; bounded rotation; no writes this cycle"
+    }
+  ],
+  "candidate": {
+    "baseline": "1c4f445288f360120ebae6fb00c6fbf312c16931",
+    "source": "a97c8aface1480232fa24b36524f798979617253",
+    "sourceTree": "c2e6119165368b10ae40a0891d0112e5e44204df",
+    "main": "4d58c46426fe085d25fef3fcb35fa5e2cce83b30",
+    "pr": 24,
+    "branch": "metaharness/test-bench-cli-discovery-2026-10-10",
+    "draft": false,
+    "mergeable": true,
+    "merged": false,
+    "conflictsResolved": 0,
+    "expectedHeadFastForwardOnly": true
+  },
+  "tools": {
+    "ruflo": "3.56.3",
+    "transformers": "4.3.1",
+    "metaharness": "0.4.17",
+    "darwin": "0.10.3",
+    "flywheel": "0.1.12",
+    "upstream": "e0dfd44da72b7adfb7c57fdd42d124be58ed7086",
+    "localNode": "24.19.0",
+    "RuOSNode": "20.20.2",
+    "RuOSRust": "1.99.0",
+    "openssl": "3.0.13",
+    "pinnedSecurityJobNode": "20.19.5"
+  },
+  "commands": {
+    "install": "npm ci --ignore-scripts",
+    "update": "npm update ajv express glob yaml body-parser brace-expansion fast-uri form-data minimatch path-to-regexp proxy-addr qs --package-lock-only --ignore-scripts",
+    "native": "node scripts/verify-proxy-boundary.mjs .",
+    "tests": "npm test",
+    "lint": "npm run lint",
+    "types": "npm run typecheck",
+    "build": "npm run build:all",
+    "format": "npm run format:check",
+    "coverage": "npm run test:coverage",
+    "productionAudit": "npm audit --omit=dev --json",
+    "highAudit": "npm audit --omit=dev --audit-level=high",
+    "allAudit": "npm audit --json",
+    "score": "node ../cycle-tools-20261017/node_modules/metaharness/dist/bin.js score . --json",
+    "darwin": "node ../cycle-tools-20261017/node_modules/@metaharness/darwin/dist/cli.js evolve . --generations 1 --children 2 --concurrency 1 --seed 2026101714 --sandbox real --selection pareto",
+    "flywheel": "node docs/metaharness/2026-10-17/evaluate.mjs ../test-bench-baseline-oct17c . ../cycle-tools-20261017 docs/metaharness/2026-10-17/flywheel-results.json"
+  },
+  "baseline": {
+    "testsPassed": 411,
+    "testsSkipped": 31,
+    "production": {
+      "critical": 1,
+      "high": 6,
+      "moderate": 6,
+      "low": 1,
+      "total": 14
+    },
+    "native": {
+      "holdout": 0,
+      "anchors": 4
+    },
+    "lintExit": 0,
+    "typeExit": 0,
+    "buildExit": 0,
+    "coverage": {
+      "scope": "initial local broad all-files population; not directly comparable with clean hosted output/new tooling files",
+      "lines": 42.46,
+      "functions": 52.84,
+      "branches": 69.4,
+      "statements": 42.46,
+      "exit": 1
+    }
+  },
+  "candidateResults": {
+    "testsPassed": 438,
+    "testsSkipped": 31,
+    "all411ExistingNamesRetained": true,
+    "production": {
+      "critical": 0,
+      "high": 0,
+      "moderate": 3,
+      "low": 0,
+      "total": 3
+    },
+    "allDependenciesIncludingDev": {
+      "critical": 4,
+      "high": 19,
+      "moderate": 6,
+      "total": 29,
+      "auditExit": 1
+    },
+    "native": {
+      "holdout": 1,
+      "anchors": 4,
+      "total": 5
+    },
+    "lintExit": 0,
+    "typeExit": 0,
+    "buildExit": 0,
+    "formatExit": 0,
+    "highAuditExit": 0,
+    "productionAllSeveritiesAuditExit": 1,
+    "localCoverage": {
+      "lines": 41.59,
+      "functions": 50,
+      "branches": 68.14,
+      "statements": 41.59,
+      "exit": 1
+    },
+    "hostedCoverage": {
+      "source": "a97c8aface1480232fa24b36524f798979617253",
+      "lines": 42.11,
+      "functions": 54.98,
+      "branches": 69.54,
+      "statements": 42.11,
+      "exit": 1
+    },
+    "coverageThresholdsChanged": false,
+    "coverageExclusionsChanged": false
+  },
+  "changes": {
+    "directFloors": {
+      "ajv": "^8.12.0 -> ^8.18.0",
+      "express": "^4.22.1 -> ^4.22.3",
+      "glob": "^10.3.10 -> ^10.5.0",
+      "yaml": "^2.3.4 -> ^2.8.3"
+    },
+    "resolvedVersions": {
+      "ajv": "8.20.0",
+      "express": "4.22.3",
+      "glob": "10.5.0",
+      "yaml": "2.9.1",
+      "proxyAddr": "2.0.8"
+    },
+    "majorDependencyUpgrades": 0,
+    "ciAggregate": {
+      "allOtherJobsRequired": 8,
+      "includesIntegration": true,
+      "includesProductionSecurity": true,
+      "failureCancelledSkippedReject": true,
+      "unitScenarios": 26
+    },
+    "newTestCounts": {
+      "nativeWrapper": 1,
+      "aggregate": 26
+    }
+  },
+  "ruflo": {
+    "swarm": "swarm-1792259929105-ypiqot",
+    "task": "test-bench-security-oct17c",
+    "delegatedWorkers": 0,
+    "swarmInvocation": "RUFLO_DAEMON_AUTOSTART=0 node ../cycle-tools-20261017/node_modules/ruflo/bin/ruflo.js swarm init --topology hierarchical --max-agents 1 --strategy specialized",
+    "preTaskInvocation": "RUFLO_DAEMON_AUTOSTART=0 node ../cycle-tools-20261017/node_modules/ruflo/bin/ruflo.js hooks pre-task --task-id test-bench-security-oct17c --description 'Repair production dependency vulnerabilities without weakening coverage or Node18 compatibility'",
+    "postTaskInvocation": "RUFLO_DAEMON_AUTOSTART=0 RUFLO_MODEL_DIR=/workspace/scratch/4f25900b71ff/ruflo-models python3 /workspace/scratch/4f25900b71ff/research-lab-blockers/scripts/offline-exec.py node --import /workspace/scratch/4f25900b71ff/research-lab-blockers/scripts/ruflo-local-model.mjs /workspace/scratch/4f25900b71ff/cycle-tools-20261017/node_modules/ruflo/bin/ruflo.js hooks post-task --task-id test-bench-security-oct17c --success false --quality 0.8 --agent codex --agent-role coordinator --task 'Patched production dependency graph14to3 advisories with zero critical/high; real proxy-trust HTTP regression fixed;438tests pass31skip; full coverage remains red; Rust bounded attempt timed out; existingPR24 implementation a97c8afa published without merge' --store-results --format json",
+    "exit": 0,
+    "modelRevision": "751bff37182d3f1213fa05d7196b954e230abad9",
+    "embeddingDimensions": 384,
+    "kernelOffline": true,
+    "remoteModelLoading": false,
+    "learningUpdates": {
+      "available": true,
+      "outcomePersisted": true,
+      "patternsUpdated": 2
+    },
+    "feedback": {
+      "recorded": true,
+      "updates": 2
+    },
+    "trajectory": {
+      "recorded": true
+    },
+    "pheromoneActive": false,
+    "adapterVerifiedAgainstResearchLabMain": "83c4850c04d6243c1f700ec4a6a0e406a7d7198a"
+  },
+  "metaharness": {
+    "baselineFit": 82,
+    "candidateFit": 82,
+    "hardConstraints": "6/6",
+    "boundary": "Static profile only; compileConfidence100 does not validate Rust"
+  },
+  "darwin": {
+    "seed": 2026101714,
+    "generations": 1,
+    "children": 2,
+    "concurrency": 1,
+    "sandbox": "real",
+    "traces": [
+      {
+        "id": "baseline",
+        "score": 0.985,
+        "traces": [
+          {
+            "task": "run repository test suite",
+            "start": "2026-10-17T18:00:53.518Z",
+            "end": "2026-10-17T18:00:58.963Z",
+            "exit": 0,
+            "tests": ["412", "31"]
+          },
+          {
+            "task": "verify generated harness safety",
+            "start": "2026-10-17T18:00:58.963Z",
+            "end": "2026-10-17T18:01:03.862Z",
+            "exit": 0,
+            "tests": ["412", "31"]
+          },
+          {
+            "task": "check trace quality",
+            "start": "2026-10-17T18:01:03.862Z",
+            "end": "2026-10-17T18:01:08.121Z",
+            "exit": 0,
+            "tests": ["412", "31"]
+          }
+        ]
+      },
+      {
+        "id": "g1_v0",
+        "score": 0.985,
+        "traces": [
+          {
+            "task": "run repository test suite",
+            "start": "2026-10-17T18:01:08.134Z",
+            "end": "2026-10-17T18:01:12.634Z",
+            "exit": 0,
+            "tests": ["412", "31"]
+          },
+          {
+            "task": "verify generated harness safety",
+            "start": "2026-10-17T18:01:12.634Z",
+            "end": "2026-10-17T18:01:17.387Z",
+            "exit": 0,
+            "tests": ["412", "31"]
+          },
+          {
+            "task": "check trace quality",
+            "start": "2026-10-17T18:01:17.387Z",
+            "end": "2026-10-17T18:01:21.636Z",
+            "exit": 0,
+            "tests": ["412", "31"]
+          }
+        ]
+      },
+      {
+        "id": "g1_v1",
+        "score": 0.985,
+        "traces": [
+          {
+            "task": "run repository test suite",
+            "start": "2026-10-17T18:01:21.637Z",
+            "end": "2026-10-17T18:01:25.793Z",
+            "exit": 0,
+            "tests": ["412", "31"]
+          },
+          {
+            "task": "verify generated harness safety",
+            "start": "2026-10-17T18:01:25.793Z",
+            "end": "2026-10-17T18:01:29.955Z",
+            "exit": 0,
+            "tests": ["412", "31"]
+          },
+          {
+            "task": "check trace quality",
+            "start": "2026-10-17T18:01:29.955Z",
+            "end": "2026-10-17T18:01:34.261Z",
+            "exit": 0,
+            "tests": ["412", "31"]
+          }
+        ]
+      }
+    ],
+    "rejected": ["g1_v0", "g1_v1"],
+    "status": "NO_IMPROVEMENT",
+    "boundary": "Real npm test substrate cannot discriminate harness surfaces; initialization is not a harness improvement; earlier stage run before CI tests were added"
+  },
+  "flywheel": {
+    "holdout": [0, 1],
+    "anchor": [1, 1],
+    "promotionCount": 1,
+    "replay": {
+      "pass": true,
+      "checks": {
+        "receipts": true,
+        "reachesRoot": true,
+        "contiguousParents": true,
+        "allPromoted": true,
+        "gateUnchanged": true,
+        "gateReExecutes": true,
+        "allCommitsReceipts": true,
+        "sealedFieldsAuthentic": true
+      },
+      "failures": [],
+      "chainSummary": "gen1(dependencies) → gen0(root)"
+    },
+    "gate": "c5942e7c9bf8f28fe7af47a6ec3887d11eeb3f8c8e8601cc6a7a54969ea0b981",
+    "fixtureSha256": "aa75658a31587e40e2aedfaca470cabe4d3967adc7386d5977a01753c7405304",
+    "baselineLock": "8707cbaf5bab21a5026b13eb4b392bb9eef5910b440b14bc6c75282cfc0c2bab",
+    "candidateLock": "39d3850c6bc15eea32ee8ef835cdb1b472a40e927c8ef24fae8180a9fb483766",
+    "fullResults": "flywheel-results.json.gz",
+    "boundary": "Component security only; no repository merge approval, deployment or LLM performance claim"
+  },
+  "rust": {
+    "worktree": "/home/ruv/work/test-bench-oct17c",
+    "source": "1c4f445288f360120ebae6fb00c6fbf312c16931",
+    "sourceUnchangedByCandidate": true,
+    "bootstrap": "bash /home/ruv/work/research-lab-runtime-recovery-20261016/scripts/bootstrap-ruos.sh",
+    "openssl": "3.0.13",
+    "initialCommand": "cargo test --workspace --locked",
+    "initialExit": 143,
+    "initialReason": "Task-owned process terminated to preserve remaining disk; SIGINT did not stop background cargo, SIGTERM did. No completed Rust tests claimed.",
+    "removed": "Only generated /home/ruv/work/test-bench-oct17c/target artifacts, cargo clean removed3579files/2.2GiB. Source/logs retained; artifacts reproducible.",
+    "boundedCommand": "timeout 240s env CARGO_PROFILE_DEV_DEBUG=0 CARGO_PROFILE_TEST_DEBUG=0 CARGO_INCREMENTAL=0 CARGO_BUILD_JOBS=2 cargo test --workspace --locked",
+    "boundedExit": 124,
+    "completedTests": 0,
+    "fmtCommand": "cargo fmt --all -- --check",
+    "fmtExit": 1,
+    "clippy": "NOT_EXECUTED; deferred after bounded compilation",
+    "build": "NOT_EXECUTED separately; no Rust build success claimed"
+  },
+  "sourceExactRuOS": {
+    "sha": "a97c8aface1480232fa24b36524f798979617253",
+    "clean": true,
+    "installExit": 0,
+    "testExit": 0,
+    "lintExit": 0,
+    "typecheckExit": 0,
+    "buildAllExit": 0,
+    "formatExit": 0,
+    "highAuditExit": 0,
+    "lockSha256": "39d3850c6bc15eea32ee8ef835cdb1b472a40e927c8ef24fae8180a9fb483766",
+    "logs": "/home/ruv/work/test-bench-oct17c-exact-*.log"
+  },
+  "sourceCI": {
+    "id": 39056681265,
+    "jobs": [
+      {
+        "id": 117465961633,
+        "name": "Check Code Formatting",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 117465961788,
+        "name": "TypeScript Type Check",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 117465961818,
+        "name": "Test (Node 20)",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 117465961847,
+        "name": "Code Coverage",
+        "status": "completed",
+        "conclusion": "failure"
+      },
+      {
+        "id": 117465961859,
+        "name": "Lint Code",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 117465961876,
+        "name": "Production Dependency Security",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 117465961878,
+        "name": "Test (Node 22)",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 117465961880,
+        "name": "Build Package",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 117465961887,
+        "name": "Test (Node 18)",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 117466273378,
+        "name": "Integration Tests",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 117466339149,
+        "name": "CI Success",
+        "status": "completed",
+        "conclusion": "failure"
+      }
+    ],
+    "aggregate": "failure",
+    "node18TestsPassed": 438,
+    "node20TestsPassed": 438,
+    "node22TestsPassed": 438,
+    "securityJobLockUnchanged": true
+  },
+  "rejectedAttempts": [
+    {
+      "kind": "Darwin",
+      "ids": ["g1_v0", "g1_v1"],
+      "reason": "Tied baseline, delta0; no mutation kept"
+    },
+    {
+      "kind": "Flywheel",
+      "reason": "First evaluator rejected Vitest aggregate JSON442pass/0pending counter. Actual per-assertion statuses411passed31skipped. Revised parser, same frozen criteria, reran full evaluation and passed."
+    },
+    {
+      "kind": "suggested npm audit fix --force",
+      "executed": false,
+      "reason": "Would downgrade Functions Framework3to2/major-change; not permitted by frozen compatibility contract. Three production moderate advisories remain explicit."
+    }
+  ],
+  "remaining": [
+    "Unchanged80%coverage requirement remains unmet; no full-repository promotion/merge",
+    "Three moderate production advisories in Functions Framework/CloudEvents/uuid",
+    "All-dependency audit29findings including4critical19high",
+    "Rust test compilation exceeds bounded time; fmt remains red; no Rust success claimed"
+  ],
+  "architecture": {
+    "rustCorePreserved": true,
+    "typeScriptIntegrationPreserved": true,
+    "serviceDatabaseAdded": false,
+    "persistenceChanged": false,
+    "deployed": false,
+    "published": false,
+    "paidProvisioning": false,
+    "forcePush": false,
+    "testsWeakened": false
+  },
+  "guidance": {
+    "coreMemoryPlaybookEntries": 0,
+    "antiPatterns": 0,
+    "unscreened": true,
+    "applied": "Explicit user architecture/merge constraints; repository file organization retained. No subagents delegated."
+  }
+}
