@@ -12,6 +12,7 @@
  * - All spans are append-only and causally ordered
  */
 
+import type { ExemptionRecord } from './policy.js';
 import type {
   ExecutionContext,
   ExecutionSpan,
@@ -20,14 +21,15 @@ import type {
   SpanStatus,
 } from './types.js';
 import { generateSpanId, nowISO, REPO_NAME } from './types.js';
-import type { ExemptionRecord } from './policy.js';
 
 /**
  * Validates that an ExecutionContext is structurally valid.
  * Rejects execution if parent_span_id is missing.
  */
 export function validateExecutionContext(ctx: unknown): ctx is ExecutionContext {
-  if (!ctx || typeof ctx !== 'object') return false;
+  if (!ctx || typeof ctx !== 'object') {
+    return false;
+  }
   const c = ctx as Record<string, unknown>;
   return (
     typeof c['execution_id'] === 'string' &&
@@ -96,7 +98,7 @@ export class SpanManager {
       throw new ExecutionContextError(
         'Execution rejected: parent_span_id is missing or invalid. ' +
           'Every externally-invoked operation must provide a valid ExecutionContext ' +
-          'with execution_id and parent_span_id.'
+          'with execution_id and parent_span_id.',
       );
     }
     return new SpanManager(ctx);
@@ -140,18 +142,14 @@ export class SpanManager {
   /**
    * End an agent-level span.
    */
-  endAgent(
-    spanId: string,
-    status: 'completed' | 'failed',
-    failureReasons?: string[]
-  ): void {
+  endAgent(spanId: string, status: 'completed' | 'failed', failureReasons?: string[]): void {
     const span = this.agentSpans.get(spanId);
     if (!span) {
       throw new ExecutionInvariantError(`Unknown agent span: ${spanId}`);
     }
     if (span.status !== 'running') {
       throw new ExecutionInvariantError(
-        `Agent span ${spanId} already ended with status ${span.status}`
+        `Agent span ${spanId} already ended with status ${span.status}`,
       );
     }
 
@@ -171,7 +169,7 @@ export class SpanManager {
     if (!this.agentSpans.has(artifact.agent_span_id)) {
       throw new ExecutionInvariantError(
         `Cannot attach artifact to unknown agent span: ${artifact.agent_span_id}. ` +
-          'Artifacts must be attached to an existing agent-level span.'
+          'Artifacts must be attached to an existing agent-level span.',
       );
     }
     this.artifacts.push(artifact);
@@ -203,9 +201,7 @@ export class SpanManager {
 
     // Enforce: at least one agent span must exist
     if (this.agentSpans.size === 0) {
-      validationErrors.push(
-        'No agent-level spans were emitted. Execution is INVALID.'
-      );
+      validationErrors.push('No agent-level spans were emitted. Execution is INVALID.');
     }
 
     // Enforce: no running agents
@@ -215,13 +211,11 @@ export class SpanManager {
         .join(', ');
       validationErrors.push(
         `Agents still running at finalization: ${running}. ` +
-          'All agent spans must be ended before finalization.'
+          'All agent spans must be ended before finalization.',
       );
       // Force-end them as failed
       for (const id of this.activeAgents) {
-        this.endAgent(id, 'failed', [
-          'Agent was still running at finalization',
-        ]);
+        this.endAgent(id, 'failed', ['Agent was still running at finalization']);
       }
     }
 
@@ -229,25 +223,19 @@ export class SpanManager {
     // This is enforced by the API: you cannot execute logic without calling startAgent
 
     // Determine repo span status
-    const anyFailed = Array.from(this.agentSpans.values()).some(
-      (s) => s.status === 'failed'
-    );
+    const anyFailed = Array.from(this.agentSpans.values()).some((s) => s.status === 'failed');
     const repoStatus: SpanStatus =
-      forceStatus ??
-      (validationErrors.length > 0
-        ? 'failed'
-        : anyFailed
-          ? 'failed'
-          : 'completed');
+      forceStatus ?? (validationErrors.length > 0 ? 'failed' : anyFailed ? 'failed' : 'completed');
 
     this.repoSpan.end_time = nowISO();
     this.repoSpan.status = repoStatus;
     if (repoStatus === 'failed') {
-      this.repoSpan.failure_reasons = validationErrors.length > 0
-        ? validationErrors
-        : Array.from(this.agentSpans.values())
-            .filter((s) => s.status === 'failed')
-            .flatMap((s) => s.failure_reasons ?? ['Agent failed']);
+      this.repoSpan.failure_reasons =
+        validationErrors.length > 0
+          ? validationErrors
+          : Array.from(this.agentSpans.values())
+              .filter((s) => s.status === 'failed')
+              .flatMap((s) => s.failure_reasons ?? ['Agent failed']);
     }
 
     const valid = validationErrors.length === 0;

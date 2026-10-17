@@ -5,8 +5,8 @@
  * and automation tools.
  */
 
-import { executeCLI, findCLIPath } from '../utils/cli-executor.js';
 import type { SDKConfig } from '../types/index.js';
+import { executeCLI, findCLIPath } from '../utils/cli-executor.js';
 
 /**
  * Fleet configuration options
@@ -131,7 +131,7 @@ export interface RepositoryResults {
   /** Provider used for this repository */
   provider_name: string;
   /** Benchmark results for this repository */
-  results: any; // BenchmarkResults
+  results: unknown;
   /** Repository-specific metadata */
   repository_metadata: Record<string, string>;
 }
@@ -265,7 +265,8 @@ export interface FleetMetadata {
  */
 export class FleetBenchmark {
   private cliPath: string;
-  private config: Required<FleetConfig>;
+  private config: FleetConfig &
+    Required<Pick<FleetConfig, 'defaultConcurrency' | 'saveResponses' | 'continueOnFailure'>>;
 
   /**
    * Create a new Fleet Benchmark SDK instance
@@ -278,7 +279,7 @@ export class FleetBenchmark {
     const resolvedCliPath = sdkConfig?.cliPath ?? findCLIPath();
     if (!resolvedCliPath) {
       throw new Error(
-        'LLM Test Bench CLI not found. Please install it via cargo or npm, or provide cliPath in config.'
+        'LLM Test Bench CLI not found. Please install it via cargo or npm, or provide cliPath in config.',
       );
     }
 
@@ -319,7 +320,7 @@ export class FleetBenchmark {
     options?: {
       wait?: boolean;
       format?: 'json' | 'summary' | 'quiet';
-    }
+    },
   ): Promise<FleetExecutionHandle> {
     const args = ['fleet', '--manifest', manifestPath, '--output', this.config.outputBaseDir];
 
@@ -361,7 +362,7 @@ export class FleetBenchmark {
         runId,
         artifactBaseDir: `${this.config.outputBaseDir}/${runId}`,
         metadata: {
-          fleetId: runId.split('-')[0] || 'unknown',
+          fleetId: runId.split('-')[0] ?? 'unknown',
           repositoryCount: 0, // Unknown until execution completes
           providers: [],
           startedAt: new Date().toISOString(),
@@ -436,7 +437,8 @@ export class FleetBenchmark {
       const content = await fs.readFile(resultsPath, 'utf-8');
       return JSON.parse(content) as FleetBenchmarkResults;
     } catch (error) {
-      throw new Error(`Failed to load fleet results for ${runId}: ${error}`);
+      const message = error instanceof Error ? error.message : String(error);
+      throw new Error(`Failed to load fleet results for ${runId}: ${message}`);
     }
   }
 
@@ -460,7 +462,7 @@ export class FleetBenchmark {
     options?: {
       timeoutMs?: number;
       pollIntervalMs?: number;
-    }
+    },
   ): Promise<FleetBenchmarkResults> {
     const timeoutMs = options?.timeoutMs ?? 600000; // 10 minutes default
     const pollIntervalMs = options?.pollIntervalMs ?? 2000; // 2 seconds default

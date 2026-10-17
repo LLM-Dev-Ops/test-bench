@@ -11,6 +11,7 @@
 ### 🚨 CRITICAL: CLI + Task Tool in SAME Message
 
 **When user says "spawn swarm" or requests complex work, Claude Code MUST in ONE message:**
+
 1. Call CLI tools via Bash to initialize coordination
 2. **IMMEDIATELY** call Task tool to spawn REAL working agents
 3. Both CLI and Task calls must be in the SAME response
@@ -21,13 +22,14 @@
 
 **The routing system has 3 tiers for optimal cost/performance:**
 
-| Tier | Handler | Latency | Cost | Use Cases |
-|------|---------|---------|------|-----------|
-| **1** | Agent Booster | <1ms | $0 | Simple transforms (var→const, add-types, remove-console) |
-| **2** | Haiku | ~500ms | $0.0002 | Simple tasks, bug fixes, low complexity |
-| **3** | Sonnet/Opus | 2-5s | $0.003-$0.015 | Architecture, security, complex reasoning |
+| Tier  | Handler       | Latency | Cost          | Use Cases                                                |
+| ----- | ------------- | ------- | ------------- | -------------------------------------------------------- |
+| **1** | Agent Booster | <1ms    | $0            | Simple transforms (var→const, add-types, remove-console) |
+| **2** | Haiku         | ~500ms  | $0.0002       | Simple tasks, bug fixes, low complexity                  |
+| **3** | Sonnet/Opus   | 2-5s    | $0.003-$0.015 | Architecture, security, complex reasoning                |
 
 **Before spawning agents, get routing recommendation:**
+
 ```bash
 npx @claude-flow/cli@latest hooks pre-task --description "[task description]"
 ```
@@ -35,15 +37,17 @@ npx @claude-flow/cli@latest hooks pre-task --description "[task description]"
 **When you see these recommendations:**
 
 1. `[AGENT_BOOSTER_AVAILABLE]` → Skip LLM entirely, use Edit tool directly
-   - Intent types: `var-to-const`, `add-types`, `add-error-handling`, `async-await`, `add-logging`, `remove-console`
+   - Intent types: `var-to-const`, `add-types`, `add-error-handling`, `async-await`, `add-logging`,
+     `remove-console`
 
 2. `[TASK_MODEL_RECOMMENDATION] Use model="X"` → Use that model in Task tool:
+
 ```javascript
 Task({
-  prompt: "...",
-  subagent_type: "coder",
-  model: "haiku"  // ← USE THE RECOMMENDED MODEL (haiku/sonnet/opus)
-})
+  prompt: '...',
+  subagent_type: 'coder',
+  model: 'haiku', // ← USE THE RECOMMENDED MODEL (haiku/sonnet/opus)
+});
 ```
 
 **Benefits:** 75% cost reduction, 352x faster for Tier 1 tasks
@@ -53,6 +57,7 @@ Task({
 ### 🛡️ Anti-Drift Config (PREFERRED)
 
 **Use this to prevent agent drift:**
+
 ```bash
 # Small teams (6-8 agents) - use hierarchical for tight control
 npx @claude-flow/cli@latest swarm init --topology hierarchical --max-agents 8 --strategy specialized
@@ -62,6 +67,7 @@ npx @claude-flow/cli@latest swarm init --topology hierarchical-mesh --max-agents
 ```
 
 **Valid Topologies:**
+
 - `hierarchical` - Queen controls workers directly (anti-drift for small teams)
 - `hierarchical-mesh` - V3 queen + peer communication (recommended for 10+ agents)
 - `mesh` - Fully connected peer network
@@ -70,6 +76,7 @@ npx @claude-flow/cli@latest swarm init --topology hierarchical-mesh --max-agents
 - `hybrid` - Dynamic topology switching
 
 **Anti-Drift Guidelines:**
+
 - **hierarchical**: Coordinator catches divergence
 - **max-agents 6-8**: Smaller team = less drift
 - **specialized**: Clear roles, no overlap
@@ -83,40 +90,42 @@ When the user requests a complex task, **spawn agents in background and WAIT for
 
 ```javascript
 // STEP 1: Initialize swarm coordination (anti-drift config)
-Bash("npx @claude-flow/cli@latest swarm init --topology hierarchical --max-agents 8 --strategy specialized")
+Bash(
+  'npx @claude-flow/cli@latest swarm init --topology hierarchical --max-agents 8 --strategy specialized',
+);
 
 // STEP 2: Spawn ALL agents IN BACKGROUND in a SINGLE message
 // Use run_in_background: true so agents work concurrently
 Task({
-  prompt: "Research requirements, analyze codebase patterns, store findings in memory",
-  subagent_type: "researcher",
-  description: "Research phase",
-  run_in_background: true  // ← CRITICAL: Run in background
-})
+  prompt: 'Research requirements, analyze codebase patterns, store findings in memory',
+  subagent_type: 'researcher',
+  description: 'Research phase',
+  run_in_background: true, // ← CRITICAL: Run in background
+});
 Task({
-  prompt: "Design architecture based on research. Document decisions.",
-  subagent_type: "system-architect",
-  description: "Architecture phase",
-  run_in_background: true
-})
+  prompt: 'Design architecture based on research. Document decisions.',
+  subagent_type: 'system-architect',
+  description: 'Architecture phase',
+  run_in_background: true,
+});
 Task({
-  prompt: "Implement the solution following the design. Write clean code.",
-  subagent_type: "coder",
-  description: "Implementation phase",
-  run_in_background: true
-})
+  prompt: 'Implement the solution following the design. Write clean code.',
+  subagent_type: 'coder',
+  description: 'Implementation phase',
+  run_in_background: true,
+});
 Task({
-  prompt: "Write comprehensive tests for the implementation.",
-  subagent_type: "tester",
-  description: "Testing phase",
-  run_in_background: true
-})
+  prompt: 'Write comprehensive tests for the implementation.',
+  subagent_type: 'tester',
+  description: 'Testing phase',
+  run_in_background: true,
+});
 Task({
-  prompt: "Review code quality, security, and best practices.",
-  subagent_type: "reviewer",
-  description: "Review phase",
-  run_in_background: true
-})
+  prompt: 'Review code quality, security, and best practices.',
+  subagent_type: 'reviewer',
+  description: 'Review phase',
+  run_in_background: true,
+});
 
 // STEP 3: WAIT - Tell user agents are working, then STOP
 // Say: "I've spawned 5 agents to work on this in parallel. They'll report back when done."
@@ -133,6 +142,7 @@ Task({
 4. **RESPOND** - When agents return results, review and synthesize
 
 **Example response after spawning:**
+
 ```
 I've launched 5 concurrent agents to work on this:
 - 🔍 Researcher: Analyzing requirements and codebase
@@ -145,12 +155,14 @@ They're working in parallel. I'll synthesize their results when they complete.
 ```
 
 ### 🚫 DO NOT:
+
 - Continuously check swarm status
 - Poll TaskOutput repeatedly
 - Add more tool calls after spawning
 - Ask "should I check on the agents?"
 
 ### ✅ DO:
+
 - Spawn all agents in ONE message
 - Tell user what's happening
 - Wait for agent results to arrive
@@ -159,6 +171,7 @@ They're working in parallel. I'll synthesize their results when they complete.
 ## 🧠 AUTO-LEARNING PROTOCOL
 
 ### Before Starting Any Task
+
 ```bash
 # 1. Search memory for relevant patterns from past successes
 Bash("npx @claude-flow/cli@latest memory search --query '[task keywords]' --namespace patterns")
@@ -171,6 +184,7 @@ Bash("npx @claude-flow/cli@latest hooks route --task '[task description]'")
 ```
 
 ### After Completing Any Task Successfully
+
 ```bash
 # 1. Store successful pattern for future reference
 Bash("npx @claude-flow/cli@latest memory store --namespace patterns --key '[pattern-name]' --value '[what worked]'")
@@ -187,24 +201,26 @@ Bash("npx @claude-flow/cli@latest hooks worker dispatch --trigger optimize")
 
 ### Continuous Improvement Triggers
 
-| Trigger | Worker | When to Use |
-|---------|--------|-------------|
-| After major refactor | `optimize` | Performance optimization |
-| After adding features | `testgaps` | Find missing test coverage |
-| After security changes | `audit` | Security analysis |
-| After API changes | `document` | Update documentation |
-| Every 5+ file changes | `map` | Update codebase map |
-| Complex debugging | `deepdive` | Deep code analysis |
+| Trigger                | Worker     | When to Use                |
+| ---------------------- | ---------- | -------------------------- |
+| After major refactor   | `optimize` | Performance optimization   |
+| After adding features  | `testgaps` | Find missing test coverage |
+| After security changes | `audit`    | Security analysis          |
+| After API changes      | `document` | Update documentation       |
+| Every 5+ file changes  | `map`      | Update codebase map        |
+| Complex debugging      | `deepdive` | Deep code analysis         |
 
 ### Memory-Enhanced Development
 
 **ALWAYS check memory before:**
+
 - Starting a new feature (search for similar implementations)
 - Debugging an issue (search for past solutions)
 - Refactoring code (search for learned patterns)
 - Performance work (search for optimization strategies)
 
 **ALWAYS store in memory after:**
+
 - Solving a tricky bug (store the solution pattern)
 - Completing a feature (store the approach)
 - Finding a performance fix (store the optimization)
@@ -212,20 +228,21 @@ Bash("npx @claude-flow/cli@latest hooks worker dispatch --trigger optimize")
 
 ### 📋 Agent Routing (Anti-Drift)
 
-| Code | Task | Agents |
-|------|------|--------|
-| 1 | Bug Fix | coordinator, researcher, coder, tester |
-| 3 | Feature | coordinator, architect, coder, tester, reviewer |
-| 5 | Refactor | coordinator, architect, coder, reviewer |
-| 7 | Performance | coordinator, perf-engineer, coder |
-| 9 | Security | coordinator, security-architect, auditor |
-| 11 | Docs | researcher, api-docs |
+| Code | Task        | Agents                                          |
+| ---- | ----------- | ----------------------------------------------- |
+| 1    | Bug Fix     | coordinator, researcher, coder, tester          |
+| 3    | Feature     | coordinator, architect, coder, tester, reviewer |
+| 5    | Refactor    | coordinator, architect, coder, reviewer         |
+| 7    | Performance | coordinator, perf-engineer, coder               |
+| 9    | Security    | coordinator, security-architect, auditor        |
+| 11   | Docs        | researcher, api-docs                            |
 
 **Codes 1-9: hierarchical/specialized (anti-drift). Code 11: mesh/balanced**
 
 ### 🎯 Task Complexity Detection
 
 **AUTO-INVOKE SWARM when task involves:**
+
 - Multiple files (3+)
 - New feature implementation
 - Refactoring across modules
@@ -235,6 +252,7 @@ Bash("npx @claude-flow/cli@latest hooks worker dispatch --trigger optimize")
 - Database schema changes
 
 **SKIP SWARM for:**
+
 - Single file edits
 - Simple bug fixes (1-2 lines)
 - Documentation updates
@@ -244,6 +262,7 @@ Bash("npx @claude-flow/cli@latest hooks worker dispatch --trigger optimize")
 ## 🚨 CRITICAL: CONCURRENT EXECUTION & FILE MANAGEMENT
 
 **ABSOLUTE RULES**:
+
 1. ALL operations MUST be concurrent/parallel in a single message
 2. **NEVER save working files, text/mds and tests to the root folder**
 3. ALWAYS organize files in appropriate subdirectories
@@ -252,6 +271,7 @@ Bash("npx @claude-flow/cli@latest hooks worker dispatch --trigger optimize")
 ### ⚡ GOLDEN RULE: "1 MESSAGE = ALL RELATED OPERATIONS"
 
 **MANDATORY PATTERNS:**
+
 - **TodoWrite**: ALWAYS batch ALL todos in ONE call (5-10+ todos minimum)
 - **Task tool (Claude Code)**: ALWAYS spawn ALL agents in ONE message with full instructions
 - **File operations**: ALWAYS batch ALL reads/writes/edits in ONE message
@@ -261,6 +281,7 @@ Bash("npx @claude-flow/cli@latest hooks worker dispatch --trigger optimize")
 ### 📁 File Organization Rules
 
 **NEVER save to root folder. Use these directories:**
+
 - `/src` - Source code files
 - `/tests` - Test files
 - `/docs` - Documentation and markdown files
@@ -282,37 +303,37 @@ Bash("npx @claude-flow/cli@latest hooks worker dispatch --trigger optimize")
 
 ### Core Commands
 
-| Command | Subcommands | Description |
-|---------|-------------|-------------|
-| `init` | 4 | Project initialization with wizard, presets, skills, hooks |
-| `agent` | 8 | Agent lifecycle (spawn, list, status, stop, metrics, pool, health, logs) |
-| `swarm` | 6 | Multi-agent swarm coordination and orchestration |
-| `memory` | 11 | AgentDB memory with vector search (150x-12,500x faster) |
-| `mcp` | 9 | MCP server management and tool execution |
-| `task` | 6 | Task creation, assignment, and lifecycle |
-| `session` | 7 | Session state management and persistence |
-| `config` | 7 | Configuration management and provider setup |
-| `status` | 3 | System status monitoring with watch mode |
-| `workflow` | 6 | Workflow execution and template management |
-| `hooks` | 17 | Self-learning hooks + 12 background workers |
-| `hive-mind` | 6 | Queen-led Byzantine fault-tolerant consensus |
+| Command     | Subcommands | Description                                                              |
+| ----------- | ----------- | ------------------------------------------------------------------------ |
+| `init`      | 4           | Project initialization with wizard, presets, skills, hooks               |
+| `agent`     | 8           | Agent lifecycle (spawn, list, status, stop, metrics, pool, health, logs) |
+| `swarm`     | 6           | Multi-agent swarm coordination and orchestration                         |
+| `memory`    | 11          | AgentDB memory with vector search (150x-12,500x faster)                  |
+| `mcp`       | 9           | MCP server management and tool execution                                 |
+| `task`      | 6           | Task creation, assignment, and lifecycle                                 |
+| `session`   | 7           | Session state management and persistence                                 |
+| `config`    | 7           | Configuration management and provider setup                              |
+| `status`    | 3           | System status monitoring with watch mode                                 |
+| `workflow`  | 6           | Workflow execution and template management                               |
+| `hooks`     | 17          | Self-learning hooks + 12 background workers                              |
+| `hive-mind` | 6           | Queen-led Byzantine fault-tolerant consensus                             |
 
 ### Advanced Commands
 
-| Command | Subcommands | Description |
-|---------|-------------|-------------|
-| `daemon` | 5 | Background worker daemon (start, stop, status, trigger, enable) |
-| `neural` | 5 | Neural pattern training (train, status, patterns, predict, optimize) |
-| `security` | 6 | Security scanning (scan, audit, cve, threats, validate, report) |
-| `performance` | 5 | Performance profiling (benchmark, profile, metrics, optimize, report) |
-| `providers` | 5 | AI providers (list, add, remove, test, configure) |
-| `plugins` | 5 | Plugin management (list, install, uninstall, enable, disable) |
-| `deployment` | 5 | Deployment management (deploy, rollback, status, environments, release) |
-| `embeddings` | 4 | Vector embeddings (embed, batch, search, init) - 75x faster with agentic-flow |
-| `claims` | 4 | Claims-based authorization (check, grant, revoke, list) |
-| `migrate` | 5 | V2 to V3 migration with rollback support |
-| `doctor` | 1 | System diagnostics with health checks |
-| `completions` | 4 | Shell completions (bash, zsh, fish, powershell) |
+| Command       | Subcommands | Description                                                                   |
+| ------------- | ----------- | ----------------------------------------------------------------------------- |
+| `daemon`      | 5           | Background worker daemon (start, stop, status, trigger, enable)               |
+| `neural`      | 5           | Neural pattern training (train, status, patterns, predict, optimize)          |
+| `security`    | 6           | Security scanning (scan, audit, cve, threats, validate, report)               |
+| `performance` | 5           | Performance profiling (benchmark, profile, metrics, optimize, report)         |
+| `providers`   | 5           | AI providers (list, add, remove, test, configure)                             |
+| `plugins`     | 5           | Plugin management (list, install, uninstall, enable, disable)                 |
+| `deployment`  | 5           | Deployment management (deploy, rollback, status, environments, release)       |
+| `embeddings`  | 4           | Vector embeddings (embed, batch, search, init) - 75x faster with agentic-flow |
+| `claims`      | 4           | Claims-based authorization (check, grant, revoke, list)                       |
+| `migrate`     | 5           | V2 to V3 migration with rollback support                                      |
+| `doctor`      | 1           | System diagnostics with health checks                                         |
+| `completions` | 4           | Shell completions (bash, zsh, fish, powershell)                               |
 
 ### Quick CLI Examples
 
@@ -345,87 +366,102 @@ npx @claude-flow/cli@latest performance benchmark --suite all
 ## 🚀 Available Agents (60+ Types)
 
 ### Core Development
+
 `coder`, `reviewer`, `tester`, `planner`, `researcher`
 
 ### V3 Specialized Agents
+
 `security-architect`, `security-auditor`, `memory-specialist`, `performance-engineer`
 
 ### 🔐 @claude-flow/security
+
 CVE remediation, input validation, path security:
+
 - `InputValidator` - Zod validation
 - `PathValidator` - Traversal prevention
 - `SafeExecutor` - Injection protection
 
 ### Swarm Coordination
-`hierarchical-coordinator`, `mesh-coordinator`, `adaptive-coordinator`, `collective-intelligence-coordinator`, `swarm-memory-manager`
+
+`hierarchical-coordinator`, `mesh-coordinator`, `adaptive-coordinator`,
+`collective-intelligence-coordinator`, `swarm-memory-manager`
 
 ### Consensus & Distributed
-`byzantine-coordinator`, `raft-manager`, `gossip-coordinator`, `consensus-builder`, `crdt-synchronizer`, `quorum-manager`, `security-manager`
+
+`byzantine-coordinator`, `raft-manager`, `gossip-coordinator`, `consensus-builder`,
+`crdt-synchronizer`, `quorum-manager`, `security-manager`
 
 ### Performance & Optimization
+
 `perf-analyzer`, `performance-benchmarker`, `task-orchestrator`, `memory-coordinator`, `smart-agent`
 
 ### GitHub & Repository
-`github-modes`, `pr-manager`, `code-review-swarm`, `issue-tracker`, `release-manager`, `workflow-automation`, `project-board-sync`, `repo-architect`, `multi-repo-swarm`
+
+`github-modes`, `pr-manager`, `code-review-swarm`, `issue-tracker`, `release-manager`,
+`workflow-automation`, `project-board-sync`, `repo-architect`, `multi-repo-swarm`
 
 ### SPARC Methodology
+
 `sparc-coord`, `sparc-coder`, `specification`, `pseudocode`, `architecture`, `refinement`
 
 ### Specialized Development
-`backend-dev`, `mobile-dev`, `ml-developer`, `cicd-engineer`, `api-docs`, `system-architect`, `code-analyzer`, `base-template-generator`
+
+`backend-dev`, `mobile-dev`, `ml-developer`, `cicd-engineer`, `api-docs`, `system-architect`,
+`code-analyzer`, `base-template-generator`
 
 ### Testing & Validation
+
 `tdd-london-swarm`, `production-validator`
 
 ## 🪝 V3 Hooks System (27 Hooks + 12 Workers)
 
 ### All Available Hooks
 
-| Hook | Description | Key Options |
-|------|-------------|-------------|
-| `pre-edit` | Get context before editing files | `--file`, `--operation` |
-| `post-edit` | Record editing outcome for learning | `--file`, `--success`, `--train-neural` |
-| `pre-command` | Assess risk before commands | `--command`, `--validate-safety` |
-| `post-command` | Record command execution outcome | `--command`, `--track-metrics` |
-| `pre-task` | Record task start, get agent suggestions | `--description`, `--coordinate-swarm` |
-| `post-task` | Record task completion for learning | `--task-id`, `--success`, `--store-results` |
-| `session-start` | Start/restore session (v2 compat) | `--session-id`, `--auto-configure` |
-| `session-end` | End session and persist state | `--generate-summary`, `--export-metrics` |
-| `session-restore` | Restore a previous session | `--session-id`, `--latest` |
-| `route` | Route task to optimal agent | `--task`, `--context`, `--top-k` |
-| `route-task` | (v2 compat) Alias for route | `--task`, `--auto-swarm` |
-| `explain` | Explain routing decision | `--topic`, `--detailed` |
-| `pretrain` | Bootstrap intelligence from repo | `--model-type`, `--epochs` |
-| `build-agents` | Generate optimized agent configs | `--agent-types`, `--focus` |
-| `metrics` | View learning metrics dashboard | `--v3-dashboard`, `--format` |
-| `transfer` | Transfer patterns via IPFS registry | `store`, `from-project` |
-| `list` | List all registered hooks | `--format` |
-| `intelligence` | RuVector intelligence system | `trajectory-*`, `pattern-*`, `stats` |
-| `worker` | Background worker management | `list`, `dispatch`, `status`, `detect` |
-| `progress` | Check V3 implementation progress | `--detailed`, `--format` |
-| `statusline` | Generate dynamic statusline | `--json`, `--compact`, `--no-color` |
-| `coverage-route` | Route based on test coverage gaps | `--task`, `--path` |
-| `coverage-suggest` | Suggest coverage improvements | `--path` |
-| `coverage-gaps` | List coverage gaps with priorities | `--format`, `--limit` |
-| `pre-bash` | (v2 compat) Alias for pre-command | Same as pre-command |
-| `post-bash` | (v2 compat) Alias for post-command | Same as post-command |
+| Hook               | Description                              | Key Options                                 |
+| ------------------ | ---------------------------------------- | ------------------------------------------- |
+| `pre-edit`         | Get context before editing files         | `--file`, `--operation`                     |
+| `post-edit`        | Record editing outcome for learning      | `--file`, `--success`, `--train-neural`     |
+| `pre-command`      | Assess risk before commands              | `--command`, `--validate-safety`            |
+| `post-command`     | Record command execution outcome         | `--command`, `--track-metrics`              |
+| `pre-task`         | Record task start, get agent suggestions | `--description`, `--coordinate-swarm`       |
+| `post-task`        | Record task completion for learning      | `--task-id`, `--success`, `--store-results` |
+| `session-start`    | Start/restore session (v2 compat)        | `--session-id`, `--auto-configure`          |
+| `session-end`      | End session and persist state            | `--generate-summary`, `--export-metrics`    |
+| `session-restore`  | Restore a previous session               | `--session-id`, `--latest`                  |
+| `route`            | Route task to optimal agent              | `--task`, `--context`, `--top-k`            |
+| `route-task`       | (v2 compat) Alias for route              | `--task`, `--auto-swarm`                    |
+| `explain`          | Explain routing decision                 | `--topic`, `--detailed`                     |
+| `pretrain`         | Bootstrap intelligence from repo         | `--model-type`, `--epochs`                  |
+| `build-agents`     | Generate optimized agent configs         | `--agent-types`, `--focus`                  |
+| `metrics`          | View learning metrics dashboard          | `--v3-dashboard`, `--format`                |
+| `transfer`         | Transfer patterns via IPFS registry      | `store`, `from-project`                     |
+| `list`             | List all registered hooks                | `--format`                                  |
+| `intelligence`     | RuVector intelligence system             | `trajectory-*`, `pattern-*`, `stats`        |
+| `worker`           | Background worker management             | `list`, `dispatch`, `status`, `detect`      |
+| `progress`         | Check V3 implementation progress         | `--detailed`, `--format`                    |
+| `statusline`       | Generate dynamic statusline              | `--json`, `--compact`, `--no-color`         |
+| `coverage-route`   | Route based on test coverage gaps        | `--task`, `--path`                          |
+| `coverage-suggest` | Suggest coverage improvements            | `--path`                                    |
+| `coverage-gaps`    | List coverage gaps with priorities       | `--format`, `--limit`                       |
+| `pre-bash`         | (v2 compat) Alias for pre-command        | Same as pre-command                         |
+| `post-bash`        | (v2 compat) Alias for post-command       | Same as post-command                        |
 
 ### 12 Background Workers
 
-| Worker | Priority | Description |
-|--------|----------|-------------|
-| `ultralearn` | normal | Deep knowledge acquisition |
-| `optimize` | high | Performance optimization |
-| `consolidate` | low | Memory consolidation |
-| `predict` | normal | Predictive preloading |
-| `audit` | critical | Security analysis |
-| `map` | normal | Codebase mapping |
-| `preload` | low | Resource preloading |
-| `deepdive` | normal | Deep code analysis |
-| `document` | normal | Auto-documentation |
-| `refactor` | normal | Refactoring suggestions |
-| `benchmark` | normal | Performance benchmarking |
-| `testgaps` | normal | Test coverage analysis |
+| Worker        | Priority | Description                |
+| ------------- | -------- | -------------------------- |
+| `ultralearn`  | normal   | Deep knowledge acquisition |
+| `optimize`    | high     | Performance optimization   |
+| `consolidate` | low      | Memory consolidation       |
+| `predict`     | normal   | Predictive preloading      |
+| `audit`       | critical | Security analysis          |
+| `map`         | normal   | Codebase mapping           |
+| `preload`     | low      | Resource preloading        |
+| `deepdive`    | normal   | Deep code analysis         |
+| `document`    | normal   | Auto-documentation         |
+| `refactor`    | normal   | Refactoring suggestions    |
+| `benchmark`   | normal   | Performance benchmarking   |
+| `testgaps`    | normal   | Test coverage analysis     |
 
 ### Essential Hook Commands
 
@@ -481,6 +517,7 @@ npx @claude-flow/cli@latest migrate validate
 ## 🧠 Intelligence System (RuVector)
 
 V3 includes the RuVector Intelligence System:
+
 - **SONA**: Self-Optimizing Neural Architecture (<0.05ms adaptation)
 - **MoE**: Mixture of Experts for specialized routing
 - **HNSW**: 150x-12,500x faster pattern search
@@ -488,6 +525,7 @@ V3 includes the RuVector Intelligence System:
 - **Flash Attention**: 2.49x-7.47x speedup
 
 The 4-step intelligence pipeline:
+
 1. **RETRIEVE** - Fetch relevant patterns via HNSW
 2. **JUDGE** - Evaluate with verdicts (success/failure)
 3. **DISTILL** - Extract key learnings via LoRA
@@ -496,6 +534,7 @@ The 4-step intelligence pipeline:
 ## 📦 Embeddings Package (v3.0.0-alpha.12)
 
 Features:
+
 - **sql.js**: Cross-platform SQLite persistent cache (WASM, no native compilation)
 - **Document chunking**: Configurable overlap and size
 - **Normalization**: L2, L1, min-max, z-score
@@ -506,12 +545,14 @@ Features:
 ## 🐝 Hive-Mind Consensus
 
 ### Topologies
+
 - `hierarchical` - Queen controls workers directly
 - `mesh` - Fully connected peer network
 - `hierarchical-mesh` - Hybrid (recommended)
 - `adaptive` - Dynamic based on load
 
 ### Consensus Strategies
+
 - `byzantine` - BFT (tolerates f < n/3 faulty)
 - `raft` - Leader-based (tolerates f < n/2)
 - `gossip` - Epidemic for eventual consistency
@@ -520,18 +561,19 @@ Features:
 
 ## V3 Performance Targets
 
-| Metric | Target |
-|--------|--------|
-| Flash Attention | 2.49x-7.47x speedup |
-| HNSW Search | 150x-12,500x faster |
+| Metric           | Target                   |
+| ---------------- | ------------------------ |
+| Flash Attention  | 2.49x-7.47x speedup      |
+| HNSW Search      | 150x-12,500x faster      |
 | Memory Reduction | 50-75% with quantization |
-| MCP Response | <100ms |
-| CLI Startup | <500ms |
-| SONA Adaptation | <0.05ms |
+| MCP Response     | <100ms                   |
+| CLI Startup      | <500ms                   |
+| SONA Adaptation  | <0.05ms                  |
 
 ## 📊 Performance Optimization Protocol
 
 ### Automatic Performance Tracking
+
 ```bash
 # After any significant operation, track metrics
 Bash("npx @claude-flow/cli@latest hooks post-command --command '[operation]' --track-metrics true")
@@ -544,6 +586,7 @@ Bash("npx @claude-flow/cli@latest performance profile --target '[component]'")
 ```
 
 ### Session Persistence (Cross-Conversation Learning)
+
 ```bash
 # At session start - restore previous context
 Bash("npx @claude-flow/cli@latest session restore --latest")
@@ -553,6 +596,7 @@ Bash("npx @claude-flow/cli@latest hooks session-end --generate-summary true --pe
 ```
 
 ### Neural Pattern Training
+
 ```bash
 # Train on successful code patterns
 Bash("npx @claude-flow/cli@latest neural train --pattern-type coordination --epochs 10")
@@ -589,6 +633,7 @@ CLAUDE_FLOW_MEMORY_PATH=./data/memory
 ## 🔍 Doctor Health Checks
 
 Run `npx @claude-flow/cli@latest doctor` to check:
+
 - Node.js version (20+)
 - npm version (9+)
 - Git installation
@@ -618,6 +663,7 @@ npx @claude-flow/cli@latest doctor --fix
 ## 🎯 Claude Code vs CLI Tools
 
 ### Claude Code Handles ALL EXECUTION:
+
 - **Task tool**: Spawn and run agents concurrently
 - File operations (Read, Write, Edit, MultiEdit, Glob, Grep)
 - Code generation and programming
@@ -626,18 +672,22 @@ npx @claude-flow/cli@latest doctor --fix
 - Git operations
 
 ### CLI Tools Handle Coordination (via Bash):
+
 - **Swarm init**: `npx @claude-flow/cli@latest swarm init --topology <type>`
 - **Swarm status**: `npx @claude-flow/cli@latest swarm status`
 - **Agent spawn**: `npx @claude-flow/cli@latest agent spawn -t <type> --name <name>`
-- **Memory store**: `npx @claude-flow/cli@latest memory store --key "mykey" --value "myvalue" --namespace patterns`
+- **Memory store**:
+  `npx @claude-flow/cli@latest memory store --key "mykey" --value "myvalue" --namespace patterns`
 - **Memory search**: `npx @claude-flow/cli@latest memory search --query "search terms"`
 - **Memory list**: `npx @claude-flow/cli@latest memory list --namespace patterns`
-- **Memory retrieve**: `npx @claude-flow/cli@latest memory retrieve --key "mykey" --namespace patterns`
+- **Memory retrieve**:
+  `npx @claude-flow/cli@latest memory retrieve --key "mykey" --namespace patterns`
 - **Hooks**: `npx @claude-flow/cli@latest hooks <hook-name> [options]`
 
 ## 📝 Memory Commands Reference (IMPORTANT)
 
 ### Store Data (ALL options shown)
+
 ```bash
 # REQUIRED: --key and --value
 # OPTIONAL: --namespace (default: "default"), --ttl, --tags
@@ -646,6 +696,7 @@ npx @claude-flow/cli@latest memory store --key "bug-fix-123" --value "Fixed null
 ```
 
 ### Search Data (semantic vector search)
+
 ```bash
 # REQUIRED: --query (full flag, not -q)
 # OPTIONAL: --namespace, --limit, --threshold
@@ -654,6 +705,7 @@ npx @claude-flow/cli@latest memory search --query "error handling" --namespace p
 ```
 
 ### List Entries
+
 ```bash
 # OPTIONAL: --namespace, --limit
 npx @claude-flow/cli@latest memory list
@@ -661,6 +713,7 @@ npx @claude-flow/cli@latest memory list --namespace patterns --limit 10
 ```
 
 ### Retrieve Specific Entry
+
 ```bash
 # REQUIRED: --key
 # OPTIONAL: --namespace (default: "default")
@@ -669,6 +722,7 @@ npx @claude-flow/cli@latest memory retrieve --key "pattern-auth" --namespace pat
 ```
 
 ### Initialize Memory Database
+
 ```bash
 npx @claude-flow/cli@latest memory init --force --verbose
 ```
@@ -677,11 +731,13 @@ npx @claude-flow/cli@latest memory init --force --verbose
 
 ## 📚 Full Capabilities Reference
 
-For a comprehensive overview of all Claude Flow V3 features, agents, commands, and integrations, see:
+For a comprehensive overview of all Claude Flow V3 features, agents, commands, and integrations,
+see:
 
 **`.claude-flow/CAPABILITIES.md`** - Complete reference generated during init
 
 This includes:
+
 - All 60+ agent types with routing recommendations
 - All 26 CLI commands with 140+ subcommands
 - All 27 hooks + 12 background workers
@@ -700,13 +756,15 @@ This includes:
 Remember: **Claude Flow CLI coordinates, Claude Code Task tool creates!**
 
 # important-instruction-reminders
-Do what has been asked; nothing more, nothing less.
-NEVER create files unless they're absolutely necessary for achieving your goal.
-ALWAYS prefer editing an existing file to creating a new one.
-NEVER proactively create documentation files (*.md) or README files. Only create documentation files if explicitly requested by the User.
-Never save working files, text/mds and tests to the root folder.
+
+Do what has been asked; nothing more, nothing less. NEVER create files unless they're absolutely
+necessary for achieving your goal. ALWAYS prefer editing an existing file to creating a new one.
+NEVER proactively create documentation files (\*.md) or README files. Only create documentation
+files if explicitly requested by the User. Never save working files, text/mds and tests to the root
+folder.
 
 ## 🚨 SWARM EXECUTION RULES (CRITICAL)
+
 1. **SPAWN IN BACKGROUND**: Use `run_in_background: true` for all agent Task calls
 2. **SPAWN ALL AT ONCE**: Put ALL agent Task calls in ONE message for parallel execution
 3. **TELL USER**: After spawning, list what each agent is doing (use emojis for clarity)
@@ -716,6 +774,7 @@ Never save working files, text/mds and tests to the root folder.
 7. **NO CONFIRMATION**: Don't ask "should I check?" - just wait for results
 
 Example spawn message:
+
 ```
 "I've launched 4 agents in background:
 - 🔍 Researcher: [task]

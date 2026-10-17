@@ -15,10 +15,7 @@
     "sourceType": "module",
     "project": "./tsconfig.json"
   },
-  "plugins": [
-    "@typescript-eslint",
-    "import"
-  ],
+  "plugins": ["@typescript-eslint", "import"],
   "rules": {
     "@typescript-eslint/no-unused-vars": [
       "error",
@@ -74,11 +71,5 @@
     "curly": ["error", "all"],
     "no-throw-literal": "error"
   },
-  "ignorePatterns": [
-    "dist",
-    "coverage",
-    "node_modules",
-    "*.js",
-    "*.d.ts"
-  ]
+  "ignorePatterns": ["dist", "coverage", "node_modules", "*.js", "*.d.ts"]
 }

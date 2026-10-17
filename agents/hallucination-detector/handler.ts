@@ -29,13 +29,14 @@ import {
   hashInputs,
   getAgentIdentity,
   sanitizeConfidence,
+  HallucinationDetectorInputSchema as PublicInputSchema,
+  DetectionConfigSchema as PublicDetectionConfigSchema,
+  type HallucinationDetectorInput as PublicInput,
+  type HallucinationDetectorOutput as PublicOutput,
+  type DetectionConfig as PublicDetectionConfig,
 } from '../contracts';
 
-import {
-  getRuVectorClient,
-  createTelemetryEmitter,
-  TelemetryEmitter,
-} from '../services';
+import { getRuVectorClient, createTelemetryEmitter, TelemetryEmitter } from '../services';
 
 // =============================================================================
 // AGENT METADATA
@@ -105,15 +106,17 @@ export const ReferenceContextSchema = z.object({
   content: z.string().min(1),
 
   /** Type of reference material */
-  content_type: z.enum([
-    'document',
-    'knowledge_base',
-    'api_response',
-    'database_result',
-    'user_provided',
-    'web_source',
-    'other',
-  ]).default('document'),
+  content_type: z
+    .enum([
+      'document',
+      'knowledge_base',
+      'api_response',
+      'database_result',
+      'user_provided',
+      'web_source',
+      'other',
+    ])
+    .default('document'),
 
   /** Optional: title or name of the reference */
   title: z.string().optional(),
@@ -191,12 +194,12 @@ export type HallucinationDetectorInput = z.infer<typeof HallucinationDetectorInp
  * Types of hallucinations that can be detected
  */
 export const HallucinationType = z.enum([
-  'fabrication',      // Claim not present in any reference context
-  'exaggeration',     // Claim overstates or embellishes what's in context
-  'misattribution',   // Claim attributes information to wrong source
-  'contradiction',    // Claim directly contradicts reference context
-  'unsupported',      // Claim cannot be verified (insufficient context)
-  'partial_support',  // Claim partially supported but contains unverified elements
+  'fabrication', // Claim not present in any reference context
+  'exaggeration', // Claim overstates or embellishes what's in context
+  'misattribution', // Claim attributes information to wrong source
+  'contradiction', // Claim directly contradicts reference context
+  'unsupported', // Claim cannot be verified (insufficient context)
+  'partial_support', // Claim partially supported but contains unverified elements
 ]);
 
 export type HallucinationTypeValue = z.infer<typeof HallucinationType>;
@@ -329,11 +332,13 @@ export const HallucinationDetectorOutputSchema = z.object({
   stats: DetectionStatsSchema,
 
   /** Reference contexts used */
-  references_used: z.array(z.object({
-    reference_id: z.string(),
-    title: z.string().optional(),
-    content_type: z.string(),
-  })),
+  references_used: z.array(
+    z.object({
+      reference_id: z.string(),
+      title: z.string().optional(),
+      content_type: z.string(),
+    }),
+  ),
 
   /** Detection configuration used */
   detection_config_used: DetectionConfigSchema,
@@ -358,11 +363,15 @@ export const HallucinationDetectorDecisionEventSchema = z.object({
   inputs_summary: z.record(z.unknown()).optional(),
   outputs: HallucinationDetectorOutputSchema,
   confidence: z.number().min(0).max(1),
-  confidence_factors: z.array(z.object({
-    factor: z.string(),
-    weight: z.number().min(0).max(1),
-    value: z.number().min(0).max(1),
-  })).optional(),
+  confidence_factors: z
+    .array(
+      z.object({
+        factor: z.string(),
+        weight: z.number().min(0).max(1),
+        value: z.number().min(0).max(1),
+      }),
+    )
+    .optional(),
   constraints_applied: z.array(z.string()),
   execution_ref: z.object({
     execution_id: z.string().uuid(),
@@ -374,19 +383,21 @@ export const HallucinationDetectorDecisionEventSchema = z.object({
   duration_ms: z.number().nonnegative(),
 });
 
-export type HallucinationDetectorDecisionEvent = z.infer<typeof HallucinationDetectorDecisionEventSchema>;
+export type HallucinationDetectorDecisionEvent = z.infer<
+  typeof HallucinationDetectorDecisionEventSchema
+>;
 
 // =============================================================================
 // CONSTRAINTS
 // =============================================================================
 
 export const VALID_CONSTRAINTS = [
-  'max_claims_exceeded',           // Claim count exceeded limit
-  'timeout_exceeded',              // Processing timeout reached
+  'max_claims_exceeded', // Claim count exceeded limit
+  'timeout_exceeded', // Processing timeout reached
   'semantic_analysis_unavailable', // Embeddings not available
-  'reference_context_empty',       // Reference context has no usable content
+  'reference_context_empty', // Reference context has no usable content
   'low_confidence_classification', // Classification confidence below threshold
-  'partial_analysis_only',         // Some claims could not be fully analyzed
+  'partial_analysis_only', // Some claims could not be fully analyzed
 ] as const;
 
 // =============================================================================
@@ -399,9 +410,7 @@ export const VALID_CONSTRAINTS = [
  * This is the main entry point for the agent.
  * Deployed as a Google Cloud Edge Function.
  */
-export async function handler(
-  request: EdgeFunctionRequest
-): Promise<EdgeFunctionResponse> {
+export async function handler(request: EdgeFunctionRequest): Promise<EdgeFunctionResponse> {
   const executionId = randomUUID();
   const startedAt = new Date();
 
@@ -409,7 +418,7 @@ export async function handler(
   const telemetry = createTelemetryEmitter(
     HALLUCINATION_DETECTOR_AGENT.agent_id,
     HALLUCINATION_DETECTOR_AGENT.agent_version,
-    executionId
+    executionId,
   );
 
   const context: ExecutionContext = {
@@ -429,28 +438,38 @@ export async function handler(
     }
 
     // Parse and validate input
-    const inputValidation = validateInput(HallucinationDetectorInputSchema, request.body);
+    const inputValidation = validateInput(PublicInputSchema, request.body);
     if (!inputValidation.success) {
-      telemetry.emitValidationFailed('input', (inputValidation as { success: false; error: AgentError }).error.message);
+      telemetry.emitValidationFailed(
+        'input',
+        (inputValidation as { success: false; error: AgentError }).error.message,
+      );
       await telemetry.flush();
 
-      return createErrorResponse(400, 'Validation Error', (inputValidation as { success: false; error: AgentError }).error);
+      return createErrorResponse(
+        400,
+        'Validation Error',
+        (inputValidation as { success: false; error: AgentError }).error,
+      );
     }
 
-    const input = inputValidation.data;
+    const publicInput = inputValidation.data;
+    const publicConfig = PublicDetectionConfigSchema.parse(publicInput.detection_config ?? {});
+    const input = normalizePublicInput(publicInput, publicConfig);
 
     // Execute hallucination detection
-    const output = await detectHallucinations(input, context);
+    const internalOutput = await detectHallucinations(input, context);
+    const output = toPublicOutput(internalOutput, publicInput, publicConfig);
 
     // Calculate confidence
-    const overallConfidence = calculateOverallConfidence(output);
+    const overallConfidence = calculateOverallConfidence(internalOutput);
 
     // Create DecisionEvent
     const decisionEvent = await createDecisionEvent(
-      input,
+      publicInput,
       output,
       overallConfidence,
-      context
+      context,
     );
 
     // Persist DecisionEvent (async, non-blocking)
@@ -461,8 +480,9 @@ export async function handler(
     telemetry.emitDecision(decisionEvent.decision_id, overallConfidence);
     telemetry.emitCompleted({
       duration_ms: Date.now() - startedAt.getTime(),
-      success_count: output.stats.total_claims - output.stats.hallucinations_detected,
-      failure_count: output.stats.hallucinations_detected,
+      success_count:
+        internalOutput.stats.total_claims - internalOutput.stats.hallucinations_detected,
+      failure_count: internalOutput.stats.hallucinations_detected,
     });
 
     // Flush telemetry
@@ -470,7 +490,6 @@ export async function handler(
 
     // Return success response
     return createSuccessResponse(output, decisionEvent.decision_id);
-
   } catch (err) {
     // Handle unexpected errors
     const error = err instanceof Error ? err : new Error(String(err));
@@ -487,13 +506,168 @@ export async function handler(
   }
 }
 
+function normalizePublicInput(
+  input: PublicInput,
+  config: PublicDetectionConfig,
+): HallucinationDetectorInput {
+  const claims = input.claim
+    ? [{ claim_id: 'claim-1', claim_text: input.claim }]
+    : (input.claims ?? []).map((claim) => ({
+        claim_id: claim.claim_id,
+        claim_text: claim.text,
+        metadata: claim.metadata,
+      }));
+
+  const references =
+    typeof input.reference_context === 'string'
+      ? [
+          {
+            reference_id: 'reference-1',
+            content: input.reference_context,
+            content_type: 'user_provided' as const,
+          },
+        ]
+      : input.reference_context.map((reference) => ({
+          reference_id: reference.source_id,
+          content: reference.content,
+          content_type: normalizeReferenceType(reference.source_type),
+          metadata: reference.metadata,
+        }));
+
+  const similarityThreshold =
+    config.sensitivity === 'high'
+      ? Math.max(config.confidence_threshold, 0.8)
+      : config.sensitivity === 'low'
+        ? Math.min(config.confidence_threshold, 0.6)
+        : config.confidence_threshold;
+
+  return {
+    claims,
+    reference_contexts: references,
+    detection_config: {
+      similarity_threshold: similarityThreshold,
+      enable_semantic_analysis: config.methods.includes('semantic_similarity'),
+      enable_keyword_matching: true,
+      enable_contradiction_detection: config.detect_types.includes('contradiction'),
+      case_sensitive: false,
+      max_claims: 100,
+      timeout_ms: 30000,
+      include_detailed_analysis: true,
+    },
+    caller_id: input.caller_id,
+    correlation_id: input.correlation_id,
+  };
+}
+
+function normalizeReferenceType(
+  sourceType:
+    | 'document'
+    | 'webpage'
+    | 'database'
+    | 'api_response'
+    | 'knowledge_base'
+    | 'transcript'
+    | 'other'
+    | undefined,
+): ReferenceContext['content_type'] {
+  switch (sourceType) {
+    case 'database':
+      return 'database_result';
+    case 'webpage':
+      return 'web_source';
+    case 'transcript':
+      return 'other';
+    default:
+      return sourceType ?? 'document';
+  }
+}
+
+function toPublicOutput(
+  output: HallucinationDetectorOutput,
+  input: PublicInput,
+  config: PublicDetectionConfig,
+): PublicOutput {
+  const byConfidence = output.results.reduce(
+    (counts, result) => {
+      if (result.confidence >= 0.8) counts.high += 1;
+      else if (result.confidence >= 0.5) counts.medium += 1;
+      else counts.low += 1;
+      return counts;
+    },
+    { high: 0, medium: 0, low: 0 },
+  );
+
+  const referenceSources =
+    typeof input.reference_context === 'string'
+      ? [{ source_id: 'reference-1', content: input.reference_context }]
+      : input.reference_context;
+
+  return {
+    execution_id: output.detection_id,
+    total_claims: output.stats.total_claims,
+    hallucinated_claims: output.stats.hallucinations_detected,
+    verified_claims: output.stats.total_claims - output.stats.hallucinations_detected,
+    overall_hallucination_rate: output.stats.hallucination_rate,
+    results: output.results.map((result) => ({
+      claim_id: result.claim_id,
+      claim_text: result.claim_text,
+      is_hallucination: result.is_hallucination,
+      hallucination_type:
+        result.hallucination_type === null
+          ? 'none'
+          : result.hallucination_type === 'partial_support'
+            ? 'unsupported'
+            : result.hallucination_type,
+      confidence: result.confidence,
+      supporting_evidence: result.evidence
+        .filter((evidence) => !evidence.is_contradictory)
+        .map((evidence) => ({
+          source_id: evidence.reference_id,
+          excerpt: evidence.relevant_excerpt ?? '',
+          relevance_score: evidence.similarity_score,
+        })),
+      contradicting_evidence: result.evidence
+        .filter((evidence) => evidence.is_contradictory)
+        .map((evidence) => ({
+          source_id: evidence.reference_id,
+          excerpt: evidence.relevant_excerpt ?? '',
+          relevance_score: evidence.similarity_score,
+        })),
+      explanation: result.summary,
+      method_scores: { semantic_similarity: result.support_score },
+    })),
+    summary: {
+      by_type: {
+        fabrication: output.stats.by_type.fabrication,
+        exaggeration: output.stats.by_type.exaggeration,
+        misattribution: output.stats.by_type.misattribution,
+        contradiction: output.stats.by_type.contradiction,
+        unsupported: output.stats.by_type.unsupported + output.stats.by_type.partial_support,
+      },
+      by_confidence: byConfidence,
+    },
+    detection_config: config,
+    reference_stats: {
+      total_sources: referenceSources.length,
+      total_characters: referenceSources.reduce(
+        (total, reference) => total + reference.content.length,
+        0,
+      ),
+      sources_used: referenceSources.map((reference) => reference.source_id),
+    },
+    started_at: output.started_at,
+    completed_at: output.completed_at,
+    total_duration_ms: output.duration_ms,
+  };
+}
+
 // =============================================================================
 // CORE DETECTION LOGIC
 // =============================================================================
 
 async function detectHallucinations(
   input: HallucinationDetectorInput,
-  context: ExecutionContext
+  context: ExecutionContext,
 ): Promise<HallucinationDetectorOutput> {
   const config = input.detection_config ?? {
     similarity_threshold: 0.7,
@@ -516,7 +690,7 @@ async function detectHallucinations(
     context.constraintsApplied.push('max_claims_exceeded');
     context.telemetry.emitConstraintApplied(
       'max_claims_exceeded',
-      `Processing ${config.max_claims} of ${input.claims.length} claims`
+      `Processing ${config.max_claims} of ${input.claims.length} claims`,
     );
   }
 
@@ -531,7 +705,7 @@ async function detectHallucinations(
       context.constraintsApplied.push('timeout_exceeded');
       context.telemetry.emitConstraintApplied(
         'timeout_exceeded',
-        `Elapsed: ${elapsed}ms, Max: ${config.timeout_ms}ms`
+        `Elapsed: ${elapsed}ms, Max: ${config.timeout_ms}ms`,
       );
       break;
     }
@@ -540,7 +714,7 @@ async function detectHallucinations(
       claim,
       preprocessedRefs,
       input.reference_contexts,
-      config
+      config,
     );
 
     results.push(result);
@@ -556,7 +730,7 @@ async function detectHallucinations(
     detection_id: context.executionId,
     results,
     stats,
-    references_used: input.reference_contexts.map(ref => ({
+    references_used: input.reference_contexts.map((ref) => ({
       reference_id: ref.reference_id,
       title: ref.title,
       content_type: ref.content_type,
@@ -580,22 +754,16 @@ interface PreprocessedReference {
 
 function preprocessReferenceContexts(
   references: ReferenceContext[],
-  config: DetectionConfig
+  config: DetectionConfig,
 ): PreprocessedReference[] {
-  return references.map(ref => {
-    const normalizedContent = config.case_sensitive
-      ? ref.content
-      : ref.content.toLowerCase();
+  return references.map((ref) => {
+    const normalizedContent = config.case_sensitive ? ref.content : ref.content.toLowerCase();
 
     // Extract keywords (simple word tokenization)
-    const keywords = new Set(
-      normalizedContent
-        .split(/\W+/)
-        .filter(word => word.length > 2)
-    );
+    const keywords = new Set(normalizedContent.split(/\W+/).filter((word) => word.length > 2));
 
     // Split into sentences
-    const sentences = ref.content.split(/[.!?]+/).filter(s => s.trim().length > 0);
+    const sentences = ref.content.split(/[.!?]+/).filter((s) => s.trim().length > 0);
 
     return {
       reference_id: ref.reference_id,
@@ -611,21 +779,17 @@ async function analyzeClaimAgainstContext(
   claim: Claim,
   preprocessedRefs: PreprocessedReference[],
   originalRefs: ReferenceContext[],
-  config: DetectionConfig
+  config: DetectionConfig,
 ): Promise<HallucinationClaimResult> {
   const evidence: Evidence[] = [];
   let bestSimilarity = 0;
   let bestMatchingRef: string | null = null;
   let hasContradiction = false;
 
-  const normalizedClaim = config.case_sensitive
-    ? claim.claim_text
-    : claim.claim_text.toLowerCase();
+  const normalizedClaim = config.case_sensitive ? claim.claim_text : claim.claim_text.toLowerCase();
 
   // Extract keywords from claim
-  const claimKeywords = new Set(
-    normalizedClaim.split(/\W+/).filter(word => word.length > 2)
-  );
+  const claimKeywords = new Set(normalizedClaim.split(/\W+/).filter((word) => word.length > 2));
 
   // Analyze against each reference
   for (const ref of preprocessedRefs) {
@@ -634,7 +798,7 @@ async function analyzeClaimAgainstContext(
     const unmatchedKeywords: string[] = [];
 
     if (config.enable_keyword_matching) {
-      Array.from(claimKeywords).forEach(keyword => {
+      Array.from(claimKeywords).forEach((keyword) => {
         if (ref.keywords.has(keyword)) {
           matchedKeywords.push(keyword);
         } else {
@@ -644,9 +808,8 @@ async function analyzeClaimAgainstContext(
     }
 
     // Calculate similarity score
-    const keywordSimilarity = claimKeywords.size > 0
-      ? matchedKeywords.length / claimKeywords.size
-      : 0;
+    const keywordSimilarity =
+      claimKeywords.size > 0 ? matchedKeywords.length / claimKeywords.size : 0;
 
     // Semantic similarity (simplified - would use embeddings in production)
     let semanticSimilarity = 0;
@@ -655,8 +818,10 @@ async function analyzeClaimAgainstContext(
     }
 
     // Combined similarity
+    // Exact keyword coverage is strong entailment evidence and must not be
+    // diluted merely because the reference contains additional context.
     const similarityScore = config.enable_semantic_analysis
-      ? (keywordSimilarity * 0.4 + semanticSimilarity * 0.6)
+      ? Math.max(keywordSimilarity, semanticSimilarity)
       : keywordSimilarity;
 
     // Find most relevant excerpt
@@ -679,7 +844,12 @@ async function analyzeClaimAgainstContext(
       matched_keywords: matchedKeywords.length > 0 ? matchedKeywords : undefined,
       unmatched_keywords: unmatchedKeywords.length > 0 ? unmatchedKeywords : undefined,
       is_contradictory: isContradictory,
-      explanation: generateExplanation(similarityScore, matchedKeywords, unmatchedKeywords, isContradictory),
+      explanation: generateExplanation(
+        similarityScore,
+        matchedKeywords,
+        unmatchedKeywords,
+        isContradictory,
+      ),
     });
 
     // Track best match
@@ -694,7 +864,7 @@ async function analyzeClaimAgainstContext(
     bestSimilarity,
     hasContradiction,
     evidence,
-    config.similarity_threshold
+    config.similarity_threshold,
   );
 
   // Calculate confidence for this classification
@@ -738,7 +908,7 @@ function calculateSemanticSimilarity(text1: string, text2: string): number {
   if (ngrams1.size === 0 || ngrams2.size === 0) return 0;
 
   let intersection = 0;
-  Array.from(ngrams1).forEach(gram => {
+  Array.from(ngrams1).forEach((gram) => {
     if (ngrams2.has(gram)) {
       intersection++;
     }
@@ -789,8 +959,8 @@ function detectContradiction(claim: string, reference: string): boolean {
     /\bweren't\b/,
   ];
 
-  const claimHasNegation = negationPatterns.some(p => p.test(claim));
-  const refHasNegation = negationPatterns.some(p => p.test(reference));
+  const claimHasNegation = negationPatterns.some((p) => p.test(claim));
+  const refHasNegation = negationPatterns.some((p) => p.test(reference));
 
   // Very simplified: if claim has negation but reference doesn't (or vice versa)
   // and they share significant content, might be a contradiction
@@ -800,14 +970,49 @@ function detectContradiction(claim: string, reference: string): boolean {
     return similarity > 0.3; // Threshold for considering it a potential contradiction
   }
 
-  return false;
+  const claimTokens = new Set(claim.match(/[a-z0-9]+/g) ?? []);
+  const referenceTokens = new Set(reference.match(/[a-z0-9]+/g) ?? []);
+  const sharedTerms = [...claimTokens].filter(
+    (token) => token.length > 2 && referenceTokens.has(token),
+  );
+
+  // Conflicting quantities are contradictory when both statements describe
+  // the same subject. This catches dates, temperatures, counts, and rates.
+  const claimNumbers = [...claimTokens].filter((token) => /^\d+(?:\.\d+)?$/.test(token));
+  const referenceNumbers = [...referenceTokens].filter((token) => /^\d+(?:\.\d+)?$/.test(token));
+  if (
+    sharedTerms.length >= 2 &&
+    claimNumbers.length > 0 &&
+    referenceNumbers.length > 0 &&
+    !claimNumbers.some((number) => referenceNumbers.includes(number))
+  ) {
+    return true;
+  }
+
+  const opposingTerms = [
+    ['won', 'defeated'],
+    ['won', 'lost'],
+    ['increase', 'decrease'],
+    ['increased', 'decreased'],
+    ['higher', 'lower'],
+    ['true', 'false'],
+  ] as const;
+
+  return (
+    sharedTerms.length >= 2 &&
+    opposingTerms.some(
+      ([left, right]) =>
+        (claimTokens.has(left) && referenceTokens.has(right)) ||
+        (claimTokens.has(right) && referenceTokens.has(left)),
+    )
+  );
 }
 
 function generateExplanation(
   similarity: number,
   matched: string[],
   unmatched: string[],
-  isContradictory: boolean
+  isContradictory: boolean,
 ): string {
   const parts: string[] = [];
 
@@ -845,7 +1050,7 @@ function classifyHallucination(
   bestSimilarity: number,
   hasContradiction: boolean,
   evidence: Evidence[],
-  threshold: number
+  threshold: number,
 ): Classification {
   // Priority 1: Contradiction
   if (hasContradiction) {
@@ -880,12 +1085,13 @@ function classifyHallucination(
   }
 
   // Priority 5: Exaggeration check (high similarity but with unmatched content)
-  const avgUnmatchedRatio = evidence.reduce((sum, e) => {
-    const unmatched = e.unmatched_keywords?.length ?? 0;
-    const matched = e.matched_keywords?.length ?? 0;
-    const total = matched + unmatched;
-    return sum + (total > 0 ? unmatched / total : 0);
-  }, 0) / evidence.length;
+  const avgUnmatchedRatio =
+    evidence.reduce((sum, e) => {
+      const unmatched = e.unmatched_keywords?.length ?? 0;
+      const matched = e.matched_keywords?.length ?? 0;
+      const total = matched + unmatched;
+      return sum + (total > 0 ? unmatched / total : 0);
+    }, 0) / evidence.length;
 
   if (bestSimilarity >= threshold && avgUnmatchedRatio > 0.4) {
     return {
@@ -909,11 +1115,12 @@ function calculateClaimConfidence(evidence: Evidence[], classification: Classifi
   // 2. Similarity scores are consistent
   // 3. Classification is clear-cut
 
-  const similarities = evidence.map(e => e.similarity_score);
+  const similarities = evidence.map((e) => e.similarity_score);
   const avgSimilarity = similarities.reduce((a, b) => a + b, 0) / similarities.length;
 
   // Variance in similarity scores (lower = more confident)
-  const variance = similarities.reduce((sum, s) => sum + Math.pow(s - avgSimilarity, 2), 0) / similarities.length;
+  const variance =
+    similarities.reduce((sum, s) => sum + Math.pow(s - avgSimilarity, 2), 0) / similarities.length;
   const consistencyScore = 1 - Math.min(1, variance * 4);
 
   // Classification clarity
@@ -936,16 +1143,15 @@ function calculateClaimConfidence(evidence: Evidence[], classification: Classifi
   const referenceFactor = Math.min(1, evidence.length / 3);
 
   // Weighted combination
-  return Math.min(1, Math.max(0,
-    consistencyScore * 0.3 +
-    clarityScore * 0.5 +
-    referenceFactor * 0.2
-  ));
+  return Math.min(
+    1,
+    Math.max(0, consistencyScore * 0.3 + clarityScore * 0.5 + referenceFactor * 0.2),
+  );
 }
 
 function determineSeverity(
   type: HallucinationTypeValue,
-  supportScore: number
+  supportScore: number,
 ): 'low' | 'medium' | 'high' | 'critical' {
   // Severity based on type and support score
   if (type === 'contradiction') {
@@ -975,7 +1181,7 @@ function determineSeverity(
 function generateSummary(
   classification: Classification,
   similarity: number,
-  bestRef: string | null
+  bestRef: string | null,
 ): string {
   if (!classification.isHallucination) {
     return `Claim is supported by reference context with ${(similarity * 100).toFixed(0)}% confidence.`;
@@ -1022,9 +1228,9 @@ function calculateDetectionStats(results: HallucinationClaimResult[]): Detection
     };
   }
 
-  const hallucinations = results.filter(r => r.is_hallucination);
-  const fullySupported = results.filter(r => !r.is_hallucination && r.support_score >= 0.7);
-  const partiallySupported = results.filter(r => !r.is_hallucination && r.support_score < 0.7);
+  const hallucinations = results.filter((r) => r.is_hallucination);
+  const fullySupported = results.filter((r) => !r.is_hallucination && r.support_score >= 0.7);
+  const partiallySupported = results.filter((r) => !r.is_hallucination && r.support_score < 0.7);
 
   const byType = {
     fabrication: 0,
@@ -1112,7 +1318,8 @@ function calculateOverallConfidence(output: HallucinationDetectorOutput): number
   // Classification consistency (inverse of hallucination rate variance from extreme)
   // Higher confidence when results are clearly hallucinated or clearly not
   const hallucinationRate = output.stats.hallucination_rate;
-  const consistencyValue = 1 - 4 * Math.abs(hallucinationRate - 0.5) * Math.abs(hallucinationRate - 0.5);
+  const consistencyValue =
+    1 - 4 * Math.abs(hallucinationRate - 0.5) * Math.abs(hallucinationRate - 0.5);
   // This peaks at 0 and 1, lowest at 0.5 (most uncertain)
   factors.push({
     factor: 'classification_consistency',
@@ -1128,10 +1335,7 @@ function calculateOverallConfidence(output: HallucinationDetectorOutput): number
   });
 
   // Calculate weighted confidence
-  const confidence = factors.reduce(
-    (sum, f) => sum + f.weight * f.value,
-    0
-  );
+  const confidence = factors.reduce((sum, f) => sum + f.weight * f.value, 0);
 
   return Math.min(1, Math.max(0, confidence));
 }
@@ -1141,10 +1345,10 @@ function calculateOverallConfidence(output: HallucinationDetectorOutput): number
 // =============================================================================
 
 async function createDecisionEvent(
-  input: HallucinationDetectorInput,
-  output: HallucinationDetectorOutput,
+  input: PublicInput,
+  output: PublicOutput,
   confidence: number,
-  context: ExecutionContext
+  context: ExecutionContext,
 ): Promise<DecisionEvent> {
   const inputsHash = await hashInputs(input);
 
@@ -1156,15 +1360,33 @@ async function createDecisionEvent(
     decision_id: randomUUID(),
     inputs_hash: inputsHash,
     inputs_summary: {
-      total_claims: input.claims.length,
-      reference_count: input.reference_contexts.length,
+      total_claims: input.claim ? 1 : (input.claims?.length ?? 0),
+      reference_count:
+        typeof input.reference_context === 'string' ? 1 : input.reference_context.length,
     },
     outputs: output,
     confidence: sanitizeConfidence(confidence),
     confidence_factors: [
-      { factor: 'sample_size', weight: 0.2, value: sanitizeConfidence(Math.min(1, Math.log10(output.results.length + 1) / 2)) },
-      { factor: 'reference_coverage', weight: 0.25, value: sanitizeConfidence(Math.min(1, output.references_used.length / 5)) },
-      { factor: 'avg_claim_confidence', weight: 0.3, value: sanitizeConfidence(output.stats.avg_confidence) },
+      {
+        factor: 'sample_size',
+        weight: 0.2,
+        value: sanitizeConfidence(Math.min(1, Math.log10(output.results.length + 1) / 2)),
+      },
+      {
+        factor: 'reference_coverage',
+        weight: 0.25,
+        value: sanitizeConfidence(Math.min(1, (output.reference_stats?.total_sources ?? 0) / 5)),
+      },
+      {
+        factor: 'avg_claim_confidence',
+        weight: 0.3,
+        value: sanitizeConfidence(
+          output.results.length > 0
+            ? output.results.reduce((sum, result) => sum + result.confidence, 0) /
+                output.results.length
+            : 0,
+        ),
+      },
     ],
     constraints_applied: context.constraintsApplied,
     execution_ref: {
@@ -1179,10 +1401,7 @@ async function createDecisionEvent(
 // RESPONSE HELPERS
 // =============================================================================
 
-function createSuccessResponse(
-  output: HallucinationDetectorOutput,
-  decisionId: string
-): EdgeFunctionResponse {
+function createSuccessResponse(output: PublicOutput, decisionId: string): EdgeFunctionResponse {
   return {
     statusCode: 200,
     headers: {
@@ -1202,7 +1421,7 @@ function createSuccessResponse(
 function createErrorResponse(
   statusCode: number,
   message: string,
-  error?: AgentError
+  error?: AgentError,
 ): EdgeFunctionResponse {
   return {
     statusCode,

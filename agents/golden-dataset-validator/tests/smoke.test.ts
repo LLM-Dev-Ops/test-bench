@@ -4,7 +4,7 @@
  * Basic integration tests to verify the agent works correctly.
  */
 
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { randomUUID } from 'crypto';
 import {
   handler,
@@ -14,6 +14,22 @@ import {
   type EdgeFunctionRequest,
   type GoldenDatasetValidatorInput,
 } from '../handler';
+
+vi.mock('../../services', () => ({
+  getRuVectorClient: () => ({
+    persistDecisionEvent: vi.fn().mockResolvedValue(undefined),
+    flush: vi.fn().mockResolvedValue(undefined),
+  }),
+  createTelemetryEmitter: () => ({
+    emitInvoked: vi.fn(),
+    emitCompleted: vi.fn(),
+    emitDecision: vi.fn(),
+    emitError: vi.fn(),
+    emitValidationFailed: vi.fn(),
+    emitConstraintApplied: vi.fn(),
+    flush: vi.fn().mockResolvedValue(undefined),
+  }),
+}));
 
 describe('Golden Dataset Validator Agent', () => {
   describe('Agent Metadata', () => {
@@ -282,12 +298,8 @@ describe('Golden Dataset Validator Agent', () => {
 
     it('should include response headers', async () => {
       const input: GoldenDatasetValidatorInput = {
-        golden_samples: [
-          { sample_id: 'header-1', input: 'Test', golden_output: 'Test' },
-        ],
-        model_outputs: [
-          { sample_id: 'header-1', model_output: 'Test' },
-        ],
+        golden_samples: [{ sample_id: 'header-1', input: 'Test', golden_output: 'Test' }],
+        model_outputs: [{ sample_id: 'header-1', model_output: 'Test' }],
       };
 
       const request: EdgeFunctionRequest = {
@@ -299,18 +311,16 @@ describe('Golden Dataset Validator Agent', () => {
 
       const response = await handler(request);
       expect(response.headers['X-Agent-Id']).toBe(GOLDEN_DATASET_VALIDATOR_AGENT.agent_id);
-      expect(response.headers['X-Agent-Version']).toBe(GOLDEN_DATASET_VALIDATOR_AGENT.agent_version);
+      expect(response.headers['X-Agent-Version']).toBe(
+        GOLDEN_DATASET_VALIDATOR_AGENT.agent_version,
+      );
       expect(response.headers['X-Decision-Id']).toBeDefined();
     });
 
     it('should handle case-insensitive matching', async () => {
       const input: GoldenDatasetValidatorInput = {
-        golden_samples: [
-          { sample_id: 'case-1', input: 'Test', golden_output: 'HELLO WORLD' },
-        ],
-        model_outputs: [
-          { sample_id: 'case-1', model_output: 'hello world' },
-        ],
+        golden_samples: [{ sample_id: 'case-1', input: 'Test', golden_output: 'HELLO WORLD' }],
+        model_outputs: [{ sample_id: 'case-1', model_output: 'hello world' }],
         validation_config: {
           case_insensitive: true,
         },
@@ -335,12 +345,8 @@ describe('Golden Dataset Validator Agent', () => {
   describe('Output Validation', () => {
     it('should produce valid output schema', async () => {
       const input: GoldenDatasetValidatorInput = {
-        golden_samples: [
-          { sample_id: 'schema-1', input: 'Test', golden_output: 'Output' },
-        ],
-        model_outputs: [
-          { sample_id: 'schema-1', model_output: 'Output' },
-        ],
+        golden_samples: [{ sample_id: 'schema-1', input: 'Test', golden_output: 'Output' }],
+        model_outputs: [{ sample_id: 'schema-1', model_output: 'Output' }],
         dataset: {
           name: 'schema-test',
           version: '1.0',
@@ -364,12 +370,8 @@ describe('Golden Dataset Validator Agent', () => {
 
     it('should include quality assessment', async () => {
       const input: GoldenDatasetValidatorInput = {
-        golden_samples: [
-          { sample_id: 'qa-1', input: 'Test', golden_output: 'Output' },
-        ],
-        model_outputs: [
-          { sample_id: 'qa-1', model_output: 'Output' },
-        ],
+        golden_samples: [{ sample_id: 'qa-1', input: 'Test', golden_output: 'Output' }],
+        model_outputs: [{ sample_id: 'qa-1', model_output: 'Output' }],
       };
 
       const request: EdgeFunctionRequest = {
@@ -426,7 +428,7 @@ describe('Golden Dataset Validator Agent', () => {
         golden_output: `Answer ${i}`,
       }));
 
-      const modelOutputs = goldenSamples.map(s => ({
+      const modelOutputs = goldenSamples.map((s) => ({
         sample_id: s.sample_id,
         model_output: s.golden_output,
       }));

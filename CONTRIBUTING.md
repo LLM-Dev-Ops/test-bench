@@ -1,6 +1,7 @@
 # Contributing to LLM Test Bench
 
-Thank you for your interest in contributing to LLM Test Bench! This document provides guidelines and instructions for contributing to the project.
+Thank you for your interest in contributing to LLM Test Bench! This document provides guidelines and
+instructions for contributing to the project.
 
 ## Table of Contents
 
@@ -21,7 +22,8 @@ Please be respectful and constructive in all interactions. We're building a welc
 
 1. Fork the repository
 2. Clone your fork: `git clone https://github.com/YOUR_USERNAME/llm-test-bench.git`
-3. Add upstream remote: `git remote add upstream https://github.com/ORIGINAL_OWNER/llm-test-bench.git`
+3. Add upstream remote:
+   `git remote add upstream https://github.com/ORIGINAL_OWNER/llm-test-bench.git`
 4. Create a branch: `git checkout -b feature/your-feature-name`
 
 ## Development Setup
@@ -63,7 +65,8 @@ npm run ci
 
 ## CI/CD Pipeline
 
-Our CI/CD pipeline ensures code quality and consistency. All checks must pass before a PR can be merged.
+Our CI/CD pipeline ensures code quality and consistency. All checks must pass before a PR can be
+merged.
 
 ### CI Workflow (Automated on Push/PR)
 
@@ -113,6 +116,7 @@ git push origin v1.0.0
 ```
 
 This triggers:
+
 - Full test suite
 - Build for multiple platforms
 - GitHub release creation
@@ -147,6 +151,7 @@ This triggers:
 Auto-format on save is recommended. Configure your editor:
 
 **VS Code (.vscode/settings.json):**
+
 ```json
 {
   "editor.formatOnSave": true,
@@ -214,6 +219,7 @@ describe('MyComponent', () => {
 6. ✅ Build succeeds: `npm run build`
 
 Or run everything at once:
+
 ```bash
 npm run ci
 ```
@@ -234,18 +240,22 @@ When creating a PR, include:
 
 ```markdown
 ## Description
+
 Brief description of the change
 
 ## Type of Change
+
 - [ ] Bug fix
 - [ ] New feature
 - [ ] Breaking change
 - [ ] Documentation update
 
 ## Testing
+
 How has this been tested?
 
 ## Checklist
+
 - [ ] Tests pass locally
 - [ ] Code follows style guidelines
 - [ ] Documentation updated
@@ -305,6 +315,7 @@ Add troubleshooting section for common installation issues.
 ### Scopes
 
 Common scopes:
+
 - `cli` - CLI interface
 - `config` - Configuration system
 - `providers` - LLM providers
@@ -336,10 +347,12 @@ npm run test:ui
 ### Husky Git Hooks
 
 Pre-commit hooks automatically run:
+
 - ESLint on staged TypeScript files
 - Prettier on staged files
 
 To bypass hooks (not recommended):
+
 ```bash
 git commit --no-verify
 ```
@@ -347,17 +360,20 @@ git commit --no-verify
 ### Common Issues
 
 **"Module not found" errors:**
+
 ```bash
 rm -rf node_modules package-lock.json
 npm install
 ```
 
 **Type errors after update:**
+
 ```bash
 npm run typecheck
 ```
 
 **Coverage threshold failures:**
+
 ```bash
 npm run test:coverage
 # Check which files need more coverage
@@ -366,7 +382,8 @@ npm run test:coverage
 ## Getting Help
 
 - 📖 Read the [documentation](./docs/)
-- 💬 Ask questions in [GitHub Discussions](https://github.com/yourusername/llm-test-bench/discussions)
+- 💬 Ask questions in
+  [GitHub Discussions](https://github.com/yourusername/llm-test-bench/discussions)
 - 🐛 Report bugs in [GitHub Issues](https://github.com/yourusername/llm-test-bench/issues)
 
 ## License

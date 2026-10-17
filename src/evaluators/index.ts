@@ -5,11 +5,7 @@
  */
 
 import { LLMTestBench } from '../core/llm-test-bench.js';
-import type {
-  EvaluationConfig,
-  CombinedEvaluationResults,
-  EvaluatorType,
-} from '../types/index.js';
+import type { EvaluationConfig, CombinedEvaluationResults, EvaluatorType } from '../types/index.js';
 
 /**
  * Evaluator helper class
@@ -20,10 +16,13 @@ export class Evaluator {
   /**
    * Evaluate text with all available evaluators
    */
-  async evaluateAll(text: string, options?: {
-    referenceText?: string;
-    context?: string[];
-  }): Promise<CombinedEvaluationResults> {
+  async evaluateAll(
+    text: string,
+    options?: {
+      referenceText?: string;
+      context?: string[];
+    },
+  ): Promise<CombinedEvaluationResults> {
     const config: EvaluationConfig = {
       evaluators: [
         'perplexity',
@@ -75,7 +74,7 @@ export class Evaluator {
     options: {
       referenceText?: string;
       context?: string[];
-    }
+    },
   ): Promise<CombinedEvaluationResults> {
     const config: EvaluationConfig = {
       evaluators: ['relevance', 'faithfulness'],
@@ -95,7 +94,7 @@ export class Evaluator {
       criteria: string[];
       judgeModel?: string;
       referenceText?: string;
-    }
+    },
   ): Promise<CombinedEvaluationResults> {
     const config: EvaluationConfig = {
       evaluators: ['llm-as-judge'],
@@ -117,7 +116,7 @@ export class Evaluator {
       referenceText?: string;
       context?: string[];
       judgeModel?: string;
-    }
+    },
   ): Promise<CombinedEvaluationResults> {
     const config: EvaluationConfig = {
       evaluators,

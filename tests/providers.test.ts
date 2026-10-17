@@ -12,7 +12,7 @@ describe('Provider Interface', () => {
         prompt: 'Hello, world!',
         temperature: 0.7,
         max_tokens: 100,
-        stream: false
+        stream: false,
       };
 
       expect(request.model).toBeTruthy();
@@ -27,12 +27,12 @@ describe('Provider Interface', () => {
       const validTemperatures = [0, 0.5, 0.7, 1.0, 1.5, 2.0];
       const invalidTemperatures = [-0.1, 2.1, -1, 3];
 
-      validTemperatures.forEach(temp => {
+      validTemperatures.forEach((temp) => {
         expect(temp).toBeGreaterThanOrEqual(0);
         expect(temp).toBeLessThanOrEqual(2);
       });
 
-      invalidTemperatures.forEach(temp => {
+      invalidTemperatures.forEach((temp) => {
         const isValid = temp >= 0 && temp <= 2;
         expect(isValid).toBe(false);
       });
@@ -48,7 +48,7 @@ describe('Provider Interface', () => {
     it('should support optional parameters', () => {
       const minimalRequest = {
         model: 'gpt-4',
-        prompt: 'Test'
+        prompt: 'Test',
       };
 
       const fullRequest = {
@@ -58,7 +58,7 @@ describe('Provider Interface', () => {
         max_tokens: 100,
         top_p: 0.9,
         stop: ['END'],
-        stream: false
+        stream: false,
       };
 
       expect(minimalRequest.model).toBeTruthy();
@@ -80,9 +80,9 @@ describe('Provider Interface', () => {
         usage: {
           prompt_tokens: 10,
           completion_tokens: 15,
-          total_tokens: 25
+          total_tokens: 25,
         },
-        created: Date.now()
+        created: Date.now(),
       };
 
       expect(response.id).toBeTruthy();
@@ -97,7 +97,7 @@ describe('Provider Interface', () => {
       const usage = {
         prompt_tokens: 10,
         completion_tokens: 15,
-        total_tokens: 25
+        total_tokens: 25,
       };
 
       expect(usage.prompt_tokens).toBeGreaterThan(0);
@@ -106,9 +106,15 @@ describe('Provider Interface', () => {
     });
 
     it('should support different finish reasons', () => {
-      const validFinishReasons = ['stop', 'length', 'content_filter', 'tool_calls', 'function_call'];
+      const validFinishReasons = [
+        'stop',
+        'length',
+        'content_filter',
+        'tool_calls',
+        'function_call',
+      ];
 
-      validFinishReasons.forEach(reason => {
+      validFinishReasons.forEach((reason) => {
         expect(validFinishReasons).toContain(reason);
       });
     });
@@ -122,7 +128,7 @@ describe('Provider Interface', () => {
         provider: 'openai',
         max_tokens: 8192,
         supports_streaming: true,
-        supports_functions: true
+        supports_functions: true,
       };
 
       expect(modelInfo.id).toBeTruthy();
@@ -138,10 +144,10 @@ describe('Provider Interface', () => {
         { id: 'gpt-4', max_tokens: 8192 },
         { id: 'gpt-4-turbo', max_tokens: 128000 },
         { id: 'gpt-3.5-turbo', max_tokens: 16385 },
-        { id: 'claude-3-opus', max_tokens: 200000 }
+        { id: 'claude-3-opus', max_tokens: 200000 },
       ];
 
-      models.forEach(model => {
+      models.forEach((model) => {
         expect(model.max_tokens).toBeGreaterThan(0);
         expect(model.max_tokens).toBeLessThanOrEqual(1000000); // Reasonable upper bound
       });
@@ -153,7 +159,7 @@ describe('Provider Interface', () => {
       const chunk = {
         content: 'Hello',
         is_final: false,
-        finish_reason: null
+        finish_reason: null,
       };
 
       expect(chunk.content).toBeDefined();
@@ -165,7 +171,7 @@ describe('Provider Interface', () => {
       const finalChunk = {
         content: '',
         is_final: true,
-        finish_reason: 'stop'
+        finish_reason: 'stop',
       };
 
       expect(finalChunk.is_final).toBe(true);
@@ -182,10 +188,10 @@ describe('Provider Interface', () => {
         'ServerError',
         'NetworkError',
         'TimeoutError',
-        'InvalidModel'
+        'InvalidModel',
       ];
 
-      errorTypes.forEach(errorType => {
+      errorTypes.forEach((errorType) => {
         expect(errorTypes).toContain(errorType);
         expect(errorType).toBeTruthy();
       });
@@ -195,7 +201,7 @@ describe('Provider Interface', () => {
       const rateLimitError = {
         type: 'RateLimitExceeded',
         message: 'Rate limit exceeded',
-        retry_after: 60 // seconds
+        retry_after: 60, // seconds
       };
 
       expect(rateLimitError.type).toBe('RateLimitExceeded');
@@ -209,8 +215,8 @@ describe('Provider Interface', () => {
         details: {
           parameter: 'temperature',
           value: 3.0,
-          expected: '0-2'
-        }
+          expected: '0-2',
+        },
       };
 
       expect(error.type).toBeTruthy();
@@ -225,7 +231,7 @@ describe('Provider-Specific Features', () => {
     it('should support GPT models', () => {
       const models = ['gpt-4', 'gpt-4-turbo', 'gpt-3.5-turbo', 'gpt-4o'];
 
-      models.forEach(model => {
+      models.forEach((model) => {
         expect(model).toMatch(/^gpt-/);
       });
     });
@@ -241,11 +247,11 @@ describe('Provider-Specific Features', () => {
             parameters: {
               type: 'object',
               properties: {
-                location: { type: 'string' }
-              }
-            }
-          }
-        ]
+                location: { type: 'string' },
+              },
+            },
+          },
+        ],
       };
 
       expect(request.functions).toBeDefined();
@@ -259,10 +265,10 @@ describe('Provider-Specific Features', () => {
       const models = [
         'claude-3-opus-20240229',
         'claude-3-sonnet-20240229',
-        'claude-3-haiku-20240307'
+        'claude-3-haiku-20240307',
       ];
 
-      models.forEach(model => {
+      models.forEach((model) => {
         expect(model).toMatch(/^claude-/);
       });
     });
@@ -271,7 +277,7 @@ describe('Provider-Specific Features', () => {
       const request = {
         model: 'claude-3-opus-20240229',
         system: 'You are a helpful assistant.',
-        prompt: 'Hello!'
+        prompt: 'Hello!',
       };
 
       expect(request.system).toBeTruthy();
@@ -281,14 +287,9 @@ describe('Provider-Specific Features', () => {
 
   describe('Google', () => {
     it('should support Gemini models', () => {
-      const models = [
-        'gemini-pro',
-        'gemini-pro-vision',
-        'gemini-1.5-pro',
-        'gemini-1.5-flash'
-      ];
+      const models = ['gemini-pro', 'gemini-pro-vision', 'gemini-1.5-pro', 'gemini-1.5-flash'];
 
-      models.forEach(model => {
+      models.forEach((model) => {
         expect(model).toMatch(/^gemini-/);
       });
     });
@@ -297,7 +298,7 @@ describe('Provider-Specific Features', () => {
       const request = {
         model: 'gemini-pro-vision',
         prompt: 'What is in this image?',
-        images: ['data:image/png;base64,iVBORw0KG...']
+        images: ['data:image/png;base64,iVBORw0KG...'],
       };
 
       expect(request.images).toBeDefined();
@@ -311,27 +312,19 @@ describe('Provider Factory', () => {
     const configs = [
       { name: 'openai', type: 'OpenAI' },
       { name: 'anthropic', type: 'Anthropic' },
-      { name: 'google', type: 'Google' }
+      { name: 'google', type: 'Google' },
     ];
 
-    configs.forEach(config => {
+    configs.forEach((config) => {
       expect(config.name).toBeTruthy();
       expect(config.type).toBeTruthy();
     });
   });
 
   it('should validate provider names', () => {
-    const validProviders = [
-      'openai',
-      'anthropic',
-      'google',
-      'cohere',
-      'mistral',
-      'groq',
-      'ollama'
-    ];
+    const validProviders = ['openai', 'anthropic', 'google', 'cohere', 'mistral', 'groq', 'ollama'];
 
-    validProviders.forEach(provider => {
+    validProviders.forEach((provider) => {
       expect(provider).toMatch(/^[a-z]+$/);
       expect(provider.length).toBeGreaterThan(0);
     });

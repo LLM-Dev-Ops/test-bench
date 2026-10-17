@@ -63,7 +63,7 @@ export class LLMTestBench {
     const resolvedCliPath = config.cliPath ?? findCLIPath();
     if (!resolvedCliPath) {
       throw new Error(
-        'LLM Test Bench CLI not found. Please install it via cargo or npm, or provide cliPath in config.'
+        'LLM Test Bench CLI not found. Please install it via cargo or npm, or provide cliPath in config.',
       );
     }
 
@@ -156,14 +156,7 @@ export class LLMTestBench {
       validateBenchmarkConfig(options.config);
     }
 
-    const args = [
-      'bench',
-      '--provider',
-      options.provider,
-      '--model',
-      options.model,
-      '--json',
-    ];
+    const args = ['bench', '--provider', options.provider, '--model', options.model, '--json'];
 
     // Add prompts
     for (const prompt of options.prompts) {
@@ -278,10 +271,7 @@ export class LLMTestBench {
    * @param config - Evaluation configuration
    * @returns Promise resolving to evaluation results
    */
-  async evaluate(
-    text: string,
-    config: EvaluationConfig
-  ): Promise<CombinedEvaluationResults> {
+  async evaluate(text: string, config: EvaluationConfig): Promise<CombinedEvaluationResults> {
     if (!text || text.trim().length === 0) {
       throw new Error('Text to evaluate cannot be empty');
     }

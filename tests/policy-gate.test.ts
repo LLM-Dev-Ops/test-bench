@@ -232,7 +232,7 @@ describe('Exemption recording', () => {
 
     // Exemption appears in artifacts
     const exemptionArtifacts = result.artifacts.filter(
-      (a) => a.artifact_type === 'policy_exemption'
+      (a) => a.artifact_type === 'policy_exemption',
     );
     expect(exemptionArtifacts).toHaveLength(1);
     expect(exemptionArtifacts[0].agent_span_id).toBe(agent.span_id);

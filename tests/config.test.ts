@@ -54,7 +54,7 @@ enabled = true
         api_key_env: 'OPENAI_API_KEY',
         base_url: 'https://api.openai.com/v1',
         default_model: 'gpt-4',
-        enabled: true
+        enabled: true,
       };
 
       expect(validProvider.name).toBeTruthy();
@@ -128,7 +128,7 @@ enabled = true
         log_level: 'info',
         timeout_seconds: 30,
         max_retries: 3,
-        output_format: 'json'
+        output_format: 'json',
       };
 
       expect(defaults.log_level).toBe('info');
@@ -141,7 +141,7 @@ enabled = true
       const providerDefaults = {
         timeout_seconds: 30,
         max_retries: 3,
-        enabled: true
+        enabled: true,
       };
 
       expect(providerDefaults.timeout_seconds).toBeGreaterThan(0);
@@ -155,11 +155,11 @@ enabled = true
       const invalidLevels = ['verbose', 'critical', 'none', ''];
       const validLevels = ['error', 'warn', 'info', 'debug', 'trace'];
 
-      invalidLevels.forEach(level => {
+      invalidLevels.forEach((level) => {
         expect(validLevels).not.toContain(level);
       });
 
-      validLevels.forEach(level => {
+      validLevels.forEach((level) => {
         expect(validLevels).toContain(level);
       });
     });
@@ -168,20 +168,16 @@ enabled = true
       const validUrls = [
         'https://api.openai.com/v1',
         'https://api.anthropic.com/v1',
-        'http://localhost:8080'
+        'http://localhost:8080',
       ];
 
-      const invalidUrls = [
-        'not-a-url',
-        'ftp://invalid.com',
-        ''
-      ];
+      const invalidUrls = ['not-a-url', 'ftp://invalid.com', ''];
 
-      validUrls.forEach(url => {
+      validUrls.forEach((url) => {
         expect(url).toMatch(/^https?:\/\/.+/);
       });
 
-      invalidUrls.forEach(url => {
+      invalidUrls.forEach((url) => {
         expect(url).not.toMatch(/^https?:\/\/.+/);
       });
     });

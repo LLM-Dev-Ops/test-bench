@@ -61,11 +61,12 @@ describe('Evaluation Metrics', () => {
         const violations: CoherenceViolation[] = [];
 
         // Check for abrupt topic changes (simplified)
-        if (text.includes('however') && text.includes('but')) {
+        const normalized = text.toLowerCase();
+        if (normalized.includes('however') && normalized.includes('but')) {
           violations.push({
             type: 'contradictory_markers',
-            position: text.indexOf('but'),
-            severity: 'medium'
+            position: normalized.indexOf('but'),
+            severity: 'medium',
           });
         }
 
@@ -82,7 +83,7 @@ describe('Evaluation Metrics', () => {
     it('should calculate coherence score', () => {
       const calculateCoherence = (violations: number, textLength: number): number => {
         if (textLength === 0) return 0;
-        return Math.max(0, 1 - (violations / (textLength / 100)));
+        return Math.max(0, 1 - violations / (textLength / 100));
       };
 
       const score1 = calculateCoherence(0, 100); // No violations
@@ -101,11 +102,11 @@ describe('Evaluation Metrics', () => {
         'furthermore',
         'consequently',
         'meanwhile',
-        'nevertheless'
+        'nevertheless',
       ];
 
       const text = 'The system works well. However, there are some issues.';
-      const hasMarker = discourseMarkers.some(marker => text.toLowerCase().includes(marker));
+      const hasMarker = discourseMarkers.some((marker) => text.toLowerCase().includes(marker));
 
       expect(hasMarker).toBe(true);
     });
@@ -115,15 +116,19 @@ describe('Evaluation Metrics', () => {
     it('should detect hallucinations', () => {
       const detectHallucination = (
         response: string,
-        context: string
+        context: string,
       ): { hasHallucination: boolean; confidence: number } => {
         // Simplified hallucination detection
-        const responseFacts = response.toLowerCase().split('.').filter(s => s.trim());
-        const contextLower = context.toLowerCase();
+        const tokenize = (value: string): Set<string> =>
+          new Set(value.toLowerCase().match(/[a-z0-9]+/g) ?? []);
+        const contextWords = tokenize(context);
+        const responseFacts = response.split('.').filter((s) => s.trim());
 
         let unsupportedFacts = 0;
-        responseFacts.forEach(fact => {
-          if (fact.length > 10 && !contextLower.includes(fact.trim().substring(0, 20))) {
+        responseFacts.forEach((fact) => {
+          const factWords = tokenize(fact);
+          const supportedWords = [...factWords].filter((word) => contextWords.has(word));
+          if (factWords.size > 0 && supportedWords.length / factWords.size < 0.5) {
             unsupportedFacts++;
           }
         });
@@ -131,7 +136,7 @@ describe('Evaluation Metrics', () => {
         const confidence = unsupportedFacts / Math.max(responseFacts.length, 1);
         return {
           hasHallucination: unsupportedFacts > 0,
-          confidence
+          confidence,
         };
       };
 
@@ -146,10 +151,7 @@ describe('Evaluation Metrics', () => {
     });
 
     it('should calculate faithfulness score', () => {
-      const calculateFaithfulness = (
-        supportedClaims: number,
-        totalClaims: number
-      ): number => {
+      const calculateFaithfulness = (supportedClaims: number, totalClaims: number): number => {
         if (totalClaims === 0) return 1.0;
         return supportedClaims / totalClaims;
       };
@@ -167,16 +169,18 @@ describe('Evaluation Metrics', () => {
 
       const checkAttribution = (text: string): Attribution[] => {
         const attributions: Attribution[] = [];
-        const sentences = text.split('.').filter(s => s.trim());
+        const sentences = text.split('.').filter((s) => s.trim());
 
-        sentences.forEach(sentence => {
-          const hasAttribution = sentence.includes('according to') ||
-            sentence.includes('states that') ||
-            sentence.includes('reported that');
+        sentences.forEach((sentence) => {
+          const normalized = sentence.toLowerCase();
+          const hasAttribution =
+            normalized.includes('according to') ||
+            normalized.includes('states that') ||
+            normalized.includes('reported that');
 
           attributions.push({
             claim: sentence.trim(),
-            source: hasAttribution ? 'cited' : null
+            source: hasAttribution ? 'cited' : null,
           });
         });
 
@@ -201,7 +205,7 @@ describe('Evaluation Metrics', () => {
         const words1 = new Set(text1.toLowerCase().split(/\s+/));
         const words2 = new Set(text2.toLowerCase().split(/\s+/));
 
-        const intersection = new Set([...words1].filter(w => words2.has(w)));
+        const intersection = new Set([...words1].filter((w) => words2.has(w)));
         const union = new Set([...words1, ...words2]);
 
         return intersection.size / union.size;
@@ -219,9 +223,11 @@ describe('Evaluation Metrics', () => {
 
     it('should detect off-topic responses', () => {
       const isOnTopic = (prompt: string, response: string, threshold = 0.1): boolean => {
-        const words1 = new Set(prompt.toLowerCase().split(/\s+/));
-        const words2 = new Set(response.toLowerCase().split(/\s+/));
-        const intersection = new Set([...words1].filter(w => words2.has(w)));
+        const tokenize = (value: string): Set<string> =>
+          new Set(value.toLowerCase().match(/[a-z0-9]+/g) ?? []);
+        const words1 = tokenize(prompt);
+        const words2 = tokenize(response);
+        const intersection = new Set([...words1].filter((w) => words2.has(w)));
         const union = new Set([...words1, ...words2]);
         const similarity = intersection.size / union.size;
 
@@ -239,13 +245,13 @@ describe('Evaluation Metrics', () => {
     it('should measure answer completeness', () => {
       const measureCompleteness = (
         prompt: string,
-        response: string
+        response: string,
       ): { complete: boolean; coverage: number } => {
         // Extract question words
         const questionWords = ['what', 'why', 'how', 'when', 'where', 'who'];
         const promptLower = prompt.toLowerCase();
 
-        const questionType = questionWords.find(w => promptLower.includes(w));
+        const questionType = questionWords.find((w) => promptLower.includes(w));
         const responseLength = response.split(/\s+/).length;
 
         // Simple heuristic: responses should have minimum length based on question
@@ -258,7 +264,8 @@ describe('Evaluation Metrics', () => {
 
       const prompt = 'Why is the sky blue?';
       const shortResponse = 'Because of light.';
-      const completeResponse = 'The sky is blue because of Rayleigh scattering. When sunlight enters the atmosphere, shorter blue wavelengths scatter more than other colors.';
+      const completeResponse =
+        'The sky is blue because of Rayleigh scattering. When sunlight enters the atmosphere, shorter blue wavelengths scatter more than other colors.';
 
       const result1 = measureCompleteness(prompt, shortResponse);
       const result2 = measureCompleteness(prompt, completeResponse);
@@ -272,7 +279,7 @@ describe('Evaluation Metrics', () => {
       const createEvaluationPrompt = (
         task: string,
         response: string,
-        criteria: string[]
+        criteria: string[],
       ): string => {
         return `
 Evaluate the following response for the task: ${task}
@@ -280,7 +287,7 @@ Evaluate the following response for the task: ${task}
 Response: ${response}
 
 Criteria:
-${criteria.map(c => `- ${c}`).join('\n')}
+${criteria.map((c) => `- ${c}`).join('\n')}
 
 Rate each criterion on a scale of 1-5 and provide overall feedback.
 `.trim();
@@ -289,7 +296,7 @@ Rate each criterion on a scale of 1-5 and provide overall feedback.
       const prompt = createEvaluationPrompt(
         'Summarize the article',
         'The article discusses climate change.',
-        ['Accuracy', 'Completeness', 'Clarity']
+        ['Accuracy', 'Completeness', 'Clarity'],
       );
 
       expect(prompt).toContain('Evaluate');
@@ -307,7 +314,7 @@ Rate each criterion on a scale of 1-5 and provide overall feedback.
         const scores: Record<string, number> = {};
         const lines = response.split('\n');
 
-        lines.forEach(line => {
+        lines.forEach((line) => {
           const match = line.match(/(\w+):\s*(\d+)/);
           if (match) {
             scores[match[1].toLowerCase()] = parseInt(match[2]);
@@ -315,9 +322,7 @@ Rate each criterion on a scale of 1-5 and provide overall feedback.
         });
 
         const feedbackIndex = response.toLowerCase().indexOf('feedback:');
-        const feedback = feedbackIndex >= 0
-          ? response.substring(feedbackIndex + 9).trim()
-          : '';
+        const feedback = feedbackIndex >= 0 ? response.substring(feedbackIndex + 9).trim() : '';
 
         return { scores, feedback };
       };
@@ -351,7 +356,7 @@ Feedback: Good overall but could be more detailed.
         accuracy: 4,
         completeness: 3,
         clarity: 5,
-        relevance: 4
+        relevance: 4,
       };
 
       const average = aggregateScores(scores);
@@ -380,8 +385,8 @@ describe('Text Analysis Utilities', () => {
   describe('Readability Metrics', () => {
     it('should calculate sentence complexity', () => {
       const calculateComplexity = (text: string): number => {
-        const sentences = text.split(/[.!?]+/).filter(s => s.trim());
-        const words = text.split(/\s+/).filter(w => w.trim());
+        const sentences = text.split(/[.!?]+/).filter((s) => s.trim());
+        const words = text.split(/\s+/).filter((w) => w.trim());
 
         if (sentences.length === 0) return 0;
 
@@ -390,7 +395,8 @@ describe('Text Analysis Utilities', () => {
       };
 
       const simple = 'I like cats. They are nice.';
-      const complex = 'The implementation of sophisticated algorithms requires comprehensive understanding of computational complexity theory.';
+      const complex =
+        'The implementation of sophisticated algorithms requires comprehensive understanding of computational complexity theory.';
 
       const simpleComplexity = calculateComplexity(simple);
       const complexComplexity = calculateComplexity(complex);
@@ -406,8 +412,8 @@ describe('Text Analysis Utilities', () => {
         const negative = ['bad', 'terrible', 'awful', 'horrible', 'poor'];
 
         const textLower = text.toLowerCase();
-        const hasPositive = positive.some(word => textLower.includes(word));
-        const hasNegative = negative.some(word => textLower.includes(word));
+        const hasPositive = positive.some((word) => textLower.includes(word));
+        const hasNegative = negative.some((word) => textLower.includes(word));
 
         if (hasPositive && !hasNegative) return 'positive';
         if (hasNegative && !hasPositive) return 'negative';

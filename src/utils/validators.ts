@@ -80,7 +80,7 @@ const evaluationConfigSchema = z.object({
       'toxicity',
       'pii-detection',
       'custom',
-    ])
+    ]),
   ),
   referenceText: z.string().optional(),
   context: z.array(z.string()).optional(),

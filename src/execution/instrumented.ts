@@ -11,6 +11,7 @@
  * This ensures the repository NEVER executes silently.
  */
 
+import { LLMTestBench } from '../core/llm-test-bench.js';
 import type {
   SDKConfig,
   CompletionRequest,
@@ -23,11 +24,11 @@ import type {
   ProviderName,
   ModelInfo,
 } from '../types/index.js';
-import { LLMTestBench } from '../core/llm-test-bench.js';
-import type { ExecutionContext, ExecutionResult } from './types.js';
+
+import { PolicyGate } from './policy-gate.js';
 import type { ExecutionPolicy } from './policy.js';
 import { SpanManager } from './span-manager.js';
-import { PolicyGate } from './policy-gate.js';
+import type { ExecutionContext, ExecutionResult } from './types.js';
 
 /**
  * Instrumented LLM Test Bench that emits execution spans.
@@ -83,7 +84,7 @@ export class InstrumentedTestBench {
    */
   async listModels(
     ctx: ExecutionContext,
-    provider?: ProviderName
+    provider?: ProviderName,
   ): Promise<ExecutionResult<ModelInfo[]>> {
     const { mgr } = this.gate.enforce('benchmark', ctx);
     const agent = mgr.startAgent('model-lister');
@@ -110,7 +111,7 @@ export class InstrumentedTestBench {
       model: string;
       prompts: string[];
       config?: BenchmarkConfig;
-    }
+    },
   ): Promise<ExecutionResult<BenchmarkResults>> {
     const { mgr } = this.gate.enforce('benchmark', ctx);
 
@@ -162,7 +163,7 @@ export class InstrumentedTestBench {
       models: Array<{ provider: ProviderName; model: string }>;
       prompts: string[];
       config?: BenchmarkConfig;
-    }
+    },
   ): Promise<ExecutionResult<ComparisonResult>> {
     const { mgr } = this.gate.enforce('compare', ctx);
     const agent = mgr.startAgent('model-comparator');
@@ -195,7 +196,7 @@ export class InstrumentedTestBench {
   async evaluate(
     ctx: ExecutionContext,
     text: string,
-    config: EvaluationConfig
+    config: EvaluationConfig,
   ): Promise<ExecutionResult<CombinedEvaluationResults>> {
     const { mgr } = this.gate.enforce('evaluate', ctx);
     const agent = mgr.startAgent('evaluator');
@@ -227,7 +228,7 @@ export class InstrumentedTestBench {
    */
   async complete(
     ctx: ExecutionContext,
-    request: CompletionRequest
+    request: CompletionRequest,
   ): Promise<ExecutionResult<CompletionResponse>> {
     const { mgr } = this.gate.enforce('complete', ctx);
     const agent = mgr.startAgent('completion-agent');
@@ -263,10 +264,8 @@ export class InstrumentedTestBench {
       metric: 'latency' | 'cost' | 'quality';
       maxCost?: number;
       minQuality?: number;
-    }
-  ): Promise<
-    ExecutionResult<{ provider: ProviderName; model: string; reason: string }>
-  > {
+    },
+  ): Promise<ExecutionResult<{ provider: ProviderName; model: string; reason: string }>> {
     const { mgr } = this.gate.enforce('optimize', ctx);
     const agent = mgr.startAgent('optimizer');
 
@@ -323,7 +322,7 @@ export class InstrumentedTestBench {
  */
 export async function executeWithSpans<T>(
   ctx: ExecutionContext,
-  fn: (mgr: SpanManager) => Promise<T>
+  fn: (mgr: SpanManager) => Promise<T>,
 ): Promise<ExecutionResult<T>> {
   const mgr = SpanManager.create(ctx);
 

@@ -119,7 +119,7 @@ describe('Error Handling', () => {
 
         constructor(
           private maxRequests: number,
-          private windowMs: number
+          private windowMs: number,
         ) {}
 
         async add<T>(fn: () => Promise<T>): Promise<T> {
@@ -158,7 +158,10 @@ describe('Error Handling', () => {
 
   describe('Input Validation', () => {
     it('should validate prompt length', () => {
-      const validatePrompt = (prompt: string, maxLength = 10000): { valid: boolean; reason?: string } => {
+      const validatePrompt = (
+        prompt: string,
+        maxLength = 10000,
+      ): { valid: boolean; reason?: string } => {
         if (!prompt || prompt.trim().length === 0) {
           return { valid: false, reason: 'Prompt is empty' };
         }
@@ -222,14 +225,14 @@ describe('Error Handling', () => {
       const checkContextLength = (
         model: Model,
         promptTokens: number,
-        requestedTokens: number
+        requestedTokens: number,
       ): { valid: boolean; reason?: string } => {
         const totalTokens = promptTokens + requestedTokens;
 
         if (totalTokens > model.max_tokens) {
           return {
             valid: false,
-            reason: `Total tokens (${totalTokens}) exceeds model limit (${model.max_tokens})`
+            reason: `Total tokens (${totalTokens}) exceeds model limit (${model.max_tokens})`,
           };
         }
 
@@ -264,7 +267,7 @@ describe('Error Handling', () => {
         if (finishReason === 'content_filter') {
           return {
             safe: false,
-            action: 'Content was filtered due to safety policies'
+            action: 'Content was filtered due to safety policies',
           };
         }
 
@@ -292,8 +295,8 @@ describe('Error Handling', () => {
         error: {
           type: 'invalid_request_error',
           message: 'Invalid parameter value',
-          code: 'invalid_value'
-        }
+          code: 'invalid_value',
+        },
       };
 
       const message = parseError(error);
@@ -345,7 +348,7 @@ describe('Error Handling', () => {
         activeRequests++;
         try {
           // Simulate async operation
-          await new Promise(resolve => setTimeout(resolve, 10));
+          await new Promise((resolve) => setTimeout(resolve, 10));
         } finally {
           activeRequests--;
         }
@@ -353,11 +356,7 @@ describe('Error Handling', () => {
 
       // This should not throw
       expect(async () => {
-        await Promise.all([
-          makeRequest(),
-          makeRequest(),
-          makeRequest()
-        ]);
+        await Promise.all([makeRequest(), makeRequest(), makeRequest()]);
       }).not.toThrow();
     });
 
@@ -421,7 +420,7 @@ describe('Error Handling', () => {
       };
 
       const clearAllTimeouts = (): void => {
-        timeouts.forEach(t => clearTimeout(t));
+        timeouts.forEach((t) => clearTimeout(t));
         timeouts.length = 0;
       };
 

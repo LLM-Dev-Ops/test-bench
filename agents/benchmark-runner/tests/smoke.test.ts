@@ -4,7 +4,7 @@
  * Verification checklist and smoke tests for platform wiring.
  */
 
-import { describe, it, expect, beforeAll, afterAll } from 'vitest';
+import { describe, it, expect, beforeAll, afterAll, vi } from 'vitest';
 import { handler, BENCHMARK_RUNNER_AGENT } from '../handler';
 import {
   BenchmarkRunnerInputSchema,
@@ -12,10 +12,23 @@ import {
   DecisionEventSchema,
   validateInput,
 } from '../../contracts';
-import {
-  getRegistrationMetadata,
-  validateRegistration,
-} from '../../registry/benchmark-runner';
+import { getRegistrationMetadata, validateRegistration } from '../../registry/benchmark-runner';
+
+vi.mock('../../services', () => ({
+  getRuVectorClient: () => ({
+    persistDecisionEvent: vi.fn().mockResolvedValue(undefined),
+    flush: vi.fn().mockResolvedValue(undefined),
+  }),
+  createTelemetryEmitter: () => ({
+    emitInvoked: vi.fn(),
+    emitCompleted: vi.fn(),
+    emitDecision: vi.fn(),
+    emitError: vi.fn(),
+    emitValidationFailed: vi.fn(),
+    emitConstraintApplied: vi.fn(),
+    flush: vi.fn().mockResolvedValue(undefined),
+  }),
+}));
 
 // =============================================================================
 // TEST FIXTURES
@@ -259,11 +272,13 @@ describe('Integration Smoke Tests', () => {
     // Requires OPENAI_API_KEY
     const input = {
       ...VALID_INPUT,
-      providers: [{
-        provider_name: 'openai' as const,
-        model_id: 'gpt-4o-mini',
-        api_key_ref: 'openai',
-      }],
+      providers: [
+        {
+          provider_name: 'openai' as const,
+          model_id: 'gpt-4o-mini',
+          api_key_ref: 'openai',
+        },
+      ],
     };
 
     const response = await handler({

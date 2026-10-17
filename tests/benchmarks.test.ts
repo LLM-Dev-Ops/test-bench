@@ -13,7 +13,7 @@ describe('Benchmark Runner', () => {
         model: 'gpt-4',
         prompts: ['Hello', 'How are you?'],
         iterations: 1,
-        parallel: false
+        parallel: false,
       };
 
       expect(config.name).toBeTruthy();
@@ -28,11 +28,11 @@ describe('Benchmark Runner', () => {
       const validIterations = [1, 5, 10, 100];
       const invalidIterations = [0, -1, -5];
 
-      validIterations.forEach(n => {
+      validIterations.forEach((n) => {
         expect(n).toBeGreaterThan(0);
       });
 
-      invalidIterations.forEach(n => {
+      invalidIterations.forEach((n) => {
         expect(n).not.toBeGreaterThan(0);
       });
     });
@@ -41,7 +41,7 @@ describe('Benchmark Runner', () => {
       const batchConfig = {
         batch_size: 10,
         max_concurrent: 3,
-        timeout_seconds: 60
+        timeout_seconds: 60,
       };
 
       expect(batchConfig.batch_size).toBeGreaterThan(0);
@@ -71,7 +71,7 @@ describe('Benchmark Runner', () => {
           mean: sum / sorted.length,
           median: sorted[Math.floor(sorted.length / 2)],
           p95: sorted[Math.floor(sorted.length * 0.95)],
-          p99: sorted[Math.floor(sorted.length * 0.99)]
+          p99: sorted[Math.floor(sorted.length * 0.99)],
         };
       };
 
@@ -85,10 +85,7 @@ describe('Benchmark Runner', () => {
     });
 
     it('should calculate throughput', () => {
-      const calculateThroughput = (
-        requests: number,
-        durationSeconds: number
-      ): number => {
+      const calculateThroughput = (requests: number, durationSeconds: number): number => {
         if (durationSeconds === 0) return 0;
         return requests / durationSeconds;
       };
@@ -106,7 +103,9 @@ describe('Benchmark Runner', () => {
         avg_tokens_per_request: number;
       }
 
-      const aggregateTokens = (usages: Array<{ prompt: number; completion: number }>): TokenMetrics => {
+      const aggregateTokens = (
+        usages: Array<{ prompt: number; completion: number }>,
+      ): TokenMetrics => {
         const total_prompt = usages.reduce((sum, u) => sum + u.prompt, 0);
         const total_completion = usages.reduce((sum, u) => sum + u.completion, 0);
         const total = total_prompt + total_completion;
@@ -115,14 +114,14 @@ describe('Benchmark Runner', () => {
           total_prompt_tokens: total_prompt,
           total_completion_tokens: total_completion,
           total_tokens: total,
-          avg_tokens_per_request: usages.length > 0 ? total / usages.length : 0
+          avg_tokens_per_request: usages.length > 0 ? total / usages.length : 0,
         };
       };
 
       const usages = [
         { prompt: 10, completion: 20 },
         { prompt: 15, completion: 25 },
-        { prompt: 12, completion: 18 }
+        { prompt: 12, completion: 18 },
       ];
 
       const metrics = aggregateTokens(usages);
@@ -143,7 +142,7 @@ describe('Benchmark Runner', () => {
       const calculateCost = (
         promptTokens: number,
         completionTokens: number,
-        pricing: PricingConfig
+        pricing: PricingConfig,
       ): number => {
         const promptCost = (promptTokens / 1000) * pricing.prompt_tokens_per_1k;
         const completionCost = (completionTokens / 1000) * pricing.completion_tokens_per_1k;
@@ -152,7 +151,7 @@ describe('Benchmark Runner', () => {
 
       const gpt4Pricing: PricingConfig = {
         prompt_tokens_per_1k: 0.03,
-        completion_tokens_per_1k: 0.06
+        completion_tokens_per_1k: 0.06,
       };
 
       const cost = calculateCost(1000, 500, gpt4Pricing);
@@ -172,12 +171,10 @@ describe('Benchmark Runner', () => {
       const providerCosts = {
         'openai-gpt4': 0.03,
         'anthropic-claude': 0.015,
-        'google-gemini': 0.001
+        'google-gemini': 0.001,
       };
 
-      const cheapest = Object.entries(providerCosts).reduce((a, b) =>
-        a[1] < b[1] ? a : b
-      );
+      const cheapest = Object.entries(providerCosts).reduce((a, b) => (a[1] < b[1] ? a : b));
 
       expect(cheapest[0]).toBe('google-gemini');
       expect(cheapest[1]).toBe(0.001);
@@ -196,8 +193,22 @@ describe('Benchmark Runner', () => {
       }
 
       const results: BenchmarkResult[] = [
-        { provider: 'openai', model: 'gpt-4', success_count: 95, failure_count: 5, avg_latency: 1500, total_cost: 0.50 },
-        { provider: 'anthropic', model: 'claude-3', success_count: 98, failure_count: 2, avg_latency: 1200, total_cost: 0.30 }
+        {
+          provider: 'openai',
+          model: 'gpt-4',
+          success_count: 95,
+          failure_count: 5,
+          avg_latency: 1500,
+          total_cost: 0.5,
+        },
+        {
+          provider: 'anthropic',
+          model: 'claude-3',
+          success_count: 98,
+          failure_count: 2,
+          avg_latency: 1200,
+          total_cost: 0.3,
+        },
       ];
 
       const totalSuccess = results.reduce((sum, r) => sum + r.success_count, 0);
@@ -206,7 +217,7 @@ describe('Benchmark Runner', () => {
 
       expect(totalSuccess).toBe(193);
       expect(totalFailure).toBe(7);
-      expect(totalCost).toBe(0.80);
+      expect(totalCost).toBe(0.8);
     });
 
     it('should calculate success rate', () => {
@@ -230,7 +241,10 @@ describe('Benchmark Runner', () => {
         cost: number;
       }
 
-      const rankModels = (models: ModelScore[], metric: keyof Pick<ModelScore, 'score' | 'latency' | 'cost'>): ModelScore[] => {
+      const rankModels = (
+        models: ModelScore[],
+        metric: keyof Pick<ModelScore, 'score' | 'latency' | 'cost'>,
+      ): ModelScore[] => {
         return [...models].sort((a, b) => {
           if (metric === 'score') {
             return b[metric] - a[metric]; // Higher score is better
@@ -242,7 +256,7 @@ describe('Benchmark Runner', () => {
       const models: ModelScore[] = [
         { model: 'gpt-4', score: 0.92, latency: 1500, cost: 0.03 },
         { model: 'claude-3', score: 0.95, latency: 1200, cost: 0.015 },
-        { model: 'gemini-pro', score: 0.88, latency: 800, cost: 0.001 }
+        { model: 'gemini-pro', score: 0.88, latency: 800, cost: 0.001 },
       ];
 
       const byScore = rankModels(models, 'score');
@@ -259,13 +273,9 @@ describe('Benchmark Runner', () => {
         accuracy: number,
         speed: number,
         cost: number,
-        weights: { accuracy: number; speed: number; cost: number }
+        weights: { accuracy: number; speed: number; cost: number },
       ): number => {
-        return (
-          accuracy * weights.accuracy +
-          speed * weights.speed +
-          cost * weights.cost
-        );
+        return accuracy * weights.accuracy + speed * weights.speed + cost * weights.cost;
       };
 
       const weights = { accuracy: 0.5, speed: 0.3, cost: 0.2 };
@@ -282,9 +292,7 @@ describe('Report Generation', () => {
       const result = {
         benchmark_name: 'Test Benchmark',
         timestamp: new Date().toISOString(),
-        results: [
-          { model: 'gpt-4', score: 0.92 }
-        ]
+        results: [{ model: 'gpt-4', score: 0.92 }],
       };
 
       const json = JSON.stringify(result, null, 2);
@@ -297,7 +305,7 @@ describe('Report Generation', () => {
     it('should format results as CSV', () => {
       const formatCSV = (headers: string[], rows: string[][]): string => {
         const headerLine = headers.join(',');
-        const dataLines = rows.map(row => row.join(','));
+        const dataLines = rows.map((row) => row.join(','));
         return [headerLine, ...dataLines].join('\n');
       };
 
@@ -305,8 +313,8 @@ describe('Report Generation', () => {
         ['Model', 'Score', 'Latency'],
         [
           ['gpt-4', '0.92', '1500'],
-          ['claude-3', '0.95', '1200']
-        ]
+          ['claude-3', '0.95', '1200'],
+        ],
       );
 
       expect(csv).toContain('Model,Score,Latency');
@@ -323,23 +331,23 @@ describe('Report Generation', () => {
       }
 
       const generateSummary = (
-        results: Array<{ success: boolean; latency: number; cost: number }>
+        results: Array<{ success: boolean; latency: number; cost: number }>,
       ): Summary => {
-        const successful = results.filter(r => r.success);
+        const successful = results.filter((r) => r.success);
 
         return {
           total_requests: results.length,
           successful_requests: successful.length,
           failed_requests: results.length - successful.length,
           avg_latency_ms: successful.reduce((sum, r) => sum + r.latency, 0) / successful.length,
-          total_cost_usd: results.reduce((sum, r) => sum + r.cost, 0)
+          total_cost_usd: results.reduce((sum, r) => sum + r.cost, 0),
         };
       };
 
       const results = [
         { success: true, latency: 1000, cost: 0.01 },
         { success: true, latency: 1200, cost: 0.015 },
-        { success: false, latency: 5000, cost: 0.0 }
+        { success: false, latency: 5000, cost: 0.0 },
       ];
 
       const summary = generateSummary(results);
@@ -362,26 +370,26 @@ describe('Report Generation', () => {
       }
 
       const prepareChartData = (
-        results: Array<{ model: string; score: number; latency: number }>
+        results: Array<{ model: string; score: number; latency: number }>,
       ): ChartData => {
         return {
-          labels: results.map(r => r.model),
+          labels: results.map((r) => r.model),
           datasets: [
             {
               label: 'Score',
-              data: results.map(r => r.score)
+              data: results.map((r) => r.score),
             },
             {
               label: 'Latency (ms)',
-              data: results.map(r => r.latency)
-            }
-          ]
+              data: results.map((r) => r.latency),
+            },
+          ],
         };
       };
 
       const results = [
         { model: 'gpt-4', score: 0.92, latency: 1500 },
-        { model: 'claude-3', score: 0.95, latency: 1200 }
+        { model: 'claude-3', score: 0.95, latency: 1200 },
       ];
 
       const chartData = prepareChartData(results);
@@ -401,15 +409,15 @@ describe('Dataset Management', () => {
         version: '1.0',
         prompts: [
           { id: '1', text: 'Hello', category: 'greeting' },
-          { id: '2', text: 'How are you?', category: 'question' }
-        ]
+          { id: '2', text: 'How are you?', category: 'question' },
+        ],
       };
 
       expect(dataset.name).toBeTruthy();
       expect(dataset.version).toMatch(/\d+\.\d+/);
       expect(dataset.prompts.length).toBeGreaterThan(0);
 
-      dataset.prompts.forEach(prompt => {
+      dataset.prompts.forEach((prompt) => {
         expect(prompt.id).toBeTruthy();
         expect(prompt.text).toBeTruthy();
         expect(prompt.category).toBeTruthy();
@@ -419,7 +427,7 @@ describe('Dataset Management', () => {
     it('should support dataset categories', () => {
       const categories = ['coding', 'math', 'reasoning', 'creative', 'factual'];
 
-      categories.forEach(category => {
+      categories.forEach((category) => {
         expect(typeof category).toBe('string');
         expect(category.length).toBeGreaterThan(0);
       });

@@ -12,6 +12,7 @@
  */
 
 import { randomUUID } from 'crypto';
+
 import type { ExemptionRecord } from './policy.js';
 
 /** Span type discriminator */

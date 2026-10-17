@@ -35,7 +35,10 @@ export abstract class ProviderClient {
   /**
    * Complete a prompt using the provider's default model
    */
-  async complete(prompt: string, options?: Partial<CompletionRequest>): Promise<CompletionResponse> {
+  async complete(
+    prompt: string,
+    options?: Partial<CompletionRequest>,
+  ): Promise<CompletionResponse> {
     const models = await this.listModels();
     if (models.length === 0) {
       throw new Error(`No models available for provider: ${this.providerName}`);
@@ -78,7 +81,10 @@ export class OpenAIClient extends ProviderClient {
   /**
    * Use GPT-4 Turbo
    */
-  async gpt4Turbo(prompt: string, options?: Partial<CompletionRequest>): Promise<CompletionResponse> {
+  async gpt4Turbo(
+    prompt: string,
+    options?: Partial<CompletionRequest>,
+  ): Promise<CompletionResponse> {
     return this.ltb.complete({
       model: 'gpt-4-turbo',
       prompt,
@@ -100,7 +106,10 @@ export class OpenAIClient extends ProviderClient {
   /**
    * Use GPT-3.5 Turbo
    */
-  async gpt35Turbo(prompt: string, options?: Partial<CompletionRequest>): Promise<CompletionResponse> {
+  async gpt35Turbo(
+    prompt: string,
+    options?: Partial<CompletionRequest>,
+  ): Promise<CompletionResponse> {
     return this.ltb.complete({
       model: 'gpt-3.5-turbo',
       prompt,
@@ -120,7 +129,10 @@ export class AnthropicClient extends ProviderClient {
   /**
    * Use Claude Opus 4
    */
-  async claudeOpus4(prompt: string, options?: Partial<CompletionRequest>): Promise<CompletionResponse> {
+  async claudeOpus4(
+    prompt: string,
+    options?: Partial<CompletionRequest>,
+  ): Promise<CompletionResponse> {
     return this.ltb.complete({
       model: 'claude-opus-4',
       prompt,
@@ -131,7 +143,10 @@ export class AnthropicClient extends ProviderClient {
   /**
    * Use Claude Sonnet 4.5
    */
-  async claudeSonnet45(prompt: string, options?: Partial<CompletionRequest>): Promise<CompletionResponse> {
+  async claudeSonnet45(
+    prompt: string,
+    options?: Partial<CompletionRequest>,
+  ): Promise<CompletionResponse> {
     return this.ltb.complete({
       model: 'claude-sonnet-4.5',
       prompt,
@@ -142,7 +157,10 @@ export class AnthropicClient extends ProviderClient {
   /**
    * Use Claude 3.5 Sonnet
    */
-  async claude35Sonnet(prompt: string, options?: Partial<CompletionRequest>): Promise<CompletionResponse> {
+  async claude35Sonnet(
+    prompt: string,
+    options?: Partial<CompletionRequest>,
+  ): Promise<CompletionResponse> {
     return this.ltb.complete({
       model: 'claude-3-5-sonnet-latest',
       prompt,
@@ -153,7 +171,10 @@ export class AnthropicClient extends ProviderClient {
   /**
    * Use Claude 3.5 Haiku
    */
-  async claude35Haiku(prompt: string, options?: Partial<CompletionRequest>): Promise<CompletionResponse> {
+  async claude35Haiku(
+    prompt: string,
+    options?: Partial<CompletionRequest>,
+  ): Promise<CompletionResponse> {
     return this.ltb.complete({
       model: 'claude-3-5-haiku-latest',
       prompt,
@@ -173,7 +194,10 @@ export class GoogleClient extends ProviderClient {
   /**
    * Use Gemini 2.5 Pro
    */
-  async gemini25Pro(prompt: string, options?: Partial<CompletionRequest>): Promise<CompletionResponse> {
+  async gemini25Pro(
+    prompt: string,
+    options?: Partial<CompletionRequest>,
+  ): Promise<CompletionResponse> {
     return this.ltb.complete({
       model: 'gemini-2.5-pro',
       prompt,
@@ -184,7 +208,10 @@ export class GoogleClient extends ProviderClient {
   /**
    * Use Gemini 1.5 Pro
    */
-  async gemini15Pro(prompt: string, options?: Partial<CompletionRequest>): Promise<CompletionResponse> {
+  async gemini15Pro(
+    prompt: string,
+    options?: Partial<CompletionRequest>,
+  ): Promise<CompletionResponse> {
     return this.ltb.complete({
       model: 'gemini-1.5-pro',
       prompt,
@@ -195,7 +222,10 @@ export class GoogleClient extends ProviderClient {
   /**
    * Use Gemini 1.5 Flash
    */
-  async gemini15Flash(prompt: string, options?: Partial<CompletionRequest>): Promise<CompletionResponse> {
+  async gemini15Flash(
+    prompt: string,
+    options?: Partial<CompletionRequest>,
+  ): Promise<CompletionResponse> {
     return this.ltb.complete({
       model: 'gemini-1.5-flash',
       prompt,

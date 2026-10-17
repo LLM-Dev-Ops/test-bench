@@ -1,0 +1,410 @@
+{
+  "contract": {
+    "baseline": "1c4f445288f360120ebae6fb00c6fbf312c16931",
+    "holdout": [
+      "zero-critical-production-advisories",
+      "zero-high-production-advisories",
+      "mapped-ipv6-trust-cannot-spoof-http-client"
+    ],
+    "anchor": [
+      "existing-unit-tests-retained",
+      "lint",
+      "typecheck",
+      "build-all",
+      "ordinary-proxy-trust-semantics"
+    ],
+    "limits": {
+      "darwinGenerations": 1,
+      "darwinChildren": 2,
+      "concurrency": 1
+    },
+    "acceptance": "No dependency major upgrades or Node18 compatibility loss; all existing 411 passing tests retained, 31 pre-existing skips unchanged; identical live HTTP test in both checkouts; no tests, 80% coverage thresholds, exclusions, or security gates weakened. Every repository gate still independently blocks merge.",
+    "baselineMeasurements": {
+      "productionAdvisories": {
+        "critical": 1,
+        "high": 6,
+        "moderate": 6,
+        "low": 1,
+        "total": 14
+      },
+      "testsPassed": 411,
+      "testsSkipped": 31,
+      "coverage": {
+        "lines": 42.46,
+        "functions": 52.84,
+        "statements": 42.46,
+        "branches": 69.4
+      },
+      "coverageExit": 1
+    },
+    "note": "Coverage values include the original broad all-files configuration and generated test-results assets; no exclusions will be changed to inflate the score."
+  },
+  "baselineLock": "8707cbaf5bab21a5026b13eb4b392bb9eef5910b440b14bc6c75282cfc0c2bab",
+  "candidateLock": "39d3850c6bc15eea32ee8ef835cdb1b472a40e927c8ef24fae8180a9fb483766",
+  "fixtureSha256": "aa75658a31587e40e2aedfaca470cabe4d3967adc7386d5977a01753c7405304",
+  "fingerprint": "c5942e7c9bf8f28fe7af47a6ec3887d11eeb3f8c8e8601cc6a7a54969ea0b981",
+  "promotions": 1,
+  "replay": {
+    "pass": true,
+    "checks": {
+      "receipts": true,
+      "reachesRoot": true,
+      "contiguousParents": true,
+      "allPromoted": true,
+      "gateUnchanged": true,
+      "gateReExecutes": true,
+      "allCommitsReceipts": true,
+      "sealedFieldsAuthentic": true
+    },
+    "failures": [],
+    "chainSummary": "gen1(dependencies) → gen0(root)"
+  },
+  "measurements": [
+    {
+      "source": "8707cbaf5bab21a5026b13eb4b392bb9eef5910b440b14bc6c75282cfc0c2bab",
+      "suite": "holdout",
+      "score": {
+        "primary": 0,
+        "noopRate": 1,
+        "costPerWin": 0,
+        "regressed": false,
+        "itemWins": [false, false, false]
+      },
+      "http": {
+        "results": [
+          {
+            "id": "mapped-ipv6-trust-cannot-spoof-http-client",
+            "trust": "::ffff:10.0.0.0/8",
+            "expected": "127.0.0.1",
+            "suite": "holdout",
+            "observed": "203.0.113.7",
+            "passed": false,
+            "durationMs": 28.035239999999988
+          },
+          {
+            "id": "default-untrusted-peer",
+            "trust": false,
+            "expected": "127.0.0.1",
+            "suite": "anchor",
+            "observed": "127.0.0.1",
+            "passed": true,
+            "durationMs": 2.5336130000000026
+          },
+          {
+            "id": "plain-ipv4-subnet",
+            "trust": "10.0.0.0/8",
+            "expected": "127.0.0.1",
+            "suite": "anchor",
+            "observed": "127.0.0.1",
+            "passed": true,
+            "durationMs": 13.862245000000001
+          },
+          {
+            "id": "explicit-loopback-proxy",
+            "trust": "loopback",
+            "expected": "203.0.113.7",
+            "suite": "anchor",
+            "observed": "203.0.113.7",
+            "passed": true,
+            "durationMs": 3.724767999999983
+          },
+          {
+            "id": "correctly-mapped-loopback-proxy",
+            "trust": "::ffff:127.0.0.0/104",
+            "expected": "203.0.113.7",
+            "suite": "anchor",
+            "observed": "203.0.113.7",
+            "passed": true,
+            "durationMs": 3.548265999999984
+          }
+        ],
+        "boundary": "Dependency-level live HTTP fixture; does not assert this deployment enables proxy trust or claim production exploitability/latency improvement"
+      },
+      "advisories": {
+        "info": 0,
+        "low": 1,
+        "moderate": 6,
+        "high": 6,
+        "critical": 1,
+        "total": 14
+      },
+      "commands": [
+        {
+          "command": [
+            "/opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node",
+            "scripts/verify-proxy-boundary.mjs",
+            "/workspace/scratch/4f25900b71ff/test-bench-baseline-oct17c"
+          ],
+          "exit": 1
+        },
+        {
+          "command": ["npm", "audit", "--omit=dev", "--json"],
+          "exit": 1
+        }
+      ]
+    },
+    {
+      "source": "8707cbaf5bab21a5026b13eb4b392bb9eef5910b440b14bc6c75282cfc0c2bab",
+      "suite": "anchor",
+      "score": {
+        "primary": 1,
+        "noopRate": 0,
+        "costPerWin": 0,
+        "regressed": false,
+        "itemWins": [true, true, true, true, true]
+      },
+      "passed": 411,
+      "skipped": 31,
+      "retained": true,
+      "http": {
+        "results": [
+          {
+            "id": "mapped-ipv6-trust-cannot-spoof-http-client",
+            "trust": "::ffff:10.0.0.0/8",
+            "expected": "127.0.0.1",
+            "suite": "holdout",
+            "observed": "203.0.113.7",
+            "passed": false,
+            "durationMs": 11.229375000000019
+          },
+          {
+            "id": "default-untrusted-peer",
+            "trust": false,
+            "expected": "127.0.0.1",
+            "suite": "anchor",
+            "observed": "127.0.0.1",
+            "passed": true,
+            "durationMs": 2.6878220000000113
+          },
+          {
+            "id": "plain-ipv4-subnet",
+            "trust": "10.0.0.0/8",
+            "expected": "127.0.0.1",
+            "suite": "anchor",
+            "observed": "127.0.0.1",
+            "passed": true,
+            "durationMs": 1.51123800000002
+          },
+          {
+            "id": "explicit-loopback-proxy",
+            "trust": "loopback",
+            "expected": "203.0.113.7",
+            "suite": "anchor",
+            "observed": "203.0.113.7",
+            "passed": true,
+            "durationMs": 1.9146159999999952
+          },
+          {
+            "id": "correctly-mapped-loopback-proxy",
+            "trust": "::ffff:127.0.0.0/104",
+            "expected": "203.0.113.7",
+            "suite": "anchor",
+            "observed": "203.0.113.7",
+            "passed": true,
+            "durationMs": 1.7589159999999993
+          }
+        ],
+        "boundary": "Dependency-level live HTTP fixture; does not assert this deployment enables proxy trust or claim production exploitability/latency improvement"
+      },
+      "commands": [
+        {
+          "command": [
+            "/opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node",
+            "scripts/verify-proxy-boundary.mjs",
+            "/workspace/scratch/4f25900b71ff/test-bench-baseline-oct17c"
+          ],
+          "exit": 1
+        },
+        {
+          "command": ["npm", "test"],
+          "exit": 0
+        },
+        {
+          "command": ["npm", "run", "lint"],
+          "exit": 0
+        },
+        {
+          "command": ["npm", "run", "typecheck"],
+          "exit": 0
+        },
+        {
+          "command": ["npm", "run", "build:all"],
+          "exit": 0
+        }
+      ]
+    },
+    {
+      "source": "39d3850c6bc15eea32ee8ef835cdb1b472a40e927c8ef24fae8180a9fb483766",
+      "suite": "holdout",
+      "score": {
+        "primary": 1,
+        "noopRate": 0,
+        "costPerWin": 0,
+        "regressed": false,
+        "itemWins": [true, true, true]
+      },
+      "http": {
+        "results": [
+          {
+            "id": "mapped-ipv6-trust-cannot-spoof-http-client",
+            "trust": "::ffff:10.0.0.0/8",
+            "expected": "127.0.0.1",
+            "suite": "holdout",
+            "observed": "127.0.0.1",
+            "passed": true,
+            "durationMs": 11.722754000000009
+          },
+          {
+            "id": "default-untrusted-peer",
+            "trust": false,
+            "expected": "127.0.0.1",
+            "suite": "anchor",
+            "observed": "127.0.0.1",
+            "passed": true,
+            "durationMs": 1.8999450000000024
+          },
+          {
+            "id": "plain-ipv4-subnet",
+            "trust": "10.0.0.0/8",
+            "expected": "127.0.0.1",
+            "suite": "anchor",
+            "observed": "127.0.0.1",
+            "passed": true,
+            "durationMs": 1.4728510000000057
+          },
+          {
+            "id": "explicit-loopback-proxy",
+            "trust": "loopback",
+            "expected": "203.0.113.7",
+            "suite": "anchor",
+            "observed": "203.0.113.7",
+            "passed": true,
+            "durationMs": 1.840125999999998
+          },
+          {
+            "id": "correctly-mapped-loopback-proxy",
+            "trust": "::ffff:127.0.0.0/104",
+            "expected": "203.0.113.7",
+            "suite": "anchor",
+            "observed": "203.0.113.7",
+            "passed": true,
+            "durationMs": 2.079640999999995
+          }
+        ],
+        "boundary": "Dependency-level live HTTP fixture; does not assert this deployment enables proxy trust or claim production exploitability/latency improvement"
+      },
+      "advisories": {
+        "info": 0,
+        "low": 0,
+        "moderate": 3,
+        "high": 0,
+        "critical": 0,
+        "total": 3
+      },
+      "commands": [
+        {
+          "command": [
+            "/opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node",
+            "scripts/verify-proxy-boundary.mjs",
+            "/workspace/scratch/4f25900b71ff/test-bench-cycle-oct17c"
+          ],
+          "exit": 0
+        },
+        {
+          "command": ["npm", "audit", "--omit=dev", "--json"],
+          "exit": 1
+        }
+      ]
+    },
+    {
+      "source": "39d3850c6bc15eea32ee8ef835cdb1b472a40e927c8ef24fae8180a9fb483766",
+      "suite": "anchor",
+      "score": {
+        "primary": 1,
+        "noopRate": 0,
+        "costPerWin": 0,
+        "regressed": false,
+        "itemWins": [true, true, true, true, true]
+      },
+      "passed": 438,
+      "skipped": 31,
+      "retained": true,
+      "http": {
+        "results": [
+          {
+            "id": "mapped-ipv6-trust-cannot-spoof-http-client",
+            "trust": "::ffff:10.0.0.0/8",
+            "expected": "127.0.0.1",
+            "suite": "holdout",
+            "observed": "127.0.0.1",
+            "passed": true,
+            "durationMs": 11.311906000000008
+          },
+          {
+            "id": "default-untrusted-peer",
+            "trust": false,
+            "expected": "127.0.0.1",
+            "suite": "anchor",
+            "observed": "127.0.0.1",
+            "passed": true,
+            "durationMs": 1.6034250000000014
+          },
+          {
+            "id": "plain-ipv4-subnet",
+            "trust": "10.0.0.0/8",
+            "expected": "127.0.0.1",
+            "suite": "anchor",
+            "observed": "127.0.0.1",
+            "passed": true,
+            "durationMs": 1.5997100000000017
+          },
+          {
+            "id": "explicit-loopback-proxy",
+            "trust": "loopback",
+            "expected": "203.0.113.7",
+            "suite": "anchor",
+            "observed": "203.0.113.7",
+            "passed": true,
+            "durationMs": 1.4375890000000027
+          },
+          {
+            "id": "correctly-mapped-loopback-proxy",
+            "trust": "::ffff:127.0.0.0/104",
+            "expected": "203.0.113.7",
+            "suite": "anchor",
+            "observed": "203.0.113.7",
+            "passed": true,
+            "durationMs": 1.9234790000000004
+          }
+        ],
+        "boundary": "Dependency-level live HTTP fixture; does not assert this deployment enables proxy trust or claim production exploitability/latency improvement"
+      },
+      "commands": [
+        {
+          "command": [
+            "/opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node",
+            "scripts/verify-proxy-boundary.mjs",
+            "/workspace/scratch/4f25900b71ff/test-bench-cycle-oct17c"
+          ],
+          "exit": 0
+        },
+        {
+          "command": ["npm", "test"],
+          "exit": 0
+        },
+        {
+          "command": ["npm", "run", "lint"],
+          "exit": 0
+        },
+        {
+          "command": ["npm", "run", "typecheck"],
+          "exit": 0
+        },
+        {
+          "command": ["npm", "run", "build:all"],
+          "exit": 0
+        }
+      ]
+    }
+  ]
+}
