@@ -1,0 +1,9 @@
+{
+  "baseline": "1c4f445288f360120ebae6fb00c6fbf312c16931",
+  "holdout": ["zero-critical-production-advisories", "zero-high-production-advisories", "mapped-ipv6-trust-cannot-spoof-http-client"],
+  "anchor": ["existing-unit-tests-retained", "lint", "typecheck", "build-all", "ordinary-proxy-trust-semantics"],
+  "limits": {"darwinGenerations": 1, "darwinChildren": 2, "concurrency": 1},
+  "acceptance": "No dependency major upgrades or Node18 compatibility loss; all existing 411 passing tests retained, 31 pre-existing skips unchanged; identical live HTTP test in both checkouts; no tests, 80% coverage thresholds, exclusions, or security gates weakened. Every repository gate still independently blocks merge.",
+  "baselineMeasurements": {"productionAdvisories": {"critical": 1, "high": 6, "moderate": 6, "low": 1, "total": 14}, "testsPassed": 411, "testsSkipped": 31, "coverage": {"lines": 42.46, "functions": 52.84, "statements": 42.46, "branches": 69.4}, "coverageExit": 1},
+  "note": "Coverage values include the original broad all-files configuration and generated test-results assets; no exclusions will be changed to inflate the score."
+}

@@ -12,6 +12,31 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  dependency-security:
+    name: Production Dependency Security
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: 20.19.5
+          cache: npm
+      - name: Fingerprint committed dependency resolution
+        run: sha256sum package-lock.json > "$RUNNER_TEMP/test-bench-lock.sha256"
+      - run: npm ci --ignore-scripts
+      - name: Reject high and critical production advisories
+        run: npm audit --omit=dev --audit-level=high
+      - name: Verify native HTTP proxy trust boundary
+        run: node scripts/verify-proxy-boundary.mjs .
+      - name: Verify dependency lock unchanged
+        if: always()
+        run: |
+          sha256sum --check "$RUNNER_TEMP/test-bench-lock.sha256"
+          git diff --exit-code -- package-lock.json
+
   # Format checking job
   format:
     name: Check Code Formatting
@@ -232,19 +257,15 @@ jobs:
   # Summary job - requires all checks to pass
   ci-success:
     name: CI Success
-    runs-on: ubuntu-latest
-    needs: [format, lint, typecheck, test, coverage, build]
+    runs-on: ubuntu-24.04
+    needs: [format, lint, typecheck, test, coverage, build, integration, dependency-security]
     if: always()
 
     steps:
       - name: Check all jobs
         run: |
-          if [[ "${{ contains(needs.*.result, 'failure') }}" == "true" ]]; then
-            echo "One or more CI jobs failed"
-            exit 1
-          fi
-          if [[ "${{ contains(needs.*.result, 'cancelled') }}" == "true" ]]; then
-            echo "One or more CI jobs were cancelled"
+          if [[ "${{ contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled') || contains(needs.*.result, 'skipped') }}" == "true" ]]; then
+            echo "One or more required CI jobs failed, were cancelled, or were skipped"
             exit 1
           fi
           echo "All CI jobs passed successfully!"
